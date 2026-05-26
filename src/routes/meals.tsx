@@ -10,7 +10,7 @@ import { MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/meals")({
   head: () => ({ meta: [
-    { title: "Healthy Meals — Fine Time for Cathy's Clean Green Classics" },
+    { title: "Healthy Meals | Fine Time for Cathy's Clean Green Classics" },
     { name: "description", content: "Balanced, clean meals made with grains, roasted vegetables, legumes, seeds and fresh toppings." },
   ]}),
   component: () => (

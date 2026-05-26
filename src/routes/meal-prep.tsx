@@ -5,7 +5,7 @@ import hero from "@/assets/section-mealprep.jpg";
 
 export const Route = createFileRoute("/meal-prep")({
   head: () => ({ meta: [
-    { title: "Meal Prep Plans — Fine Time for Cathy's Clean Green Classics" },
+    { title: "Meal Prep Plans | Fine Time for Cathy's Clean Green Classics" },
     { name: "description", content: "Five, eight, and twelve meal plans for clean, convenient eating all week." },
   ]}),
   component: MealPrep,

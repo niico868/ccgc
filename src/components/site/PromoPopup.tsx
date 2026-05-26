@@ -50,7 +50,7 @@ export function PromoPopup() {
           <div className="text-xs uppercase tracking-[0.2em] opacity-80">Limited offer</div>
           <h3 className="mt-1 text-display text-2xl font-bold">Join the CGCC Healthy Community</h3>
           <p className="mt-2 text-sm text-primary-foreground/90">
-            Get a discount on your first order — or gift it to someone else.
+            Get a discount on your first order. Or gift it to someone else.
           </p>
         </div>
         <form onSubmit={submit} className="space-y-3 p-7">

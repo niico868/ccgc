@@ -7,7 +7,7 @@ import { waLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [
-    { title: "Contact — Fine Time for Cathy's Clean Green Classics" },
+    { title: "Contact | Fine Time for Cathy's Clean Green Classics" },
     { name: "description", content: "Leave us a message, or reach us on WhatsApp, Instagram, phone or email." },
   ]}),
   component: Contact,

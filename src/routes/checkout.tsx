@@ -8,7 +8,7 @@ import { CheckCircle2, MessageCircle } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({ meta: [{ title: "Checkout — Fine Time for Cathy's Clean Green Classics" }] }),
+  head: () => ({ meta: [{ title: "Checkout | Fine Time for Cathy's Clean Green Classics" }] }),
   component: Checkout,
 });
 

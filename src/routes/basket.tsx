@@ -4,7 +4,7 @@ import { useBasket } from "@/lib/basket";
 import { Minus, Plus, Trash2, ShoppingBasket } from "lucide-react";
 
 export const Route = createFileRoute("/basket")({
-  head: () => ({ meta: [{ title: "Your Basket — Fine Time for Cathy's Clean Green Classics" }] }),
+  head: () => ({ meta: [{ title: "Your Basket | Fine Time for Cathy's Clean Green Classics" }] }),
   component: Basket,
 });
 
