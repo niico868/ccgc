@@ -9,8 +9,68 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SaladsRouteImport } from './routes/salads'
+import { Route as MealsRouteImport } from './routes/meals'
+import { Route as MealPrepRouteImport } from './routes/meal-prep'
+import { Route as JuicesRouteImport } from './routes/juices'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CateringRouteImport } from './routes/catering'
+import { Route as BasketRouteImport } from './routes/basket'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SaladsRoute = SaladsRouteImport.update({
+  id: '/salads',
+  path: '/salads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealsRoute = MealsRouteImport.update({
+  id: '/meals',
+  path: '/meals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealPrepRoute = MealPrepRouteImport.update({
+  id: '/meal-prep',
+  path: '/meal-prep',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JuicesRoute = JuicesRouteImport.update({
+  id: '/juices',
+  path: '/juices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CateringRoute = CateringRouteImport.update({
+  id: '/catering',
+  path: '/catering',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BasketRoute = BasketRouteImport.update({
+  id: '/basket',
+  path: '/basket',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +79,172 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/basket': typeof BasketRoute
+  '/catering': typeof CateringRoute
+  '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/gallery': typeof GalleryRoute
+  '/juices': typeof JuicesRoute
+  '/meal-prep': typeof MealPrepRoute
+  '/meals': typeof MealsRoute
+  '/salads': typeof SaladsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/basket': typeof BasketRoute
+  '/catering': typeof CateringRoute
+  '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/gallery': typeof GalleryRoute
+  '/juices': typeof JuicesRoute
+  '/meal-prep': typeof MealPrepRoute
+  '/meals': typeof MealsRoute
+  '/salads': typeof SaladsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/basket': typeof BasketRoute
+  '/catering': typeof CateringRoute
+  '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/gallery': typeof GalleryRoute
+  '/juices': typeof JuicesRoute
+  '/meal-prep': typeof MealPrepRoute
+  '/meals': typeof MealsRoute
+  '/salads': typeof SaladsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/basket'
+    | '/catering'
+    | '/checkout'
+    | '/contact'
+    | '/faq'
+    | '/gallery'
+    | '/juices'
+    | '/meal-prep'
+    | '/meals'
+    | '/salads'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/basket'
+    | '/catering'
+    | '/checkout'
+    | '/contact'
+    | '/faq'
+    | '/gallery'
+    | '/juices'
+    | '/meal-prep'
+    | '/meals'
+    | '/salads'
+  id:
+    | '__root__'
+    | '/'
+    | '/basket'
+    | '/catering'
+    | '/checkout'
+    | '/contact'
+    | '/faq'
+    | '/gallery'
+    | '/juices'
+    | '/meal-prep'
+    | '/meals'
+    | '/salads'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BasketRoute: typeof BasketRoute
+  CateringRoute: typeof CateringRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
+  GalleryRoute: typeof GalleryRoute
+  JuicesRoute: typeof JuicesRoute
+  MealPrepRoute: typeof MealPrepRoute
+  MealsRoute: typeof MealsRoute
+  SaladsRoute: typeof SaladsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/salads': {
+      id: '/salads'
+      path: '/salads'
+      fullPath: '/salads'
+      preLoaderRoute: typeof SaladsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meals': {
+      id: '/meals'
+      path: '/meals'
+      fullPath: '/meals'
+      preLoaderRoute: typeof MealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meal-prep': {
+      id: '/meal-prep'
+      path: '/meal-prep'
+      fullPath: '/meal-prep'
+      preLoaderRoute: typeof MealPrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/juices': {
+      id: '/juices'
+      path: '/juices'
+      fullPath: '/juices'
+      preLoaderRoute: typeof JuicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catering': {
+      id: '/catering'
+      path: '/catering'
+      fullPath: '/catering'
+      preLoaderRoute: typeof CateringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/basket': {
+      id: '/basket'
+      path: '/basket'
+      fullPath: '/basket'
+      preLoaderRoute: typeof BasketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +257,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BasketRoute: BasketRoute,
+  CateringRoute: CateringRoute,
+  CheckoutRoute: CheckoutRoute,
+  ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
+  GalleryRoute: GalleryRoute,
+  JuicesRoute: JuicesRoute,
+  MealPrepRoute: MealPrepRoute,
+  MealsRoute: MealsRoute,
+  SaladsRoute: SaladsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
