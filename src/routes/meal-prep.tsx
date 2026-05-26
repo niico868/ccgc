@@ -1,23 +1,35 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero, Section } from "@/components/site/Section";
-import { Check } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import hero from "@/assets/section-mealprep.jpg";
 
 export const Route = createFileRoute("/meal-prep")({
   head: () => ({ meta: [
-    { title: "Meal Prep Plans — Fine Time for Cathy's" },
-    { name: "description", content: "5, 8, and 12 meal subscription plans for clean, convenient eating all week." },
+    { title: "Meal Prep Plans | Fine Time for Cathy's Clean Green Classics" },
+    { name: "description", content: "Five, eight, and twelve meal plans for clean, convenient eating all week." },
   ]}),
   component: MealPrep,
 });
 
 const PLANS = [
-  { name: "5 Meal Plan", price: "$375", desc: "Five clean meals to start your week light and balanced.",
-    includes: ["5 chef-built meals", "Balanced macros", "Protein choice", "Pickup or delivery"] },
-  { name: "8 Meal Plan", price: "$580", desc: "Eight meals for steady eating Monday through Friday.",
-    includes: ["8 chef-built meals", "Lunch + dinner variety", "Protein choice", "Pickup or delivery"] },
-  { name: "12 Meal Plan", price: "$840", desc: "Twelve meals — full coverage for busy weeks and active families.",
-    includes: ["12 chef-built meals", "Maximum variety", "Protein choice", "Pickup or delivery"] },
+  {
+    name: "Five Meal Plan",
+    price: "$375",
+    desc: "Five clean meals to start your week light and balanced.",
+    includes: ["5 chef-built meals", "Balanced macros", "Protein choice", "Pickup or delivery"],
+  },
+  {
+    name: "Eight Meal Plan",
+    price: "$580",
+    desc: "Eight fresh meals for a balanced week with more convenience.",
+    includes: ["8 chef-built meals", "Lunch and dinner variety", "Protein choice", "Pickup or delivery"],
+  },
+  {
+    name: "Twelve Meal Plan",
+    price: "$840",
+    desc: "Twelve clean meals for full-week planning, convenience, and consistency.",
+    includes: ["12 chef-built meals", "Maximum variety", "Protein choice", "Pickup or delivery"],
+  },
 ];
 
 function MealPrep() {
@@ -26,28 +38,32 @@ function MealPrep() {
       <PageHero eyebrow="Meal Prep Plans" title="Eat clean. All week."
         intro="Plan your week with fresh, affordable meals made for convenience, balance, and flavor."
         image={hero} />
-      <Section className="py-14">
-        <div className="grid gap-6 lg:grid-cols-3">
+
+      <Section className="py-12">
+        <div className="flex flex-col gap-5">
           {PLANS.map((p) => (
-            <div key={p.name} className="flex flex-col rounded-3xl border border-border bg-card p-7 shadow-card">
-              <div className="text-display text-2xl font-semibold">{p.name}</div>
-              <div className="mt-1 text-3xl font-bold text-leaf">{p.price}</div>
-              <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
-              <ul className="mt-5 space-y-2 text-sm">
-                {p.includes.map((i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-leaf" /> {i}
-                  </li>
-                ))}
-              </ul>
+            <div key={p.name} className="grid items-center gap-5 rounded-3xl border-2 border-leaf/20 bg-card p-6 shadow-card lg:grid-cols-[1fr_auto] lg:p-8">
+              <div>
+                <div className="text-display text-2xl font-extrabold text-leaf-deep">{p.name}</div>
+                <p className="mt-1 text-sm text-foreground/80">{p.desc}</p>
+                <div className="mt-3 text-2xl font-extrabold text-leaf">{p.price}</div>
+                <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
+                  {p.includes.map((i) => (
+                    <li key={i} className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-leaf" /> {i}</li>
+                  ))}
+                </ul>
+              </div>
               <Link to="/contact"
-                className="mt-7 inline-flex h-11 items-center justify-center rounded-xl bg-leaf text-sm font-semibold text-primary-foreground hover:opacity-90">
-                Choose This Plan
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-leaf px-7 text-sm font-extrabold text-primary-foreground hover:opacity-90">
+                View Meal Plan <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-center text-xs text-muted-foreground">Seafood meals cost $5 more. Final pricing confirmed at checkout.</p>
+
+        <div className="mt-6 rounded-2xl border-2 border-tomato/40 bg-tomato/10 px-5 py-4 text-center text-sm font-bold text-tomato">
+          Seafood meals cost $5 more each. Our 5-meal combos can be delivered or picked up once or twice a week.
+        </div>
       </Section>
     </>
   );

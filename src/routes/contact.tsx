@@ -1,46 +1,85 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { Clock, Instagram, Mail, MapPin, MessageCircle, Phone, Truck } from "lucide-react";
 import { waLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [
-    { title: "Contact — Fine Time for Cathy's" },
-    { name: "description", content: "Get in touch with Fine Time for Cathy's by phone, WhatsApp, Instagram or email." },
+    { title: "Contact | Fine Time for Cathy's Clean Green Classics" },
+    { name: "description", content: "Leave us a message, or reach us on WhatsApp, Instagram, phone or email." },
   ]}),
   component: Contact,
 });
 
 function Contact() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const existing = JSON.parse(localStorage.getItem("cgcc.messages") || "[]");
+    existing.push({ ...form, at: new Date().toISOString() });
+    localStorage.setItem("cgcc.messages", JSON.stringify(existing));
+    toast.success("Message sent. We'll get back to you soon.");
+    setForm({ name: "", email: "", phone: "", message: "" });
+  };
+
+  const input = "h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none focus:border-leaf";
+
   return (
     <>
-      <Section className="pt-14 lg:pt-20 pb-6">
-        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf">Contact</div>
-        <h1 className="mt-2 text-display text-4xl font-bold lg:text-5xl">Let's talk fresh food.</h1>
-        <p className="mt-3 max-w-xl text-muted-foreground">WhatsApp is the fastest way to reach us — for ordering, catering, and meal prep questions.</p>
+      <Section className="pt-12 lg:pt-16 pb-4">
+        <div className="text-xs font-extrabold uppercase tracking-[0.22em] text-leaf">Contact</div>
+        <h1 className="mt-2 text-display text-3xl font-extrabold lg:text-4xl">Let's talk fresh food.</h1>
       </Section>
-      <Section className="pb-20">
-        <div className="grid gap-5 lg:grid-cols-2">
-          <div className="rounded-3xl border border-border bg-card p-7 shadow-card">
-            <h2 className="text-display text-xl font-semibold">Reach out</h2>
-            <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-center gap-3"><Phone className="h-5 w-5 text-leaf" /> +1 868-488-4248</li>
-              <li className="flex items-center gap-3"><Instagram className="h-5 w-5 text-leaf" /> @finelivingbycathy</li>
-              <li className="flex items-center gap-3"><Mail className="h-5 w-5 text-leaf" /> hello@finetimeforcathys.com</li>
-            </ul>
-            <a href={waLink("Hi! I have a question about ordering.")} target="_blank" rel="noreferrer"
-              className="mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-leaf px-6 text-sm font-semibold text-primary-foreground hover:opacity-90">
-              <MessageCircle className="h-4 w-4" /> Message us on WhatsApp
-            </a>
+
+      <Section className="pb-16">
+        <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+          <div className="rounded-3xl border border-border bg-card p-7 shadow-card lg:p-8">
+            <div className="text-display text-xl font-extrabold">Leave Us a Message</div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Use this form to share your thoughts, feedback, questions, or any note you would like us to receive. For faster order-related communication, please message us directly on WhatsApp.
+            </p>
+            <form onSubmit={submit} className="mt-5 space-y-3">
+              <input required placeholder="Customer name" value={form.name} onChange={set("name")} className={input} />
+              <input required type="email" placeholder="Customer email" value={form.email} onChange={set("email")} className={input} />
+              <input type="tel" placeholder="Phone number (optional)" value={form.phone} onChange={set("phone")} className={input} />
+              <textarea required rows={5} placeholder="Your message" value={form.message} onChange={set("message")}
+                className="w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf" />
+              <div className="flex flex-wrap gap-3">
+                <button type="submit" className="inline-flex h-11 items-center gap-2 rounded-full bg-leaf px-6 text-sm font-extrabold text-primary-foreground hover:opacity-90">
+                  Send Message
+                </button>
+                <a href={waLink("Hi! I have a question.")} target="_blank" rel="noreferrer"
+                  className="inline-flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-extrabold text-white hover:brightness-105">
+                  <MessageCircle className="h-4 w-4 fill-white" /> WhatsApp Us
+                </a>
+              </div>
+            </form>
           </div>
-          <div className="rounded-3xl border border-border bg-card p-7 shadow-card">
-            <h2 className="text-display text-xl font-semibold">Pickup & delivery</h2>
-            <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-start gap-3"><Clock className="mt-0.5 h-5 w-5 text-leaf" /> <span><b>Order cutoff:</b> 9:00 AM daily</span></li>
-              <li className="flex items-start gap-3"><Truck className="mt-0.5 h-5 w-5 text-leaf" /> <span><b>Delivery:</b> from 2:00 PM, $40 flat. Arima → Port of Spain.</span></li>
-              <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-5 w-5 text-leaf" /> <span><b>Pickup 1:</b> Sinclair, Port of Spain · 9 AM–12 PM</span></li>
-              <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-5 w-5 text-leaf" /> <span><b>Pickup 2:</b> Lopinot · 2 PM–5 PM</span></li>
-            </ul>
+
+          <div className="space-y-4">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
+              <div className="text-display text-base font-extrabold uppercase tracking-wider text-leaf-deep">Reach out</div>
+              <ul className="mt-3 space-y-2 text-sm">
+                <li className="flex items-center gap-3"><Phone className="h-4 w-4 text-leaf" /> +1 868-488-4248</li>
+                <li className="flex items-center gap-3"><Instagram className="h-4 w-4 text-leaf" /> @finelivingbycathy</li>
+                <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-leaf" /> dfinetimerestaurant@gmail.com</li>
+              </ul>
+            </div>
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
+              <div className="text-display text-base font-extrabold uppercase tracking-wider text-leaf-deep">Pickup &amp; delivery</div>
+              <ul className="mt-3 space-y-2 text-sm">
+                <li className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Order cutoff:</b> 9 AM daily. Salads 8 AM (Mon, Wed, Fri).</span></li>
+                <li className="flex items-start gap-3"><Truck className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Delivery:</b> from 2 PM.</span></li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>St Clair:</b> 11 AM to 1 PM</span></li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Trincity:</b> 2 PM to 6 PM</span></li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Pickup 2:</b> Orange Grove, Tacarigua</span></li>
+              </ul>
+            </div>
           </div>
         </div>
       </Section>

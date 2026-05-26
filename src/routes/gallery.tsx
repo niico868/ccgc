@@ -12,7 +12,7 @@ import hero from "@/assets/hero-salad.jpg";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({ meta: [
-    { title: "Gallery — Fine Time for Cathy's" },
+    { title: "Gallery | Fine Time for Cathy's" },
     { name: "description", content: "Food, kitchen, and behind-the-scenes photography from Fine Time for Cathy's." },
   ]}),
   component: Gallery,

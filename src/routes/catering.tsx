@@ -7,7 +7,7 @@ import { waLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/catering")({
   head: () => ({ meta: [
-    { title: "Catering — Fine Time for Cathy's" },
+    { title: "Catering | Fine Time for Cathy's" },
     { name: "description", content: "Request catering for events, office lunches and family gatherings." },
   ]}),
   component: Catering,
@@ -49,7 +49,7 @@ Notes: ${form.notes}`;
   return (
     <>
       <PageHero eyebrow="Catering" title="Family-style food, beautifully planned."
-        intro="Office lunches, birthdays, intimate weddings, family events. Tell us the details — we'll handle the rest."
+        intro="Office lunches, birthdays, intimate weddings, family events. Tell us the details | we'll handle the rest."
         image={hero} />
       <Section className="py-14">
         <form onSubmit={submit} className="mx-auto max-w-3xl rounded-3xl border border-border bg-card p-7 shadow-card lg:p-10">
