@@ -9,6 +9,7 @@ export type BasketLine = {
   protein?: string;
   addons?: string[];
   juiceOption?: string;
+  preferences?: string;
   notes?: string;
 };
 
