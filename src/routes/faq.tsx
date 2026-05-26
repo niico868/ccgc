@@ -16,7 +16,7 @@ const QA = [
   { q: "When do daily orders close?", a: "Daily orders close at 9:00 AM. Place your order the day before or first thing in the morning." },
   { q: "When does delivery start?", a: "Delivery starts at 2:00 PM and runs along the east-west corridor from Arima to Port of Spain." },
   { q: "How much is delivery?", a: "Delivery is a flat $40. We stay close to the main route — let us know your address at checkout." },
-  { q: "Where can I pick up my order?", a: "Pickup 1: Sinclair, Port of Spain — 9 AM to 12 PM. Pickup 2: Lopinot / home restaurant — 2 PM to 5 PM." },
+  { q: "Where can I pick up my order?", a: "Pickup 1: Sinclair, Port of Spain — 9 AM to 12 PM. Pickup 2: Orange Grove, Tacarigua / home restaurant — 2 PM to 5 PM." },
   { q: "Do you offer seafood?", a: "Yes — seafood meals (shrimp, fish, etc.) cost $5 more than the standard option." },
   { q: "How do I confirm my order?", a: "Order through the website. After checkout, we'll guide you to WhatsApp to confirm and arrange payment." },
   { q: "Do you cater events?", a: "Absolutely. Catering is planned in advance — submit a catering request and we'll be in touch." },
