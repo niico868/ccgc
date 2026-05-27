@@ -18,7 +18,6 @@ import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as CateringRouteImport } from './routes/catering'
 import { Route as BasketRouteImport } from './routes/basket'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -67,11 +66,6 @@ const CheckoutRoute = CheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CateringRoute = CateringRouteImport.update({
-  id: '/catering',
-  path: '/catering',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BasketRoute = BasketRouteImport.update({
   id: '/basket',
   path: '/basket',
@@ -86,7 +80,6 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/basket': typeof BasketRoute
-  '/catering': typeof CateringRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -100,7 +93,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/basket': typeof BasketRoute
-  '/catering': typeof CateringRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -115,7 +107,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/basket': typeof BasketRoute
-  '/catering': typeof CateringRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -131,7 +122,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/basket'
-    | '/catering'
     | '/checkout'
     | '/contact'
     | '/faq'
@@ -145,7 +135,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/basket'
-    | '/catering'
     | '/checkout'
     | '/contact'
     | '/faq'
@@ -159,7 +148,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/basket'
-    | '/catering'
     | '/checkout'
     | '/contact'
     | '/faq'
@@ -174,7 +162,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BasketRoute: typeof BasketRoute
-  CateringRoute: typeof CateringRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
@@ -251,13 +238,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/catering': {
-      id: '/catering'
-      path: '/catering'
-      fullPath: '/catering'
-      preLoaderRoute: typeof CateringRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/basket': {
       id: '/basket'
       path: '/basket'
@@ -278,7 +258,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BasketRoute: BasketRoute,
-  CateringRoute: CateringRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
