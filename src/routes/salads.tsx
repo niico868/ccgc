@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
-import { PageHero, Section } from "@/components/site/Section";
+import { Section } from "@/components/site/Section";
 import { MenuCard } from "@/components/site/MenuCard";
-import { SALADS, SALAD_INGREDIENTS } from "@/lib/menu-data";
-import hero from "@/assets/section-salads.jpg";
-import { OrderRules, FirstTimerCard } from "@/components/site/OrderRules";
+import { SALADS } from "@/lib/menu-data";
+import { FirstTimerCard } from "@/components/site/OrderRules";
+import { OrderingAccordion, CompactPageHeader } from "@/components/site/OrderingAccordion";
 import { OtherSections } from "@/components/site/OtherSections";
 import { waLink } from "@/lib/whatsapp";
-import { MessageCircle, Sparkles } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/salads")({
   head: () => ({ meta: [
@@ -20,25 +20,30 @@ export const Route = createFileRoute("/salads")({
 function SaladsPage() {
   return (
     <>
-      <PageHero
+      <CompactPageHeader
         eyebrow="Custom Salads"
         title="Cathy's Clean Green Classics Salads"
-        intro="Fresh, made-to-order salads prepared with clean greens, fruits, nuts, seeds, vegetables, and your choice of chicken, fish, shrimp, or vegan options. Choose from our specialty salads or freestyle your own from the full ingredient list."
-        image={hero}
+        intro="Pick a specialty salad below, add any preferences, and continue to checkout."
       />
 
-      <Section className="py-10">
-        <div className="rounded-3xl border-2 border-leaf/25 bg-cream p-6 lg:p-8">
-          <div className="text-xs font-extrabold uppercase tracking-[0.22em] text-tomato">Important salad ordering info</div>
-          <div className="mt-3 grid gap-4 text-sm text-foreground/85 sm:grid-cols-2 lg:grid-cols-3">
-            <p><span className="font-bold text-leaf-deep">Made:</span> Mondays, Wednesdays, and Fridays only.</p>
-            <p><span className="font-bold text-leaf-deep">Order by:</span> 8 AM on salad days. Pre-orders only.</p>
-            <p><span className="font-bold text-leaf-deep">Freshness:</span> Salads stay fresh up to 5 days.</p>
-            <p><span className="font-bold text-leaf-deep">Pickup, St Clair:</span> 11 AM to 1 PM.</p>
-            <p><span className="font-bold text-leaf-deep">Pickup, Trincity:</span> 2 PM to 6 PM.</p>
-            <p><span className="font-bold text-leaf-deep">Payment:</span> Online or cash on delivery.</p>
-          </div>
-        </div>
+      <Section className="py-8">
+        <Accordion type="single" collapsible className="rounded-3xl border-2 border-brown/30 bg-cream">
+          <AccordionItem value="info" className="border-0">
+            <AccordionTrigger className="px-6 py-4 text-xs font-extrabold uppercase tracking-[0.22em] text-brown hover:no-underline">
+              Important salad ordering info
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-6">
+              <div className="grid gap-4 text-sm text-foreground/85 sm:grid-cols-2 lg:grid-cols-3">
+                <p><span className="font-bold text-leaf-deep">Made:</span> Mondays, Wednesdays, and Fridays only.</p>
+                <p><span className="font-bold text-tomato">Order by:</span> 8 AM on salad days. Pre-orders only.</p>
+                <p><span className="font-bold text-leaf-deep">Freshness:</span> Salads stay fresh up to 5 days.</p>
+                <p><span className="font-bold text-leaf-deep">Pickup, St Clair:</span> 11 AM to 1 PM.</p>
+                <p><span className="font-bold text-leaf-deep">Pickup, Trincity:</span> 2 PM to 6 PM.</p>
+                <p><span className="font-bold text-leaf-deep">Payment:</span> Online or cash on delivery.</p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </Section>
 
       <Section className="pb-10">
@@ -57,33 +62,8 @@ function SaladsPage() {
         </div>
       </Section>
 
-      <Section className="pb-14">
-        <div className="rounded-3xl border-2 border-citrus/40 bg-gradient-to-br from-citrus/15 to-cream p-7 lg:p-10">
-          <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.22em] text-leaf-deep">
-            <Sparkles className="h-4 w-4" /> Build Your Own Salad
-          </div>
-          <p className="mt-2 max-w-2xl text-sm text-foreground/85">
-            Choose what you love. Leave out what you do not. Cathy's Clean Green Classics salads can be built from the fresh ingredient list below.
-          </p>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {Object.entries(SALAD_INGREDIENTS).map(([group, items]) => (
-              <div key={group} className="rounded-2xl border border-border bg-white p-5">
-                <div className="text-sm font-extrabold uppercase tracking-wide text-leaf-deep">{group}</div>
-                <p className="mt-2 text-sm text-foreground/80">{items}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6">
-            <Link to="/catering"
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-leaf px-6 text-sm font-extrabold text-primary-foreground hover:opacity-90">
-              Build My Salad (request)
-            </Link>
-          </div>
-        </div>
-      </Section>
-
       <Section className="pb-14"><FirstTimerCard /></Section>
-      <Section className="pb-14"><OrderRules /></Section>
+      <Section className="pb-14"><OrderingAccordion /></Section>
       <Section className="pb-16"><OtherSections except="salad" /></Section>
     </>
   );

@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHero, Section } from "@/components/site/Section";
+import { Section } from "@/components/site/Section";
 import { MenuCard } from "@/components/site/MenuCard";
 import { MEALS } from "@/lib/menu-data";
-import hero from "@/assets/section-meals.jpg";
-import { OrderRules } from "@/components/site/OrderRules";
+import { OrderingAccordion, CompactPageHeader } from "@/components/site/OrderingAccordion";
 import { OtherSections } from "@/components/site/OtherSections";
 import { waLink } from "@/lib/whatsapp";
 import { MessageCircle } from "lucide-react";
@@ -15,13 +14,12 @@ export const Route = createFileRoute("/meals")({
   ]}),
   component: () => (
     <>
-      <PageHero
+      <CompactPageHeader
         eyebrow="Healthy Meals"
         title="Healthy Meals"
-        intro="Balanced, comforting, and clean meals made with grains, roasted vegetables, legumes, seeds, nuts, and fresh toppings. Built for everyday convenience without losing flavor."
-        image={hero}
+        intro="Balanced, comforting meals built for everyday convenience."
       />
-      <Section className="py-12">
+      <Section className="py-10">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {MEALS.map((s) => <MenuCard key={s.id} item={s} />)}
         </div>
@@ -35,7 +33,7 @@ export const Route = createFileRoute("/meals")({
           </a>
         </div>
       </Section>
-      <Section className="pb-14"><OrderRules /></Section>
+      <Section className="pb-14"><OrderingAccordion /></Section>
       <Section className="pb-16"><OtherSections except="meal" /></Section>
     </>
   ),

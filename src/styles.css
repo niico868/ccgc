@@ -36,6 +36,7 @@
   --color-citrus: var(--citrus);
   --color-tomato: var(--tomato);
   --color-leaf-deep: var(--leaf-deep);
+  --color-brown: var(--brown);
 
   --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Fraunces", Georgia, serif;
@@ -79,6 +80,7 @@
   --leaf-deep: oklch(0.32 0.10 145);
   --citrus: oklch(0.82 0.17 95);
   --tomato: oklch(0.65 0.21 30);
+  --brown: oklch(0.42 0.07 55);
 
   --chart-1: oklch(0.55 0.15 145);
   --chart-2: oklch(0.78 0.16 95);
@@ -111,6 +113,9 @@
   .text-leaf-deep { color: var(--leaf-deep); }
   .text-citrus { color: var(--citrus); }
   .text-tomato { color: var(--tomato); }
+  .text-brown { color: var(--brown); }
+  .bg-brown { background-color: var(--brown); }
+  .border-brown { border-color: var(--brown); }
   .bg-leaf { background-color: var(--leaf); }
   .bg-leaf-deep { background-color: var(--leaf-deep); }
   .bg-citrus { background-color: var(--citrus); }

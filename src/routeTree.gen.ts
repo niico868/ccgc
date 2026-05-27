@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SaladsRouteImport } from './routes/salads'
 import { Route as MealsRouteImport } from './routes/meals'
 import { Route as MealPrepRouteImport } from './routes/meal-prep'
+import { Route as MealPlanSelectionRouteImport } from './routes/meal-plan-selection'
 import { Route as JuicesRouteImport } from './routes/juices'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -34,6 +35,11 @@ const MealsRoute = MealsRouteImport.update({
 const MealPrepRoute = MealPrepRouteImport.update({
   id: '/meal-prep',
   path: '/meal-prep',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealPlanSelectionRoute = MealPlanSelectionRouteImport.update({
+  id: '/meal-plan-selection',
+  path: '/meal-plan-selection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JuicesRoute = JuicesRouteImport.update({
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
+  '/meal-plan-selection': typeof MealPlanSelectionRoute
   '/meal-prep': typeof MealPrepRoute
   '/meals': typeof MealsRoute
   '/salads': typeof SaladsRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
+  '/meal-plan-selection': typeof MealPlanSelectionRoute
   '/meal-prep': typeof MealPrepRoute
   '/meals': typeof MealsRoute
   '/salads': typeof SaladsRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
+  '/meal-plan-selection': typeof MealPlanSelectionRoute
   '/meal-prep': typeof MealPrepRoute
   '/meals': typeof MealsRoute
   '/salads': typeof SaladsRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/gallery'
     | '/juices'
+    | '/meal-plan-selection'
     | '/meal-prep'
     | '/meals'
     | '/salads'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/gallery'
     | '/juices'
+    | '/meal-plan-selection'
     | '/meal-prep'
     | '/meals'
     | '/salads'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/gallery'
     | '/juices'
+    | '/meal-plan-selection'
     | '/meal-prep'
     | '/meals'
     | '/salads'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
   JuicesRoute: typeof JuicesRoute
+  MealPlanSelectionRoute: typeof MealPlanSelectionRoute
   MealPrepRoute: typeof MealPrepRoute
   MealsRoute: typeof MealsRoute
   SaladsRoute: typeof SaladsRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/meal-prep'
       fullPath: '/meal-prep'
       preLoaderRoute: typeof MealPrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meal-plan-selection': {
+      id: '/meal-plan-selection'
+      path: '/meal-plan-selection'
+      fullPath: '/meal-plan-selection'
+      preLoaderRoute: typeof MealPlanSelectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/juices': {
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
   JuicesRoute: JuicesRoute,
+  MealPlanSelectionRoute: MealPlanSelectionRoute,
   MealPrepRoute: MealPrepRoute,
   MealsRoute: MealsRoute,
   SaladsRoute: SaladsRoute,
@@ -271,13 +292,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

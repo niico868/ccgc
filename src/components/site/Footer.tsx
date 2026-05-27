@@ -30,9 +30,9 @@ export function Footer() {
         <div>
           <div className="text-display text-sm font-extrabold uppercase tracking-wider text-leaf-deep">Contact</div>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-leaf" /> +1 868-488-4248</li>
-            <li className="flex items-center gap-2"><Instagram className="h-4 w-4 text-leaf" /> @finelivingbycathy</li>
-            <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-leaf" /> dfinetimerestaurant@gmail.com</li>
+            <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-leaf" /><span>+1 868-488-4248</span></li>
+            <li className="flex items-center gap-2"><Instagram className="h-4 w-4 text-leaf" /><span>@finelivingbycathy</span></li>
+            <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-leaf" /><span>dfinetimerestaurant@gmail.com</span></li>
           </ul>
         </div>
       </div>

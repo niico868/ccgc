@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHero, Section } from "@/components/site/Section";
+import { Section } from "@/components/site/Section";
+import { CompactPageHeader, OrderingAccordion } from "@/components/site/OrderingAccordion";
 import { ArrowRight, Check } from "lucide-react";
-import hero from "@/assets/section-mealprep.jpg";
 
 export const Route = createFileRoute("/meal-prep")({
   head: () => ({ meta: [
@@ -35,11 +35,13 @@ const PLANS = [
 function MealPrep() {
   return (
     <>
-      <PageHero eyebrow="Meal Prep Plans" title="Eat clean. All week."
-        intro="Plan your week with fresh, affordable meals made for convenience, balance, and flavor."
-        image={hero} />
+      <CompactPageHeader
+        eyebrow="Meal Prep Plans"
+        title="Eat clean. All week."
+        intro="Fresh, affordable meals made for convenience, balance, and flavor."
+      />
 
-      <Section className="py-12">
+      <Section className="py-10">
         <div className="flex flex-col gap-5">
           {PLANS.map((p) => (
             <div key={p.name} className="grid items-center gap-5 rounded-3xl border-2 border-leaf/20 bg-card p-6 shadow-card lg:grid-cols-[1fr_auto] lg:p-8">
@@ -53,7 +55,7 @@ function MealPrep() {
                   ))}
                 </ul>
               </div>
-              <Link to="/contact"
+              <Link to="/meal-plan-selection"
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-leaf px-7 text-sm font-extrabold text-primary-foreground hover:opacity-90">
                 View Meal Plan <ArrowRight className="h-4 w-4" />
               </Link>
@@ -61,10 +63,12 @@ function MealPrep() {
           ))}
         </div>
 
-        <div className="mt-6 rounded-2xl border-2 border-tomato/40 bg-tomato/10 px-5 py-4 text-center text-sm font-bold text-tomato">
+        <div className="mt-6 rounded-2xl border-2 border-brown/30 bg-brown/10 px-5 py-4 text-center text-sm font-bold text-brown">
           Seafood meals cost $5 more each. Our 5-meal combos can be delivered or picked up once or twice a week.
         </div>
       </Section>
+
+      <Section className="pb-14"><OrderingAccordion /></Section>
     </>
   );
 }
