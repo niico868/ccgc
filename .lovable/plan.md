@@ -1,65 +1,68 @@
+## 1. Branding & visuals
+- Replace `src/assets/hero-salad.jpg` with the uploaded grilled-chicken broccoli bowl photo and use it as the homepage hero.
+- Replace `src/assets/logo.png` with the uploaded "Fine Time for Cathy's — Clean, Green, Classics" circular logo. Used in header, footer watermark, and promo popup.
+- Footer: change "Fine Time for Cathy's" and the tagline "Clean Green Classics — fresh homemade food from Trinidad & Tobago." to **Great Vibes** font (`font-script`).
 
-## Goals
+## 2. Pricing updates (`src/lib/menu-data.ts`)
+- Salads base: **$40** (was $45).
+- Healthy Meals base: **$45** (was $65).
+- Seafood (Fish/Shrimp) still adds **+$5**.
+- Update homepage Meal Plan prices accordingly: 5 × $45 = **$225**, 8 = **$360**, 12 = **$540** (only shown on cards; the Meal Prep page itself is being removed — see §5).
 
-Clean up routing errors, remove the unfinished Build Your Own Salad flow, fix the broken "View Meal Plan" button, and tighten all product pages for direct ordering.
+## 3. WhatsApp fixes
+- Standalone "Order on WhatsApp" buttons currently 404 / API-fail. Fix `WhatsAppButton` and all `waLink()` callers to open `https://wa.me/18684884248?text=...` in a new tab (`target="_blank" rel="noopener noreferrer"`). Verify no relative path is generated.
+- Checkout "Confirm Order" button: currently fails to open WhatsApp on first click. Fix by:
+  - Building the `wa.me` URL **synchronously** during the click handler (no async/await before `window.open`) so the popup isn't blocked.
+  - Use `window.open(url, "_blank", "noopener")` and fall back to `location.href = url` if it returns null.
+  - Also clear the basket **after** the open call, not before.
 
-## 1. Remove Build Your Own Salad flow
+## 4. Cutoff & fulfillment rule changes
+- New rule: orders close the **day before** the fulfillment day (no same-day orders). Any order placed on day X applies to the next fulfillment day.
+- Delivery starts at **2 PM**.
+- Update everywhere this is shown: homepage notice bar, `OrderRules`, `OrderingAccordion`, FAQ, checkout copy.
+- FAQ: rewrite cutoff/ordering Q&As to match (remove "9 AM same-day"); add new Q&As: "When do I need to order by?", "When does delivery start?", "Can I order for the same day?".
 
-In `src/routes/salads.tsx`:
-- Delete the entire "Build Your Own Salad" section (the citrus-gradient card with `SALAD_INGREDIENTS` and the "Build My Salad (request)" button that currently links to `/catering`).
-- Remove the `Sparkles` icon import and `SALAD_INGREDIENTS` import if no longer used.
-- Keep specialty salads grid, WhatsApp button, first-timer card, order rules, and other-sections intact.
+## 5. Remove Meal Prep page
+- Delete `src/routes/meal-prep.tsx` and `src/routes/meal-plan-selection.tsx`.
+- Regenerate route tree (remove entries).
+- Remove "Meal Prep Plans" from header nav and footer "Order" list.
+- Homepage: remove the Meal Prep section and "View All Plans" button. Meal-plan ordering happens through the normal Salads/Meals flow with quantity (min 5).
+- Replace any "View Plan" CTA with "Order Meals".
 
-No nav entry exists for Build Your Own Salad, so no Header change needed. Leave `SALAD_INGREDIENTS` data in `menu-data.ts` for future use.
+## 6. Pickup location copy
+- Footer + Contact: change pickup list to:
+  - **St Clair:** 11 AM – 1 PM
+  - **Orange Grove, Tacarigua:** 2 PM – 6 PM
+  - (remove the third "Pickup 2" line and remove "Trincity")
 
-## 2. Meal Plan placeholder page + fix View Meal Plan button
+## 7. Contact page heading
+- Change `Contact — Let's talk fresh food.` to **`Let's Chat`**.
 
-Create new route `src/routes/meal-plan-selection.tsx`:
-- Simple centered page: heading "Meal Plan Selection Coming Soon", subtext "Choose from 5, 8, or 12 meal plans. Full meal selection and customization will be available soon."
-- Single CTA button back to `/meal-prep`.
-- Uses existing Section component, brand styling, no hero image.
+## 8. Auth & accounts (Lovable Cloud)
+Enable Lovable Cloud. Configure providers: email/password + Google (via `supabase--configure_social_auth`).
 
-In `src/routes/meal-prep.tsx`:
-- Change the "View Meal Plan" `<Link to="/contact">` to `<Link to="/meal-plan-selection">`.
-- Remove the `PageHero` block (large image) and replace with a compact page header (eyebrow + title + 1-line intro, no image).
-- Change the bottom seafood notice from `text-tomato`/`border-tomato`/`bg-tomato/10` to brown tones (use `--clay`/brown token; if not present, add a `--brown` token in `styles.css` like `oklch(0.42 0.07 55)` and a corresponding `bg-brown/10`, `border-brown/30`, `text-brown` utility approach via inline `text-[color]` or new tailwind-safe class).
+**Schema (migration):**
+- `profiles` table — `id uuid PK references auth.users(id) on delete cascade`, `first_name`, `last_name`, `email`, `phone`, `marketing_opt_in bool`, timestamps. RLS: user reads/updates own row. Trigger on `auth.users` insert to seed a profile from signup metadata.
+- `orders` table — `id`, `user_id references auth.users`, `total_cents int`, `items jsonb`, `status text default 'submitted'`, `whatsapp_sent_at`, `created_at`. RLS: user selects/inserts own rows. Grants for `authenticated` + `service_role`.
+- `discount_codes` table — `id`, `user_id`, `code text`, `percent int`, `source text` (e.g. `signup_popup`), `redeemed_at`, `created_at`. RLS: user selects own; insert via server fn.
 
-## 3. Compact product pages (Salads, Meals, Juices, Meal Prep)
+**UI:**
+- **Account icon** next to the basket in `Header.tsx`. Logged-out: dropdown with "Sign in" / "Create account". Logged-in: dropdown with "My account", "Order history", "Saved discounts", "Sign out".
+- **`/auth` route** — single page with tabs: Sign in / Sign up. Both surfaces show "Continue with Google" and email/password form with "Stay signed in" checkbox (controls Supabase session persistence). Sign-up form matches the attached screenshot layout: First Name, Last Name, Email, Phone, marketing opt-in checkbox, Password, Confirm Password, Continue button.
+- **On-load sign-in prompt** — soft modal (once per device via localStorage flag) inviting visitors to sign in / sign up, dismissible. Does not block browsing.
+- **`/account`** (under `_authenticated` layout) — profile details, order history list (reads from `orders`), saved discount codes list.
+- **Checkout integration** — if not signed in, the checkout form doubles as account creation: collects name/email/phone/password + confirm; on submit, creates the auth user (with `emailRedirectTo: window.location.origin`) and writes the profile, then submits the order. If already signed in, autofills from profile.
+- **Order persistence** — when "Confirm Order" runs, insert an `orders` row via a `createServerFn` (`requireSupabaseAuth`) before opening WhatsApp; show in `/account` order history.
+- **Discount popup** — existing `PromoPopup` becomes the signup discount flow. On submit, if signed in, server fn generates a unique code (e.g. `WELCOME-XXXX`, 10% off) and inserts into `discount_codes`; if signed out, it routes the user to `/auth` and creates the code after first sign-in. Code displays in popup and is saved in account.
 
-For each of `salads.tsx`, `meals.tsx`, `juices.tsx`, `meal-prep.tsx`:
-- Remove `PageHero` (large hero image + long intro paragraph).
-- Replace with a compact header section: small eyebrow, H1 title, optional 1-line subtitle. No image. Tight top padding.
-- Remove unused `hero` image imports.
+## 9. Red-text discipline (carry-over rule)
+Keep all informational notes brown (`text-brown`). Red only for cutoff misses, missing minimums, or auth errors.
 
-For Salads page specifically:
-- Convert the "Important salad ordering info" panel from always-visible to a collapsible accordion (closed by default). Use existing `@/components/ui/accordion` (shadcn). Title: "How ordering works". Keep the same 6 info lines inside.
-- Recolor that panel's accent from tomato/red to brown (it's informational, not an alert).
+---
 
-For Meals and Juices pages:
-- Wrap the `<OrderRules />` block in the same accordion ("How ordering works", closed by default).
-
-Inspect `OrderRules.tsx` first to confirm whether it has its own red accents; if so, retune to brown for normal info, keeping red only for the 8 AM cutoff line (genuine deadline).
-
-## 4. Site-wide red → brown for informational text
-
-Audit and recolor non-alert red usage:
-- `meal-prep.tsx` seafood note → brown.
-- Salads page ordering-info card → brown accent (was leaf-deep + tomato eyebrow; change eyebrow from `text-tomato` to brown).
-- Any `text-tomato`/`border-tomato`/`bg-tomato/*` used for generic info notes across product pages → brown.
-- Keep red (`tomato`) only for: order cutoff times ("Order by 8 AM"), basket count badge, true warnings.
-
-Add a brown token to `src/styles.css` if one doesn't already exist (`--brown` ~ warm chocolate) and expose via `@theme` so `text-brown`, `bg-brown`, `border-brown` work in Tailwind v4.
-
-## 5. Verify
-
-After edits:
-- `rg "to=\"/catering\"|to=\"/contact\"" src/routes/salads.tsx src/routes/meal-prep.tsx` to confirm no stray wrong links.
-- `rg "SALAD_INGREDIENTS|Build My Salad|Build Your Own Salad" src/` to confirm removal from user-facing pages.
-- Check `routeTree.gen.ts` regenerates with `/meal-plan-selection`.
-- Visual check of each product page in preview.
-
-## Out of scope (deferred per user)
-
-- Real Build Your Own Salad ordering page.
-- Real meal-plan selection/ordering flow.
-- Admin dashboard / Lovable Cloud wiring.
+### Technical notes
+- New files: `src/routes/auth.tsx`, `src/routes/_authenticated.tsx`, `src/routes/_authenticated/account.tsx`, `src/components/site/AccountMenu.tsx`, `src/components/site/SignInPromptModal.tsx`, `src/lib/orders.functions.ts`, `src/lib/discount.functions.ts`, Supabase migration for `profiles`/`orders`/`discount_codes` + grants + RLS + signup trigger.
+- Wire `attachSupabaseAuth` in `src/start.ts` (per Supabase integration knowledge) and add a root `onAuthStateChange` listener to invalidate router/query caches.
+- Use the Lovable broker for Google sign-in (`lovable.auth.signInWithOAuth("google", ...)`) and call `supabase--configure_social_auth` with `providers: ["google"]`.
+- Validate signup/profile inputs with Zod (name ≤100, email, phone format, password ≥8).
+- Delete `src/assets/section-mealprep.jpg` after meal-prep page removal.
