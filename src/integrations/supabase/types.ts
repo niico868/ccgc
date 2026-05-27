@@ -14,7 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      discount_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          percent: number
+          redeemed_at: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          percent?: number
+          redeemed_at?: string | null
+          source?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          percent?: number
+          redeemed_at?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          delivery_address: string | null
+          delivery_fee: number
+          email: string | null
+          fulfillment: string | null
+          id: string
+          items: Json
+          notes: string | null
+          order_ref: string
+          payment_method: string | null
+          phone: string | null
+          pickup_location: string | null
+          status: string
+          subtotal: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          delivery_address?: string | null
+          delivery_fee?: number
+          email?: string | null
+          fulfillment?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          order_ref: string
+          payment_method?: string | null
+          phone?: string | null
+          pickup_location?: string | null
+          status?: string
+          subtotal?: number
+          total?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          delivery_address?: string | null
+          delivery_fee?: number
+          email?: string | null
+          fulfillment?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          order_ref?: string
+          payment_method?: string | null
+          phone?: string | null
+          pickup_location?: string | null
+          status?: string
+          subtotal?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          marketing_opt_in: boolean
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          marketing_opt_in?: boolean
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          marketing_opt_in?: boolean
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
