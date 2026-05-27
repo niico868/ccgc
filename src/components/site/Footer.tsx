@@ -13,8 +13,8 @@ export function Footer() {
       />
       <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-3 lg:px-8">
         <div>
-          <div className="font-script text-2xl text-leaf-deep">Fine Time for Cathy's</div>
-          <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+          <div className="font-script text-3xl leading-tight text-leaf-deep">Fine Time for Cathy's</div>
+          <p className="mt-2 max-w-xs font-script text-xl leading-snug text-leaf-deep/85">
             Clean Green Classics — fresh homemade food from Trinidad &amp; Tobago.
           </p>
         </div>
@@ -24,7 +24,7 @@ export function Footer() {
             <li><Link to="/salads" className="hover:text-leaf-deep">Custom Salads</Link></li>
             <li><Link to="/meals" className="hover:text-leaf-deep">Healthy Meals</Link></li>
             <li><Link to="/juices" className="hover:text-leaf-deep">Cold-Pressed Juices</Link></li>
-            <li><Link to="/meal-prep" className="hover:text-leaf-deep">Meal Prep Plans</Link></li>
+            <li><Link to="/account" className="hover:text-leaf-deep">My Account</Link></li>
           </ul>
         </div>
         <div>
@@ -36,8 +36,7 @@ export function Footer() {
           </ul>
           <ul className="mt-4 space-y-1 text-xs text-muted-foreground">
             <li><span className="font-semibold text-leaf-deep">St Clair:</span> 11 AM – 1 PM</li>
-            <li><span className="font-semibold text-leaf-deep">Trincity:</span> 2 PM – 6 PM</li>
-            <li><span className="font-semibold text-leaf-deep">Pickup 2:</span> Orange Grove, Tacarigua</li>
+            <li><span className="font-semibold text-leaf-deep">Orange Grove, Tacarigua:</span> 2 PM – 6 PM</li>
           </ul>
         </div>
       </div>

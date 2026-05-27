@@ -3,10 +3,10 @@ import logo from "@/assets/logo.png";
 
 export function OrderRules() {
   const items = [
-    { icon: CalendarDays, title: "Lunches: Mon & Wed", desc: "Meal plan orders split across two days each week for better variety." },
-    { icon: Clock, title: "Daily orders close 9 AM", desc: "Salads close 8 AM on salad days (Mon, Wed, Fri)." },
+    { icon: CalendarDays, title: "All lunches made to order", desc: "No same-day orders. Orders apply to the next fulfillment day." },
+    { icon: Clock, title: "Orders close the day prior", desc: "Place your order at least one day before your delivery or pickup day." },
     { icon: Truck, title: "Delivery from 2 PM", desc: "Limited delivery. $40 flat fee." },
-    { icon: MapPin, title: "Pickup windows", desc: "St Clair 11 AM – 1 PM · Trincity 2 PM – 6 PM · Orange Grove, Tacarigua." },
+    { icon: MapPin, title: "Pickup windows", desc: "St Clair 11 AM – 1 PM · Orange Grove, Tacarigua 2 PM – 6 PM." },
   ];
   return (
     <div className="rounded-3xl border border-border bg-cream p-6 lg:p-8">
@@ -19,7 +19,7 @@ export function OrderRules() {
             </div>
             <div>
               <div className="text-sm font-semibold text-leaf-deep">{it.title}</div>
-              <p className="text-xs text-muted-foreground">{it.desc}</p>
+              <p className="text-xs text-brown">{it.desc}</p>
             </div>
           </div>
         ))}
@@ -36,19 +36,18 @@ export function FirstTimerCard() {
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">First time ordering?</div>
         <h3 className="mt-2 text-display text-2xl text-leaf-deep">Welcome to Cathy's Clean Green Classics.</h3>
         <div className="mt-4 grid gap-4 text-sm text-foreground/85 sm:grid-cols-2">
-          <p>Salads are pre-ordered only and prepared Mondays, Wednesdays, and Fridays. Orders close 8 AM on salad days.</p>
-          <p>Choose chicken, fish, shrimp, or vegan. Seafood adds $5 per meal.</p>
+          <p className="text-brown">All lunches are made to order. Orders close the day before your fulfillment day — no same-day orders.</p>
+          <p className="text-brown">Choose chicken, fish, shrimp, or vegan. Seafood adds $5 per meal.</p>
           <div>
             <div className="font-semibold text-leaf-deep">Pickup windows</div>
-            <ul className="mt-1 space-y-0.5">
+            <ul className="mt-1 space-y-0.5 text-brown">
               <li>St Clair: 11 AM – 1 PM</li>
-              <li>Trincity: 2 PM – 6 PM</li>
-              <li>Orange Grove, Tacarigua</li>
+              <li>Orange Grove, Tacarigua: 2 PM – 6 PM</li>
             </ul>
           </div>
           <div>
             <div className="font-semibold text-leaf-deep">Minimums</div>
-            <ul className="mt-1 space-y-0.5">
+            <ul className="mt-1 space-y-0.5 text-brown">
               <li>Minimum 5 meals per food order.</li>
               <li>Minimum 6 drinks per juice order.</li>
               <li>Payment: online or cash on delivery.</li>

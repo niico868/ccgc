@@ -11,14 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SaladsRouteImport } from './routes/salads'
 import { Route as MealsRouteImport } from './routes/meals'
-import { Route as MealPrepRouteImport } from './routes/meal-prep'
-import { Route as MealPlanSelectionRouteImport } from './routes/meal-plan-selection'
 import { Route as JuicesRouteImport } from './routes/juices'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as BasketRouteImport } from './routes/basket'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SaladsRoute = SaladsRouteImport.update({
@@ -29,16 +29,6 @@ const SaladsRoute = SaladsRouteImport.update({
 const MealsRoute = MealsRouteImport.update({
   id: '/meals',
   path: '/meals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MealPrepRoute = MealPrepRouteImport.update({
-  id: '/meal-prep',
-  path: '/meal-prep',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MealPlanSelectionRoute = MealPlanSelectionRouteImport.update({
-  id: '/meal-plan-selection',
-  path: '/meal-plan-selection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JuicesRoute = JuicesRouteImport.update({
@@ -71,6 +61,16 @@ const BasketRoute = BasketRouteImport.update({
   path: '/basket',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,41 +79,41 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
-  '/meal-plan-selection': typeof MealPlanSelectionRoute
-  '/meal-prep': typeof MealPrepRoute
   '/meals': typeof MealsRoute
   '/salads': typeof SaladsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
-  '/meal-plan-selection': typeof MealPlanSelectionRoute
-  '/meal-prep': typeof MealPrepRoute
   '/meals': typeof MealsRoute
   '/salads': typeof SaladsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
-  '/meal-plan-selection': typeof MealPlanSelectionRoute
-  '/meal-prep': typeof MealPrepRoute
   '/meals': typeof MealsRoute
   '/salads': typeof SaladsRoute
 }
@@ -121,54 +121,54 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
+    | '/auth'
     | '/basket'
     | '/checkout'
     | '/contact'
     | '/faq'
     | '/gallery'
     | '/juices'
-    | '/meal-plan-selection'
-    | '/meal-prep'
     | '/meals'
     | '/salads'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
+    | '/auth'
     | '/basket'
     | '/checkout'
     | '/contact'
     | '/faq'
     | '/gallery'
     | '/juices'
-    | '/meal-plan-selection'
-    | '/meal-prep'
     | '/meals'
     | '/salads'
   id:
     | '__root__'
     | '/'
+    | '/account'
+    | '/auth'
     | '/basket'
     | '/checkout'
     | '/contact'
     | '/faq'
     | '/gallery'
     | '/juices'
-    | '/meal-plan-selection'
-    | '/meal-prep'
     | '/meals'
     | '/salads'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AuthRoute: typeof AuthRoute
   BasketRoute: typeof BasketRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
   JuicesRoute: typeof JuicesRoute
-  MealPlanSelectionRoute: typeof MealPlanSelectionRoute
-  MealPrepRoute: typeof MealPrepRoute
   MealsRoute: typeof MealsRoute
   SaladsRoute: typeof SaladsRoute
 }
@@ -187,20 +187,6 @@ declare module '@tanstack/react-router' {
       path: '/meals'
       fullPath: '/meals'
       preLoaderRoute: typeof MealsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meal-prep': {
-      id: '/meal-prep'
-      path: '/meal-prep'
-      fullPath: '/meal-prep'
-      preLoaderRoute: typeof MealPrepRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meal-plan-selection': {
-      id: '/meal-plan-selection'
-      path: '/meal-plan-selection'
-      fullPath: '/meal-plan-selection'
-      preLoaderRoute: typeof MealPlanSelectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/juices': {
@@ -245,6 +231,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BasketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -257,14 +257,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AuthRoute: AuthRoute,
   BasketRoute: BasketRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
   JuicesRoute: JuicesRoute,
-  MealPlanSelectionRoute: MealPlanSelectionRoute,
-  MealPrepRoute: MealPrepRoute,
   MealsRoute: MealsRoute,
   SaladsRoute: SaladsRoute,
 }

@@ -16,7 +16,7 @@ export function WhatsAppButton({
     <a
       href={href}
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       className={`inline-flex items-center gap-2 rounded-full bg-wa font-semibold text-cream shadow-card transition hover:brightness-105 ${h} ${className}`}
     >
       <img src={wa} alt="" className="h-5 w-5" />

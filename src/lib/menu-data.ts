@@ -8,7 +8,7 @@ export type MenuItem = {
   id: string;
   name: string;
   category: "salad" | "meal" | "juice";
-  price: number; // base price (or default size price)
+  price: number;
   image: string;
   ingredients?: string;
   description: string;
@@ -16,7 +16,7 @@ export type MenuItem = {
   proteinOptions?: string[];
   seafood?: boolean;
   sizes?: Size[];
-  fixedSize?: string; // e.g. "2 oz" for ginger shot
+  fixedSize?: string;
 };
 
 export const SALAD_PROTEINS = ["Chicken", "Fish (+$5)", "Shrimp (+$5)", "Vegan"];
@@ -27,7 +27,8 @@ export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
 export const SEAFOOD_SURCHARGE = 5;
 
-const SALAD_BASE = 45;
+const SALAD_BASE = 40;
+const MEAL_BASE = 45;
 
 export const SALADS: MenuItem[] = [
   {
@@ -81,8 +82,6 @@ export const SALADS: MenuItem[] = [
     proteinOptions: SALAD_PROTEINS,
   },
 ];
-
-const MEAL_BASE = 65;
 
 export const MEALS: MenuItem[] = [
   {
