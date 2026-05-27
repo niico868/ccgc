@@ -3,7 +3,6 @@ import { Section } from "@/components/site/Section";
 import salads from "@/assets/section-salads.jpg";
 import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
-import mealprep from "@/assets/section-mealprep.jpg";
 import kitchen from "@/assets/gallery-kitchen.jpg";
 import produce from "@/assets/gallery-produce.jpg";
 import fish from "@/assets/gallery-fish.jpg";
@@ -25,8 +24,8 @@ const IMAGES = [
   { src: juices, caption: "Cold-pressed trio" },
   { src: produce, caption: "Fresh from the market" },
   { src: kitchen, caption: "On the prep counter" },
-  { src: mealprep, caption: "Meal prep, packed and ready" },
 ];
+
 
 function Gallery() {
   return (

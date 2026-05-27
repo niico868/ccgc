@@ -12,7 +12,7 @@ import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 export const Route = createFileRoute("/salads")({
   head: () => ({ meta: [
     { title: "Custom Salads | Cathy's Clean Green Classics" },
-    { name: "description", content: "Fresh, made-to-order salads from $45. Choose chicken, fish, shrimp, or vegan." },
+    { name: "description", content: "Fresh, made-to-order salads from $40. Choose chicken, fish, shrimp, or vegan." },
   ]}),
   component: SaladsPage,
 });
@@ -23,7 +23,7 @@ function SaladsPage() {
       <CompactPageHeader
         eyebrow="Custom Salads"
         title="Cathy's Clean Green Classics Salads"
-        intro="Salads from $45. Seafood adds $5 per salad. Minimum 5 meals per order."
+        intro="Salads from $40. Seafood adds $5 per salad. Minimum 5 meals per order."
       />
 
       <Section className="pt-6 pb-2">
