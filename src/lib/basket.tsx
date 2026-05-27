@@ -1,4 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { FOOD_MIN, DRINK_MIN } from "./menu-data";
+
+export type BasketCategory = "salad" | "meal" | "juice";
 
 export type BasketLine = {
   lineId: string;
@@ -6,9 +9,10 @@ export type BasketLine = {
   name: string;
   unitPrice: number;
   quantity: number;
+  category: BasketCategory;
   protein?: string;
-  addons?: string[];
-  juiceOption?: string;
+  size?: string;
+  seafood?: boolean;
   preferences?: string;
   notes?: string;
 };
@@ -21,10 +25,15 @@ type BasketCtx = {
   clear: () => void;
   count: number;
   subtotal: number;
+  foodCount: number;
+  drinkCount: number;
+  foodOk: boolean;
+  drinkOk: boolean;
+  minMet: boolean;
 };
 
 const Ctx = createContext<BasketCtx | null>(null);
-const KEY = "cgcc.basket.v1";
+const KEY = "cgcc.basket.v2";
 
 export function BasketProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<BasketLine[]>([]);
@@ -48,11 +57,20 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     setLines((p) => p.map((l) => (l.lineId === id ? { ...l, quantity: Math.max(1, qty) } : l))), []);
   const clear = useCallback(() => setLines([]), []);
 
-  const value = useMemo<BasketCtx>(() => ({
-    lines, add, remove, setQty, clear,
-    count: lines.reduce((s, l) => s + l.quantity, 0),
-    subtotal: lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0),
-  }), [lines, add, remove, setQty, clear]);
+  const value = useMemo<BasketCtx>(() => {
+    const foodCount = lines.filter((l) => l.category !== "juice").reduce((s, l) => s + l.quantity, 0);
+    const drinkCount = lines.filter((l) => l.category === "juice").reduce((s, l) => s + l.quantity, 0);
+    const foodOk = foodCount === 0 || foodCount >= FOOD_MIN;
+    const drinkOk = drinkCount === 0 || drinkCount >= DRINK_MIN;
+    const hasItems = lines.length > 0;
+    return {
+      lines, add, remove, setQty, clear,
+      count: lines.reduce((s, l) => s + l.quantity, 0),
+      subtotal: lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0),
+      foodCount, drinkCount, foodOk, drinkOk,
+      minMet: hasItems && foodOk && drinkOk,
+    };
+  }, [lines, add, remove, setQty, clear]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
