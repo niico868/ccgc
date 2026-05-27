@@ -56,10 +56,6 @@ function Checkout() {
       return;
     }
     const orderId = "CGCC-" + Date.now().toString(36).toUpperCase();
-    const order = { orderId, ...form, lines, subtotal, deliveryFee, total, at: new Date().toISOString() };
-    const existing = JSON.parse(localStorage.getItem("cgcc.orders") || "[]");
-    existing.push(order);
-    localStorage.setItem("cgcc.orders", JSON.stringify(existing));
 
     const msg = `Hi, I'd like to confirm my order from Fine Time for Cathy's Clean Green Classics.
 
@@ -85,10 +81,46 @@ Notes: ${form.notes || "-"}
 
 Order placed through the website.`;
 
+    // Open WhatsApp SYNCHRONOUSLY inside the click handler to avoid popup blockers.
+    const url = `https://wa.me/18684884248?text=${encodeURIComponent(msg)}`;
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win) window.location.href = url;
+
+    // Then persist + cleanup
     setLastMsg(msg);
+    const order = { orderId, ...form, lines, subtotal, deliveryFee, total, at: new Date().toISOString() };
+    try {
+      const existing = JSON.parse(localStorage.getItem("cgcc.orders") || "[]");
+      existing.push(order);
+      localStorage.setItem("cgcc.orders", JSON.stringify(existing));
+    } catch {}
+
+    // Save to backend if signed in (fire-and-forget)
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          supabase.from("orders").insert({
+            user_id: data.user.id,
+            order_ref: orderId,
+            customer_name: form.name,
+            phone: form.phone,
+            email: form.email || null,
+            fulfillment: form.fulfillment,
+            pickup_location: form.fulfillment === "Pickup" ? form.pickup : null,
+            delivery_address: form.fulfillment === "Delivery" ? form.address : null,
+            payment_method: form.payment,
+            notes: form.notes || null,
+            items: lines as unknown as object,
+            subtotal,
+            delivery_fee: deliveryFee,
+            total,
+          }).then(() => {});
+        }
+      });
+    });
+
     setDone(true);
     clear();
-    setTimeout(() => window.open(waLink(msg), "_blank"), 600);
   };
 
   if (done) {
@@ -152,8 +184,7 @@ Order placed through the website.`;
               {form.fulfillment === "Pickup" ? (
                 <select value={form.pickup} onChange={set("pickup")} className={input}>
                   <option>St Clair (11 AM to 1 PM)</option>
-                  <option>Trincity (2 PM to 6 PM)</option>
-                  <option>Orange Grove, Tacarigua</option>
+                  <option>Orange Grove, Tacarigua (2 PM to 6 PM)</option>
                 </select>
               ) : (
                 <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={input} />

@@ -32,8 +32,7 @@ function Contact() {
   return (
     <>
       <Section className="pt-12 lg:pt-16 pb-4">
-        <div className="text-xs font-extrabold uppercase tracking-[0.22em] text-leaf">Contact</div>
-        <h1 className="mt-2 text-display text-3xl font-extrabold lg:text-4xl">Let's talk fresh food.</h1>
+        <h1 className="text-display text-3xl font-extrabold lg:text-4xl">Let's Chat</h1>
       </Section>
 
       <Section className="pb-16">
@@ -72,12 +71,11 @@ function Contact() {
             </div>
             <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
               <div className="text-display text-base font-extrabold uppercase tracking-wider text-leaf-deep">Pickup &amp; delivery</div>
-              <ul className="mt-3 space-y-2 text-sm">
-                <li className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Order cutoff:</b> 9 AM daily. Salads 8 AM (Mon, Wed, Fri).</span></li>
-                <li className="flex items-start gap-3"><Truck className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Delivery:</b> from 2 PM.</span></li>
-                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>St Clair:</b> 11 AM to 1 PM</span></li>
-                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Trincity:</b> 2 PM to 6 PM</span></li>
-                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b>Pickup 2:</b> Orange Grove, Tacarigua</span></li>
+              <ul className="mt-3 space-y-2 text-sm text-brown">
+                <li className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Order cutoff:</b> The day before your fulfillment day. No same-day orders.</span></li>
+                <li className="flex items-start gap-3"><Truck className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Delivery:</b> from 2 PM.</span></li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">St Clair:</b> 11 AM to 1 PM</span></li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Orange Grove, Tacarigua:</b> 2 PM to 6 PM</span></li>
               </ul>
             </div>
           </div>
