@@ -2,33 +2,51 @@ import salads from "@/assets/section-salads.jpg";
 import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
 
+export type Size = { label: string; price: number };
+
 export type MenuItem = {
   id: string;
   name: string;
   category: "salad" | "meal" | "juice";
-  price: number;
+  price: number; // base price (or default size price)
   image: string;
-  ingredients: string;
+  ingredients?: string;
   description: string;
   benefits?: string;
   proteinOptions?: string[];
-  juiceOptions?: string[];
   seafood?: boolean;
-  pack?: string;
-  size?: string;
+  sizes?: Size[];
+  fixedSize?: string; // e.g. "2 oz" for ginger shot
 };
 
-export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
+export const SALAD_PROTEINS = ["Chicken", "Fish (+$5)", "Shrimp (+$5)", "Vegan"];
+export const MEAL_PROTEINS = ["Chicken", "Fish (+$5)", "Shrimp (+$5)", "Vegan"];
+export const SEAFOOD_LABELS = ["Fish (+$5)", "Shrimp (+$5)"];
+
+export const FOOD_MIN = 5;
+export const DRINK_MIN = 6;
+export const SEAFOOD_SURCHARGE = 5;
+
+const SALAD_BASE = 45;
 
 export const SALADS: MenuItem[] = [
+  {
+    id: "salad-ccgc-specialty",
+    category: "salad",
+    name: "CCGC Specialty Salad — Chef's Choice",
+    price: SALAD_BASE,
+    image: salads,
+    description: "A salad made from the chef's choice of fresh ingredients.",
+    benefits: "Chef's pick. Always fresh.",
+    proteinOptions: SALAD_PROTEINS,
+  },
   {
     id: "salad-broccoli-power",
     category: "salad",
     name: "Broccoli Power Bowl",
-    price: 85,
+    price: SALAD_BASE,
     image: salads,
-    description: "A hearty green salad built on romaine lettuce with chopped broccoli, fruit, seeds, sweet corn, and diced chicken breast.",
-    ingredients: "Romaine lettuce, chopped broccoli, grapes, dried cranberry, pumpkin seeds, red onions, sweet corn, diced chicken breast.",
+    description: "Romaine, broccoli, fruit, seeds, sweet corn, diced chicken breast.",
     benefits: "Hearty. Crunchy. Energizing.",
     proteinOptions: SALAD_PROTEINS,
   },
@@ -36,10 +54,9 @@ export const SALADS: MenuItem[] = [
     id: "salad-chopped",
     category: "salad",
     name: "Chopped Salad",
-    price: 80,
+    price: SALAD_BASE,
     image: salads,
-    description: "A crisp chopped salad with fresh vegetables, feta, olives, radishes, sweet corn, and layered chicken.",
-    ingredients: "Olives, lettuce, tomato, sweet corn, cucumber, red onion, feta cheese, radishes, layered chicken.",
+    description: "Crisp chopped greens, feta, olives, radishes, sweet corn, layered chicken.",
     benefits: "Crisp. Briny. Fresh.",
     proteinOptions: SALAD_PROTEINS,
   },
@@ -47,10 +64,9 @@ export const SALADS: MenuItem[] = [
     id: "salad-protein-packed",
     category: "salad",
     name: "Protein Packed Bowl",
-    price: 90,
+    price: SALAD_BASE,
     image: salads,
-    description: "A filling salad bowl with quinoa, egg, feta, fresh vegetables, nuts, grains, and clean protein energy.",
-    ingredients: "Quinoa, red onions, nuts and grains, lettuce, cucumber slices, fresh parsley, feta cheese, egg, bell pepper.",
+    description: "Quinoa, egg, feta, fresh vegetables, nuts, grains.",
     benefits: "Filling. Balanced. Clean.",
     proteinOptions: [...SALAD_PROTEINS, "Egg"],
   },
@@ -58,136 +74,130 @@ export const SALADS: MenuItem[] = [
     id: "salad-grilled-bowl",
     category: "salad",
     name: "Grilled Salad Bowl",
-    price: 85,
+    price: SALAD_BASE,
     image: salads,
-    description: "A warm and fresh salad bowl with roasted vegetables, chickpeas, pickled onions, cucumber, parsley, and greens.",
-    ingredients: "Sweet potato, cauliflower or broccoli, chickpeas, pickled red onions, cucumber, chopped parsley, kale or lettuce.",
+    description: "Roasted vegetables, chickpeas, pickled onions, cucumber, parsley, greens.",
     benefits: "Warm. Roasted. Wholesome.",
     proteinOptions: SALAD_PROTEINS,
   },
 ];
+
+const MEAL_BASE = 65;
 
 export const MEALS: MenuItem[] = [
   {
     id: "meal-green-quinoa",
     category: "meal",
     name: "Green Power Quinoa Bowl",
-    price: 80,
+    price: MEAL_BASE,
     image: meals,
-    description: "Fluffy quinoa with roasted broccoli and cauliflower, garlic-seasoned black beans, pumpkin seeds, sunflower seeds, and avocado slices when in season.",
-    ingredients: "Quinoa, roasted broccoli, roasted cauliflower, black beans, garlic seasoning, pumpkin seeds, sunflower seeds, avocado slices when in season.",
-    benefits: "Plant-powered. Filling. Balanced.",
+    description: "Quinoa, roasted broccoli and cauliflower, garlic black beans, seeds, avocado in season.",
+    benefits: "Plant-powered. Filling.",
+    proteinOptions: MEAL_PROTEINS,
   },
   {
     id: "meal-sweet-potato-lentil",
     category: "meal",
-    name: "Sweet Potato and Lentil Wellness Plate",
-    price: 80,
+    name: "Sweet Potato & Lentil Plate",
+    price: MEAL_BASE,
     image: meals,
-    description: "Roasted sweet potato wedges with lightly seasoned lentils, steamed string beans, mixed nuts, and chia seeds.",
-    ingredients: "Sweet potato wedges, seasoned lentils, steamed string beans, mixed nuts, chia seeds.",
-    benefits: "Hearty. Clean. Nourishing.",
+    description: "Roasted sweet potato, seasoned lentils, string beans, nuts, chia.",
+    benefits: "Hearty. Nourishing.",
+    proteinOptions: MEAL_PROTEINS,
   },
   {
     id: "meal-couscous-garden",
     category: "meal",
     name: "Grilled Garden Couscous Bowl",
-    price: 80,
+    price: MEAL_BASE,
     image: meals,
-    description: "Fluffy couscous with grilled vegetables, broccoli, sweet potato, zucchini, sprouts, pumpkin seeds, and sliced almonds.",
-    ingredients: "Couscous, grilled broccoli, sweet potato, zucchini, mixed sprouts, pumpkin seeds, sliced almonds.",
+    description: "Couscous, grilled vegetables, sprouts, pumpkin seeds, almonds.",
     benefits: "Fresh. Light. Flavorful.",
+    proteinOptions: MEAL_PROTEINS,
   },
   {
     id: "meal-power-rice",
     category: "meal",
     name: "Power Rice Bowl",
-    price: 80,
+    price: MEAL_BASE,
     image: meals,
-    description: "Brown rice or quinoa topped with steamed broccoli, roasted cauliflower, black beans, pumpkin seeds, sunflower seeds, and lemon olive oil drizzle.",
-    ingredients: "Brown rice or quinoa, steamed broccoli, roasted cauliflower, black beans, pumpkin seeds, sunflower seeds, lemon olive oil drizzle.",
-    benefits: "Balanced. Energizing. Clean.",
+    description: "Brown rice or quinoa, steamed broccoli, roasted cauliflower, beans, seeds, lemon olive oil.",
+    benefits: "Balanced. Energizing.",
+    proteinOptions: MEAL_PROTEINS,
   },
   {
     id: "meal-sweet-potato-power",
     category: "meal",
     name: "Sweet Potato Power Bowl",
-    price: 85,
+    price: MEAL_BASE,
     image: meals,
-    description: "Brown rice or lentils topped with roasted garlic butter sweet potato, beetroot cubes, steamed string beans, mixed nuts, and healthy seeds.",
-    ingredients: "Brown rice or lentils, roasted garlic butter sweet potato, beetroot cubes, steamed string beans, mixed nuts, healthy seeds.",
-    benefits: "Warm. Filling. Restorative.",
+    description: "Brown rice or lentils, garlic butter sweet potato, beetroot, string beans, nuts, seeds.",
+    benefits: "Warm. Restorative.",
+    proteinOptions: MEAL_PROTEINS,
   },
   {
     id: "meal-couscous-wellness",
     category: "meal",
     name: "Couscous Wellness Bowl",
-    price: 80,
+    price: MEAL_BASE,
     image: meals,
-    description: "Hearty couscous topped with roasted Parmesan zucchini, sweet potato cubes, cucumber strips, shredded carrots, cranberries, and walnuts.",
-    ingredients: "Couscous, roasted Parmesan zucchini, sweet potato cubes, cucumber strips, shredded carrots, dried cranberries, walnuts.",
-    benefits: "Fresh. Textured. Satisfying.",
+    description: "Couscous, Parmesan zucchini, sweet potato, cucumber, carrots, cranberries, walnuts.",
+    benefits: "Fresh. Satisfying.",
+    proteinOptions: MEAL_PROTEINS,
   },
 ];
 
 export const JUICES: MenuItem[] = [
   {
-    id: "juice-melon",
+    id: "juice-beetroot",
     category: "juice",
-    name: "Melon",
-    price: 90,
+    name: "Beetroot",
+    price: 20,
     image: juices,
-    size: "300 ml",
-    pack: "6 bottles",
-    description: "A fresh melon-based cold-pressed drink made to hydrate, cool, and refresh.",
-    ingredients: "Fresh melon.",
-    benefits: "Hydrating. Light. Refreshing.",
+    description: "Rich beetroot juice for earthy flavor and natural energy.",
+    benefits: "Rich. Restorative.",
+    sizes: [
+      { label: "300 ml", price: 20 },
+      { label: "500 ml", price: 30 },
+    ],
   },
   {
-    id: "juice-beet",
+    id: "juice-mixed-vegetables",
     category: "juice",
-    name: "Beet",
-    price: 114,
+    name: "Mixed Vegetables",
+    price: 15,
     image: juices,
-    size: "300 ml",
-    pack: "6 bottles",
-    description: "A rich beetroot cold-pressed drink made for deep earthy flavor, natural energy, and wellness support.",
-    ingredients: "Fresh beetroot.",
-    benefits: "Rich. Restorative. Energizing.",
+    description: "A bright mixed blend of fresh vegetables and fruit.",
+    benefits: "Balanced. Fresh.",
+    sizes: [
+      { label: "300 ml", price: 15 },
+      { label: "500 ml", price: 22 },
+    ],
   },
   {
-    id: "juice-mixer",
+    id: "juice-green-juice",
     category: "juice",
-    name: "Mixer",
-    price: 96,
+    name: "Green Juice",
+    price: 18,
     image: juices,
-    size: "300 ml",
-    pack: "6 bottles",
-    description: "A bright mixed cold-pressed blend with carrot, beet, apple, pineapple, and melon.",
-    ingredients: "Carrot, beet, apple, pineapple, melon.",
-    benefits: "Balanced. Fruity. Fresh.",
+    description: "Celery, cucumber, spinach, kale, Granny Smith apple.",
+    benefits: "Green. Clean.",
+    sizes: [
+      { label: "300 ml", price: 18 },
+      { label: "500 ml", price: 30 },
+    ],
   },
   {
-    id: "juice-green-supreme",
+    id: "juice-ginger-shot",
     category: "juice",
-    name: "Green Supreme",
-    price: 102,
+    name: "Ginger Shot",
+    price: 8,
     image: juices,
-    size: "300 ml",
-    pack: "6 bottles",
-    description: "A clean green blend with celery, cucumber, spinach, kale, and Granny Smith apple.",
-    ingredients: "Celery, cucumber, spinach, kale, Granny Smith apple.",
-    benefits: "Green. Clean. Restoring.",
+    description: "A small, potent ginger wellness shot.",
+    benefits: "Warm. Restoring.",
+    fixedSize: "2 oz",
   },
 ];
-
-export const SALAD_INGREDIENTS = {
-  "Greens and Vegetables": "Kale, romaine lettuce, broccoli, cauliflower, zucchini, bell pepper, celery, radish, cress, beetroot, red onions, cucumber, cucumber pickles, sweet corn, grilled butter squash, sweet potato.",
-  "Extras": "Olives, tomato, feta cheese.",
-  "Fruits": "Mango, pineapple, grapes, apple, organic raisins, dried cranberry.",
-  "Nuts, Seeds, and Grains": "Almonds, pecans, cashews, sesame seeds, chia seeds, sunflower seeds, pumpkin seeds, quinoa.",
-  "Proteins": "Chicken, fish, shrimp, egg, vegan option.",
-};
 
 export const ALL_ITEMS = [...SALADS, ...MEALS, ...JUICES];
 export const findItem = (id: string) => ALL_ITEMS.find((i) => i.id === id);

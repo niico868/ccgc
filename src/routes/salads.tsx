@@ -4,15 +4,15 @@ import { MenuCard } from "@/components/site/MenuCard";
 import { SALADS } from "@/lib/menu-data";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { OrderingAccordion, CompactPageHeader } from "@/components/site/OrderingAccordion";
-import { OtherSections } from "@/components/site/OtherSections";
+import { CategoryTabs } from "@/components/site/CategoryTabs";
+import { MinimumNotice } from "@/components/site/MinimumNotice";
 import { waLink } from "@/lib/whatsapp";
-import { MessageCircle } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 
 export const Route = createFileRoute("/salads")({
   head: () => ({ meta: [
-    { title: "Cathy's Clean Green Classics Salads" },
-    { name: "description", content: "Fresh, made-to-order salads with clean greens, fruits, nuts, seeds, and your choice of protein." },
+    { title: "Custom Salads | Cathy's Clean Green Classics" },
+    { name: "description", content: "Fresh, made-to-order salads from $45. Choose chicken, fish, shrimp, or vegan." },
   ]}),
   component: SaladsPage,
 });
@@ -23,48 +23,28 @@ function SaladsPage() {
       <CompactPageHeader
         eyebrow="Custom Salads"
         title="Cathy's Clean Green Classics Salads"
-        intro="Pick a specialty salad below, add any preferences, and continue to checkout."
+        intro="Salads from $45. Seafood adds $5 per salad. Minimum 5 meals per order."
       />
 
-      <Section className="py-8">
-        <Accordion type="single" collapsible className="rounded-3xl border-2 border-brown/30 bg-cream">
-          <AccordionItem value="info" className="border-0">
-            <AccordionTrigger className="px-6 py-4 text-xs font-extrabold uppercase tracking-[0.22em] text-brown hover:no-underline">
-              Important salad ordering info
-            </AccordionTrigger>
-            <AccordionContent className="px-6 pb-6">
-              <div className="grid gap-4 text-sm text-foreground/85 sm:grid-cols-2 lg:grid-cols-3">
-                <p><span className="font-bold text-leaf-deep">Made:</span> Mondays, Wednesdays, and Fridays only.</p>
-                <p><span className="font-bold text-tomato">Order by:</span> 8 AM on salad days. Pre-orders only.</p>
-                <p><span className="font-bold text-leaf-deep">Freshness:</span> Salads stay fresh up to 5 days.</p>
-                <p><span className="font-bold text-leaf-deep">Pickup, St Clair:</span> 11 AM to 1 PM.</p>
-                <p><span className="font-bold text-leaf-deep">Pickup, Trincity:</span> 2 PM to 6 PM.</p>
-                <p><span className="font-bold text-leaf-deep">Payment:</span> Online or cash on delivery.</p>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      <Section className="pt-6 pb-2">
+        <CategoryTabs active="/salads" />
+      </Section>
+
+      <Section className="pt-6 pb-4">
+        <MinimumNotice kind="food" />
       </Section>
 
       <Section className="pb-10">
-        <div className="mb-6 text-center">
-          <h2 className="text-display text-2xl font-extrabold lg:text-3xl">Specialty salads</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Pick a favorite. Note any ingredients you do not like.</p>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           {SALADS.map((s) => <MenuCard key={s.id} item={s} />)}
         </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <a href={waLink("Hi! I'd like to order salads.")} target="_blank" rel="noreferrer"
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-extrabold text-white hover:brightness-105">
-            <MessageCircle className="h-4 w-4 fill-white" /> Order on WhatsApp
-          </a>
+        <div className="mt-6 flex justify-center">
+          <WhatsAppButton href={waLink("Hi! I'd like to order salads.")}>Order on WhatsApp</WhatsAppButton>
         </div>
       </Section>
 
       <Section className="pb-14"><FirstTimerCard /></Section>
       <Section className="pb-14"><OrderingAccordion /></Section>
-      <Section className="pb-16"><OtherSections except="salad" /></Section>
     </>
   );
 }

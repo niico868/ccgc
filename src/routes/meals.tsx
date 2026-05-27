@@ -1,40 +1,40 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
 import { MenuCard } from "@/components/site/MenuCard";
 import { MEALS } from "@/lib/menu-data";
 import { OrderingAccordion, CompactPageHeader } from "@/components/site/OrderingAccordion";
-import { OtherSections } from "@/components/site/OtherSections";
+import { CategoryTabs } from "@/components/site/CategoryTabs";
+import { MinimumNotice } from "@/components/site/MinimumNotice";
 import { waLink } from "@/lib/whatsapp";
-import { MessageCircle } from "lucide-react";
+import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 
 export const Route = createFileRoute("/meals")({
   head: () => ({ meta: [
-    { title: "Healthy Meals | Fine Time for Cathy's Clean Green Classics" },
-    { name: "description", content: "Balanced, clean meals made with grains, roasted vegetables, legumes, seeds and fresh toppings." },
+    { title: "Healthy Meals | Cathy's Clean Green Classics" },
+    { name: "description", content: "Balanced, clean meals with grains, vegetables, legumes, and your choice of protein." },
   ]}),
   component: () => (
     <>
       <CompactPageHeader
         eyebrow="Healthy Meals"
         title="Healthy Meals"
-        intro="Balanced, comforting meals built for everyday convenience."
+        intro="Balanced bowls with your choice of protein. Seafood adds $5 per meal. Minimum 5 meals per order."
       />
-      <Section className="py-10">
+      <Section className="pt-6 pb-2">
+        <CategoryTabs active="/meals" />
+      </Section>
+      <Section className="pt-6 pb-4">
+        <MinimumNotice kind="food" />
+      </Section>
+      <Section className="pb-10">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {MEALS.map((s) => <MenuCard key={s.id} item={s} />)}
         </div>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/meal-prep" className="inline-flex h-11 items-center gap-2 rounded-full bg-leaf px-6 text-sm font-extrabold text-primary-foreground hover:opacity-90">
-            View Meal Prep Plans
-          </Link>
-          <a href={waLink("Hi! I'd like to order healthy meals.")} target="_blank" rel="noreferrer"
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-extrabold text-white hover:brightness-105">
-            <MessageCircle className="h-4 w-4 fill-white" /> Order on WhatsApp
-          </a>
+        <div className="mt-6 flex justify-center">
+          <WhatsAppButton href={waLink("Hi! I'd like to order healthy meals.")}>Order on WhatsApp</WhatsAppButton>
         </div>
       </Section>
       <Section className="pb-14"><OrderingAccordion /></Section>
-      <Section className="pb-16"><OtherSections except="meal" /></Section>
     </>
   ),
 });

@@ -19,7 +19,7 @@ const QA = [
   { q: "Where can I pick up my order?", a: "Pickup 1: Sinclair, Port of Spain, 9 AM to 12 PM. Pickup 2: Orange Grove, Tacarigua / home restaurant, 2 PM to 5 PM." },
   { q: "Do you offer seafood?", a: "Yes, seafood meals (shrimp, fish, etc.) cost $5 more than the standard option." },
   { q: "How do I confirm my order?", a: "Order through the website. After checkout, we'll guide you to WhatsApp to confirm and arrange payment." },
-  { q: "Do you cater events?", a: "Absolutely. Catering is planned in advance. Submit a catering request and we'll be in touch." },
+  { q: "What are the minimums?", a: "Minimum 5 meals per food order and 6 drinks per juice order." },
   { q: "More questions coming soon", a: "Final FAQ content will be added shortly. For now, message us on WhatsApp anytime." },
 ];
 

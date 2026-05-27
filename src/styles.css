@@ -33,60 +33,68 @@
   --color-ring: var(--ring);
   --color-cream: var(--cream);
   --color-leaf: var(--leaf);
+  --color-leaf-soft: var(--leaf-soft);
   --color-citrus: var(--citrus);
   --color-tomato: var(--tomato);
   --color-leaf-deep: var(--leaf-deep);
   --color-brown: var(--brown);
+  --color-coral: var(--coral);
+  --color-wa: var(--wa);
 
-  --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Fraunces", Georgia, serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Great Vibes", cursive;
 
-  --shadow-soft: 0 10px 30px -12px color-mix(in oklab, var(--leaf) 25%, transparent);
-  --shadow-card: 0 4px 20px -8px color-mix(in oklab, var(--leaf) 18%, transparent);
+  --shadow-soft: 0 14px 40px -16px color-mix(in oklab, var(--leaf-deep) 30%, transparent);
+  --shadow-card: 0 4px 18px -8px color-mix(in oklab, var(--leaf-deep) 18%, transparent);
 }
 
 :root {
-  --radius: 0.875rem;
+  --radius: 1rem;
 
-  --background: oklch(0.985 0.012 95);
-  --foreground: oklch(0.22 0.04 145);
+  /* Brand palette — warm cream, deep leaf, fresh herb, sunlit yellow, soft coral, charcoal green */
+  --cream: #FFF8EA;
+  --leaf-deep: #1F5A35;   /* Deep Leaf Green */
+  --leaf: #1F5A35;
+  --leaf-soft: #6FAF6B;   /* Fresh Herb Green */
+  --citrus: #E9C94C;      /* Sunlit Yellow */
+  --coral: #E76F51;       /* Soft Citrus Coral */
+  --tomato: #E76F51;
+  --brown: #6B4A2B;
+  --wa: #2F8C57;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.04 145);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 145);
+  --background: #FFF8EA;
+  --foreground: #263328;  /* Charcoal Green */
 
-  --primary: oklch(0.42 0.12 145);
-  --primary-foreground: oklch(0.98 0.015 95);
+  --card: #FFFDF6;
+  --card-foreground: #263328;
+  --popover: #FFFDF6;
+  --popover-foreground: #263328;
 
-  --secondary: oklch(0.95 0.025 90);
-  --secondary-foreground: oklch(0.30 0.06 145);
+  --primary: #1F5A35;
+  --primary-foreground: #FFF8EA;
 
-  --muted: oklch(0.95 0.02 90);
-  --muted-foreground: oklch(0.48 0.03 130);
+  --secondary: #F4ECD6;
+  --secondary-foreground: #1F5A35;
 
-  --accent: oklch(0.85 0.16 95);
-  --accent-foreground: oklch(0.25 0.06 145);
+  --muted: #F4ECD6;
+  --muted-foreground: #6B6A5F;
 
-  --destructive: oklch(0.58 0.22 27);
-  --destructive-foreground: oklch(0.98 0.015 95);
+  --accent: #E9C94C;
+  --accent-foreground: #263328;
 
-  --border: oklch(0.90 0.02 100);
-  --input: oklch(0.92 0.02 100);
-  --ring: oklch(0.55 0.13 145);
+  --destructive: #C84A2E;
+  --destructive-foreground: #FFF8EA;
 
-  --cream: oklch(0.97 0.02 90);
-  --leaf: oklch(0.45 0.14 145);
-  --leaf-deep: oklch(0.32 0.10 145);
-  --citrus: oklch(0.82 0.17 95);
-  --tomato: oklch(0.65 0.21 30);
-  --brown: oklch(0.42 0.07 55);
+  --border: #E4D9BD;
+  --input: #E4D9BD;
+  --ring: #6FAF6B;
 
-  --chart-1: oklch(0.55 0.15 145);
-  --chart-2: oklch(0.78 0.16 95);
-  --chart-3: oklch(0.65 0.21 30);
-  --chart-4: oklch(0.70 0.10 165);
-  --chart-5: oklch(0.50 0.08 110);
+  --chart-1: #1F5A35;
+  --chart-2: #6FAF6B;
+  --chart-3: #E9C94C;
+  --chart-4: #E76F51;
+  --chart-5: #6B4A2B;
 }
 
 @layer base {
@@ -100,59 +108,45 @@
   }
   h1, h2, h3, h4, h5, .text-display {
     font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer utilities {
-  .text-display { font-family: var(--font-display); font-weight: 800; }
-  .font-serif-body { font-family: var(--font-sans); }
+  .text-display { font-family: var(--font-display); font-weight: 400; }
+  .font-script { font-family: var(--font-script); font-weight: 400; }
+  .font-sans { font-family: var(--font-sans); }
   .bg-cream { background-color: var(--cream); }
   .text-leaf { color: var(--leaf); }
   .text-leaf-deep { color: var(--leaf-deep); }
+  .text-leaf-soft { color: var(--leaf-soft); }
   .text-citrus { color: var(--citrus); }
   .text-tomato { color: var(--tomato); }
+  .text-coral { color: var(--coral); }
   .text-brown { color: var(--brown); }
   .bg-brown { background-color: var(--brown); }
   .border-brown { border-color: var(--brown); }
   .bg-leaf { background-color: var(--leaf); }
   .bg-leaf-deep { background-color: var(--leaf-deep); }
+  .bg-leaf-soft { background-color: var(--leaf-soft); }
   .bg-citrus { background-color: var(--citrus); }
   .bg-tomato { background-color: var(--tomato); }
+  .bg-coral { background-color: var(--coral); }
+  .bg-wa { background-color: var(--wa); }
   .border-leaf { border-color: var(--leaf); }
+  .border-leaf-soft { border-color: var(--leaf-soft); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-card { box-shadow: var(--shadow-card); }
-
-  /* Tomato cross-section button */
-  .btn-tomato {
-    background-image:
-      radial-gradient(circle at 22% 38%, rgba(255,255,255,0.85) 0 2.5px, transparent 3px),
-      radial-gradient(circle at 38% 62%, rgba(255,255,255,0.8) 0 2.5px, transparent 3px),
-      radial-gradient(circle at 58% 35%, rgba(255,255,255,0.85) 0 2.5px, transparent 3px),
-      radial-gradient(circle at 72% 65%, rgba(255,255,255,0.8) 0 2.5px, transparent 3px),
-      radial-gradient(circle at 50% 50%, oklch(0.78 0.18 28) 0%, oklch(0.66 0.22 30) 55%, oklch(0.56 0.21 28) 100%);
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(120,30,10,0.45);
-    box-shadow: 0 8px 20px -8px rgba(200,55,30,0.55), inset 0 0 0 2px rgba(255,255,255,0.18);
-  }
-  .btn-tomato:hover { filter: brightness(1.05); }
-
-  /* Yellow bell pepper cross-section button */
-  .btn-pepper {
-    background-image:
-      radial-gradient(ellipse at 28% 60%, rgba(255,255,255,0.55) 0 14%, transparent 30%),
-      radial-gradient(ellipse at 72% 40%, rgba(255,255,255,0.45) 0 12%, transparent 28%),
-      linear-gradient(135deg, oklch(0.92 0.18 95) 0%, oklch(0.82 0.20 92) 50%, oklch(0.74 0.18 88) 100%);
-    color: oklch(0.30 0.10 95);
-    text-shadow: 0 1px 1px rgba(255,255,255,0.5);
-    box-shadow: 0 8px 20px -8px rgba(200,160,30,0.5), inset 0 0 0 2px rgba(255,255,255,0.35);
-  }
-  .btn-pepper:hover { filter: brightness(1.04); }
 
   .gradient-warm {
     background-image: linear-gradient(180deg,
       color-mix(in oklab, var(--cream) 100%, transparent) 0%,
       var(--background) 100%);
+  }
+  .hero-overlay {
+    background-image: linear-gradient(180deg,
+      color-mix(in oklab, var(--leaf-deep) 25%, transparent) 0%,
+      color-mix(in oklab, var(--leaf-deep) 55%, transparent) 100%);
   }
 }

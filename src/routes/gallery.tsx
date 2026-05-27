@@ -4,7 +4,6 @@ import salads from "@/assets/section-salads.jpg";
 import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
 import mealprep from "@/assets/section-mealprep.jpg";
-import catering from "@/assets/section-catering.jpg";
 import kitchen from "@/assets/gallery-kitchen.jpg";
 import produce from "@/assets/gallery-produce.jpg";
 import fish from "@/assets/gallery-fish.jpg";
@@ -13,7 +12,7 @@ import hero from "@/assets/hero-salad.jpg";
 export const Route = createFileRoute("/gallery")({
   head: () => ({ meta: [
     { title: "Gallery | Fine Time for Cathy's" },
-    { name: "description", content: "Food, kitchen, and behind-the-scenes photography from Fine Time for Cathy's." },
+    { name: "description", content: "Food, kitchen, and behind-the-scenes photography." },
   ]}),
   component: Gallery,
 });
@@ -27,16 +26,15 @@ const IMAGES = [
   { src: produce, caption: "Fresh from the market" },
   { src: kitchen, caption: "On the prep counter" },
   { src: mealprep, caption: "Meal prep, packed and ready" },
-  { src: catering, caption: "Catering spread" },
 ];
 
 function Gallery() {
   return (
     <>
       <Section className="pt-14 lg:pt-20 pb-8">
-        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf">Gallery</div>
-        <h1 className="mt-2 text-display text-4xl font-bold lg:text-5xl">From the kitchen to the table.</h1>
-        <p className="mt-3 max-w-xl text-muted-foreground">Finished dishes, fresh produce, and behind-the-scenes moments from the prep counter.</p>
+        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">Gallery</div>
+        <h1 className="mt-2 text-display text-4xl text-leaf-deep lg:text-5xl">From the kitchen to the table.</h1>
+        <p className="mt-3 max-w-xl text-muted-foreground">Finished dishes, fresh produce, and prep-counter moments.</p>
       </Section>
       <Section className="pb-20">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-5">
