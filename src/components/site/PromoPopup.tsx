@@ -46,10 +46,10 @@ export function PromoPopup() {
           className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground">
           <X className="h-4 w-4" />
         </button>
-        <div className="gradient-leaf px-7 py-7 text-primary-foreground">
+        <div className="bg-leaf-deep px-7 py-7 text-cream">
           <div className="text-xs uppercase tracking-[0.2em] opacity-80">Limited offer</div>
-          <h3 className="mt-1 text-display text-2xl font-bold">Join the CGCC Healthy Community</h3>
-          <p className="mt-2 text-sm text-primary-foreground/90">
+          <h3 className="mt-1 text-display text-2xl">Join the CGCC Healthy Community</h3>
+          <p className="mt-2 text-sm text-cream/90">
             Get a discount on your first order. Or gift it to someone else.
           </p>
         </div>
