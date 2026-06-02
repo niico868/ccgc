@@ -2,12 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
-import { FOOD_MIN, DRINK_MIN } from "@/lib/menu-data";
+import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { toast } from "sonner";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import type { Json } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout | Cathy's Clean Green Classics" }] }),
@@ -43,9 +44,8 @@ function Checkout() {
     const parts = [`${l.quantity} × ${l.name}`];
     if (l.size) parts.push(`(${l.size})`);
     if (l.protein) parts.push(`(${l.protein})`);
-    if (l.seafood) parts.push("[+$5 seafood]");
+    if (l.seafood) parts.push("[seafood]");
     if (l.preferences) parts.push(`[no: ${l.preferences}]`);
-    parts.push(`— $${(l.quantity * l.unitPrice).toFixed(2)}`);
     return `• ${parts.join(" ")}`;
   }).join("\n"), [lines]);
 
@@ -57,7 +57,7 @@ function Checkout() {
     }
     const orderId = "CGCC-" + Date.now().toString(36).toUpperCase();
 
-    const msg = `Hi, I'd like to confirm my order from Fine Time for Cathy's Clean Green Classics.
+    const msg = `Hi Cathy, I'd like to confirm my order from Fine Time for Cathy's Clean Green Classics.
 
 Order ID: ${orderId}
 
@@ -71,22 +71,17 @@ ${orderLines}
 Fulfillment: ${form.fulfillment}
 Pickup Location: ${form.fulfillment === "Pickup" ? form.pickup : "-"}
 Delivery Address: ${form.fulfillment === "Delivery" ? form.address : "-"}
-Delivery Fee: $${deliveryFee}
-
-Subtotal: $${subtotal.toFixed(2)}
-Total: $${total.toFixed(2)}
 
 Payment Method: ${form.payment}
 Notes: ${form.notes || "-"}
 
-Order placed through the website.`;
+Placed through the website. Please confirm the final total.`;
 
     // Open WhatsApp SYNCHRONOUSLY inside the click handler to avoid popup blockers.
     const url = `https://wa.me/18684884248?text=${encodeURIComponent(msg)}`;
     const win = window.open(url, "_blank", "noopener,noreferrer");
     if (!win) window.location.href = url;
 
-    // Then persist + cleanup
     setLastMsg(msg);
     const order = { orderId, ...form, lines, subtotal, deliveryFee, total, at: new Date().toISOString() };
     try {
@@ -95,7 +90,6 @@ Order placed through the website.`;
       localStorage.setItem("cgcc.orders", JSON.stringify(existing));
     } catch {}
 
-    // Save to backend if signed in (fire-and-forget)
     import("@/integrations/supabase/client").then(({ supabase }) => {
       supabase.auth.getUser().then(({ data }) => {
         if (data.user) {
@@ -110,7 +104,7 @@ Order placed through the website.`;
             delivery_address: form.fulfillment === "Delivery" ? form.address : null,
             payment_method: form.payment,
             notes: form.notes || null,
-            items: lines as unknown as object,
+            items: lines as unknown as Json,
             subtotal,
             delivery_fee: deliveryFee,
             total,
@@ -129,7 +123,7 @@ Order placed through the website.`;
         <CheckCircle2 className="mx-auto h-14 w-14 text-leaf-deep" />
         <h1 className="mt-4 text-display text-3xl text-leaf-deep">Order received.</h1>
         <p className="mx-auto mt-2 max-w-md text-muted-foreground">
-          We've opened WhatsApp with your order details. <b>Press send</b> to confirm with Cathy.
+          We've opened WhatsApp with your order details. <b>Press send</b> so Cathy can confirm and arrange payment.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <WhatsAppButton href={waLink(lastMsg)}>Confirm via WhatsApp</WhatsAppButton>
@@ -144,20 +138,20 @@ Order placed through the website.`;
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Confirm details, then we'll guide you to WhatsApp to lock it in.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you over to WhatsApp to lock it in with Cathy.</p>
 
       {!minMet && (
         <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm">
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} meals to complete this order. You have {foodCount}.
+              You need at least {FOOD_MIN} meals to complete this order. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. You have {drinkCount}.
+              You need at least {DRINK_MIN} drinks to complete this order. You currently have {drinkCount}.
             </div>
           )}
         </div>
@@ -190,7 +184,7 @@ Order placed through the website.`;
                 <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={input} />
               )}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Limited delivery available. $40 flat fee.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Limited delivery along the east-west corridor from 2 PM.</p>
           </div>
 
           <div>
@@ -204,7 +198,7 @@ Order placed through the website.`;
 
           <div>
             <div className="text-display text-lg text-leaf-deep">Order notes</div>
-            <textarea rows={4} placeholder="Allergies, drop-off instructions, preferences..." value={form.notes} onChange={set("notes")}
+            <textarea rows={4} placeholder="Allergies, drop-off instructions, anything else we should know…" value={form.notes} onChange={set("notes")}
               className="mt-3 w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf-deep" />
           </div>
         </div>
@@ -219,17 +213,17 @@ Order placed through the website.`;
                   {(l.size || l.protein) && (
                     <span className="block text-xs text-muted-foreground">{[l.size, l.protein].filter(Boolean).join(" · ")}</span>
                   )}
-                  {l.seafood && <span className="block text-xs text-coral">Seafood +$5</span>}
+                  {l.seafood && <span className="block text-xs text-brown">Seafood</span>}
                   {l.preferences && <span className="block text-xs text-muted-foreground">No: {l.preferences}</span>}
                 </span>
-                <span className="font-bold">${(l.quantity * l.unitPrice).toFixed(2)}</span>
+                <span className="font-bold">{PRICELESS}</span>
               </li>
             ))}
           </ul>
           <div className="border-t border-border pt-3 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>${deliveryFee.toFixed(2)}</span></div>
-            <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>${total.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{PRICELESS}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{PRICELESS}</span></div>
+            <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>{PRICELESS}</span></div>
           </div>
           <button
             type="submit"
@@ -240,7 +234,7 @@ Order placed through the website.`;
           >
             {minMet ? "Confirm Order" : "Minimum not met"}
           </button>
-          <p className="text-[11px] text-muted-foreground">After confirming, we'll open WhatsApp with your full order.</p>
+          <p className="text-[11px] text-muted-foreground">After confirming, we'll open WhatsApp with your full order so Cathy can confirm the final total.</p>
         </aside>
       </form>
 

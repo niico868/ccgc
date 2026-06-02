@@ -12,22 +12,22 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Fine Time for Cathy's Clean Green Classics" },
-      { name: "description", content: "Homemade salads, healthy meals, and cold-pressed juices. Made fresh in Trinidad and Tobago." },
+      { name: "description", content: "Properly made salads, hearty healthy meals and cold-pressed juices — homestyle done well, in Trinidad and Tobago." },
     ],
   }),
   component: Home,
 });
 
 const SECTIONS = [
-  { to: "/salads", title: "Custom Salads", image: salads, desc: "Fresh greens, clean toppings, and your choice of protein. From $40.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
-  { to: "/meals", title: "Healthy Meals", image: meals, desc: "Balanced bowls with grains, vegetables, legumes, and seeds. From $45.", benefit: "Wholesome. Convenient.", objectPosition: "center 55%" },
-  { to: "/juices", title: "Cold-Pressed Juices", image: juices, desc: "Fresh fruit and vegetable blends to refresh and restore.", benefit: "Fresh. Natural.", objectPosition: "center 70%" },
+  { to: "/salads", title: "Custom Salads", image: salads, desc: "Fresh greens, clean toppings and your choice of protein — built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
+  { to: "/meals", title: "Healthy Meals", image: meals, desc: "Hearty, homestyle bowls. Properly seasoned, well-balanced and made with care.", benefit: "Wholesome. Satisfying.", objectPosition: "center 55%" },
+  { to: "/juices", title: "Cold-Pressed Juices", image: juices, desc: "Pressed fresh from clean produce — to lift, restore and refresh.", benefit: "Fresh. Pure.", objectPosition: "center 70%" },
 ];
 
 const REVIEWS = [
   { name: "Aaliyah R.", text: "The Broccoli Power Bowl is the best lunch in my week. Fresh, filling, beautifully packed." },
-  { name: "Marcus D.", text: "Cathy's juices taste like they were pressed five minutes ago." },
-  { name: "Simone J.", text: "Premium from start to finish. Everyone asked who made the salads." },
+  { name: "Marcus D.", text: "Cathy's juices taste like they were pressed five minutes before they reached me." },
+  { name: "Simone J.", text: "Proper food, beautifully done. Everyone at the table asked who made it." },
 ];
 
 function Home() {
@@ -46,7 +46,7 @@ function Home() {
               Clean Green Classics,<br />Made Fresh Daily.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-cream/95 lg:text-lg">
-              Homemade salads, healthy meals, and cold-pressed juices prepared fresh in Trinidad &amp; Tobago.
+              Homestyle salads, hearty healthy meals and cold-pressed juices — properly made, packed with care, ready when you are.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to="/salads" className="inline-flex h-12 items-center gap-2 rounded-full bg-leaf-deep px-8 text-sm font-semibold text-cream shadow-soft transition hover:opacity-95">
@@ -68,9 +68,9 @@ function Home() {
 
       <Section className="py-20 lg:py-24">
         <div className="mb-10 text-center">
-          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">Menu Today</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">On the menu</div>
           <h2 className="mt-2 text-display text-3xl text-leaf-deep lg:text-4xl">Clean Green Classics</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brown">Real food, beautifully made. Order 5+ meals or 6+ drinks per order.</p>
+          <p className="mx-auto mt-3 max-w-xl text-brown">Real food, beautifully made. Minimum 5 meals per food order, 6 drinks per juice order.</p>
         </div>
         <div className="mx-auto flex max-w-4xl flex-col gap-5">
           {SECTIONS.map((s) => (
@@ -90,14 +90,14 @@ function Home() {
           ))}
         </div>
         <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-leaf-soft/30 bg-leaf-soft/10 px-5 py-3 text-center text-sm font-semibold text-leaf-deep">
-          Salads $40 base · Healthy meals $45 base · Seafood adds $5 · Min 5 meals / 6 drinks per order.
+          Minimum 5 meals per food order · Minimum 6 drinks per juice order · Fish &amp; shrimp available on request.
         </div>
       </Section>
 
       <Section className="pb-16 lg:pb-20">
         <div className="mb-8 text-center">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">Loved by regulars</div>
-          <h2 className="mt-2 text-display text-3xl text-leaf-deep lg:text-4xl">What our community says</h2>
+          <h2 className="mt-2 text-display text-3xl text-leaf-deep lg:text-4xl">What our community is saying</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           {REVIEWS.map((r) => (

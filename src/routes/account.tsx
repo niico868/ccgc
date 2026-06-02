@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Section } from "@/components/site/Section";
+import { PRICELESS } from "@/lib/menu-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/account")({
@@ -56,7 +57,7 @@ function AccountPage() {
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
         <div className="text-display text-lg text-leaf-deep">Saved discount codes</div>
         {codes.length === 0 ? (
-          <p className="mt-2 text-sm text-brown">No discount codes yet. Look out for our signup offer.</p>
+          <p className="mt-2 text-sm text-brown">No codes saved yet. Keep an eye out for our signup offer.</p>
         ) : (
           <ul className="mt-3 space-y-2 text-sm">
             {codes.map((c) => (
@@ -82,7 +83,7 @@ function AccountPage() {
                   <div className="text-xs text-brown">{new Date(o.created_at).toLocaleString()}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-leaf-deep">${Number(o.total).toFixed(2)}</div>
+                  <div className="font-bold text-leaf-deep">{PRICELESS}</div>
                   <div className="text-xs text-brown capitalize">{o.status}</div>
                 </div>
               </li>
