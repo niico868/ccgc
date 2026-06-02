@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
-import { SEAFOOD_LABELS, SEAFOOD_SURCHARGE } from "@/lib/menu-data";
+import { PRICELESS, SEAFOOD_LABELS, SEAFOOD_SURCHARGE } from "@/lib/menu-data";
 import { Minus, Plus, ShoppingBasket } from "lucide-react";
 
 export function MenuCard({ item }: { item: MenuItem }) {
@@ -14,10 +14,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
 
   const size = item.sizes?.[sizeIdx];
   const seafood = !!protein && SEAFOOD_LABELS.includes(protein);
-  const unitPrice = useMemo(() => {
-    const base = size ? size.price : item.price;
-    return base + (seafood ? SEAFOOD_SURCHARGE : 0);
-  }, [size, item.price, seafood]);
+  const unitPrice = (size ? size.price : item.price) + (seafood ? SEAFOOD_SURCHARGE : 0);
 
   const onAdd = () => {
     add({
@@ -49,10 +46,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-display text-lg leading-tight text-leaf-deep">{item.name}</h3>
-          <div className="shrink-0 text-base font-bold text-leaf-deep">
-            ${unitPrice}
-            {item.fixedSize && <span className="ml-1 text-xs font-medium text-muted-foreground">/ {item.fixedSize}</span>}
-          </div>
+          <div className="shrink-0 text-sm font-bold tracking-wide text-leaf-deep">{PRICELESS}</div>
         </div>
         <p className="text-sm leading-relaxed text-foreground/80">{item.description}</p>
         {item.benefits && (
@@ -72,7 +66,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
                     sizeIdx === i ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-background hover:border-leaf-deep"
                   }`}
                 >
-                  {s.label} · ${s.price}
+                  {s.label}
                 </button>
               ))}
             </div>
@@ -96,16 +90,13 @@ export function MenuCard({ item }: { item: MenuItem }) {
                 </button>
               ))}
             </div>
-            {seafood && (
-              <div className="mt-1.5 text-[11px] font-semibold text-coral">Seafood adds $5 per item.</div>
-            )}
           </div>
         )}
 
         {item.category === "salad" && (
           <div>
             <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Ingredients you do not like
+              Anything you'd rather we leave out
             </label>
             <input
               value={preferences}

@@ -19,9 +19,12 @@ export type MenuItem = {
   fixedSize?: string;
 };
 
-export const SALAD_PROTEINS = ["Chicken", "Fish (+$5)", "Shrimp (+$5)", "Vegan"];
-export const MEAL_PROTEINS = ["Chicken", "Fish (+$5)", "Shrimp (+$5)", "Vegan"];
-export const SEAFOOD_LABELS = ["Fish (+$5)", "Shrimp (+$5)"];
+/** Customer-facing price label. All prices read [PRICELESS] on the website. */
+export const PRICELESS = "[PRICELESS]";
+
+export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
+export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
+export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
 
 export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
@@ -37,8 +40,8 @@ export const SALADS: MenuItem[] = [
     name: "CCGC Specialty Salad — Chef's Choice",
     price: SALAD_BASE,
     image: salads,
-    description: "A salad made from the chef's choice of fresh ingredients.",
-    benefits: "Chef's pick. Always fresh.",
+    description: "A salad built around Cathy's pick of the freshest produce on the morning's prep counter.",
+    benefits: "Chef's Pick. Always Fresh.",
     proteinOptions: SALAD_PROTEINS,
   },
   {
@@ -47,8 +50,8 @@ export const SALADS: MenuItem[] = [
     name: "Broccoli Power Bowl",
     price: SALAD_BASE,
     image: salads,
-    description: "Romaine, broccoli, fruit, seeds, sweet corn, diced chicken breast.",
-    benefits: "Hearty. Crunchy. Energizing.",
+    description: "Romaine, broccoli, seasonal fruit, toasted seeds, sweet corn and tender diced chicken breast.",
+    benefits: "Hearty. Satisfying.",
     proteinOptions: SALAD_PROTEINS,
   },
   {
@@ -57,8 +60,8 @@ export const SALADS: MenuItem[] = [
     name: "Chopped Salad",
     price: SALAD_BASE,
     image: salads,
-    description: "Crisp chopped greens, feta, olives, radishes, sweet corn, layered chicken.",
-    benefits: "Crisp. Briny. Fresh.",
+    description: "Crisp chopped greens with feta, olives, radish, sweet corn and properly layered chicken.",
+    benefits: "Crisp. Well-Balanced.",
     proteinOptions: SALAD_PROTEINS,
   },
   {
@@ -67,8 +70,8 @@ export const SALADS: MenuItem[] = [
     name: "Protein Packed Bowl",
     price: SALAD_BASE,
     image: salads,
-    description: "Quinoa, egg, feta, fresh vegetables, nuts, grains.",
-    benefits: "Filling. Balanced. Clean.",
+    description: "Quinoa, boiled egg, feta, garden vegetables, nuts and grains — a proper, filling plate.",
+    benefits: "Filling. Clean.",
     proteinOptions: [...SALAD_PROTEINS, "Egg"],
   },
   {
@@ -77,71 +80,55 @@ export const SALADS: MenuItem[] = [
     name: "Grilled Salad Bowl",
     price: SALAD_BASE,
     image: salads,
-    description: "Roasted vegetables, chickpeas, pickled onions, cucumber, parsley, greens.",
-    benefits: "Warm. Roasted. Wholesome.",
+    description: "Roasted vegetables, chickpeas, pickled onion, cucumber and parsley over fresh greens.",
+    benefits: "Warm. Wholesome.",
     proteinOptions: SALAD_PROTEINS,
   },
 ];
 
 export const MEALS: MenuItem[] = [
   {
-    id: "meal-green-quinoa",
+    id: "meal-quinoa-chow-mein",
     category: "meal",
-    name: "Green Power Quinoa Bowl",
+    name: "Chinese-Style Quinoa Chow Mein Bowl",
     price: MEAL_BASE,
     image: meals,
-    description: "Quinoa, roasted broccoli and cauliflower, garlic black beans, seeds, avocado in season.",
-    benefits: "Plant-powered. Filling.",
+    description:
+      "Fluffy quinoa sautéed chow mein–style with chunky vegetables, served with oven-baked Chinese-style chicken for a clean, full-flavoured, protein-rich plate.",
+    benefits: "Proper. Full-Flavoured.",
     proteinOptions: MEAL_PROTEINS,
   },
   {
-    id: "meal-sweet-potato-lentil",
+    id: "meal-sweet-potato-basil",
     category: "meal",
-    name: "Sweet Potato & Lentil Plate",
+    name: "Sweet Potato Basil Mash with Chimichurri Chicken",
     price: MEAL_BASE,
     image: meals,
-    description: "Roasted sweet potato, seasoned lentils, string beans, nuts, chia.",
-    benefits: "Hearty. Nourishing.",
+    description:
+      "Creamy sweet potato and basil mash served with sautéed garlic-parsley vegetables, grilled chicken, fresh chimichurri, and a light topping of alfalfa or broccoli sprouts.",
+    benefits: "Wholesome. Homestyle.",
     proteinOptions: MEAL_PROTEINS,
   },
   {
-    id: "meal-couscous-garden",
+    id: "meal-cumin-basmati-tandoori",
     category: "meal",
-    name: "Grilled Garden Couscous Bowl",
+    name: "Cumin Basmati Rice with Tandoori Chicken",
     price: MEAL_BASE,
     image: meals,
-    description: "Couscous, grilled vegetables, sprouts, pumpkin seeds, almonds.",
-    benefits: "Fresh. Light. Flavorful.",
+    description:
+      "Cumin-infused basmati rice served with Indian-spiced oven-roasted vegetables and topped with tender tandoori-style chicken.",
+    benefits: "Hearty. Well-Seasoned.",
     proteinOptions: MEAL_PROTEINS,
   },
   {
-    id: "meal-power-rice",
+    id: "meal-roasted-veg-thai-butter",
     category: "meal",
-    name: "Power Rice Bowl",
+    name: "Roasted Vegetable Medley with Thai Butter Chicken",
     price: MEAL_BASE,
     image: meals,
-    description: "Brown rice or quinoa, steamed broccoli, roasted cauliflower, beans, seeds, lemon olive oil.",
-    benefits: "Balanced. Energizing.",
-    proteinOptions: MEAL_PROTEINS,
-  },
-  {
-    id: "meal-sweet-potato-power",
-    category: "meal",
-    name: "Sweet Potato Power Bowl",
-    price: MEAL_BASE,
-    image: meals,
-    description: "Brown rice or lentils, garlic butter sweet potato, beetroot, string beans, nuts, seeds.",
-    benefits: "Warm. Restorative.",
-    proteinOptions: MEAL_PROTEINS,
-  },
-  {
-    id: "meal-couscous-wellness",
-    category: "meal",
-    name: "Couscous Wellness Bowl",
-    price: MEAL_BASE,
-    image: meals,
-    description: "Couscous, Parmesan zucchini, sweet potato, cucumber, carrots, cranberries, walnuts.",
-    benefits: "Fresh. Satisfying.",
+    description:
+      "A hearty roasted vegetable medley served with our in-house Thai butter chicken — rich, savoury and balanced with warm Thai-inspired flavour.",
+    benefits: "Rich. Nourishing.",
     proteinOptions: MEAL_PROTEINS,
   },
 ];
@@ -153,8 +140,8 @@ export const JUICES: MenuItem[] = [
     name: "Beetroot",
     price: 20,
     image: juices,
-    description: "Rich beetroot juice for earthy flavor and natural energy.",
-    benefits: "Rich. Restorative.",
+    description: "Pure pressed beetroot for that deep, earthy lift after a long morning.",
+    benefits: "Earthy. Restorative.",
     sizes: [
       { label: "300 ml", price: 20 },
       { label: "500 ml", price: 30 },
@@ -166,7 +153,7 @@ export const JUICES: MenuItem[] = [
     name: "Mixed Vegetables",
     price: 15,
     image: juices,
-    description: "A bright mixed blend of fresh vegetables and fruit.",
+    description: "A bright blend of fresh vegetables and seasonal fruit, balanced and easy on the palate.",
     benefits: "Balanced. Fresh.",
     sizes: [
       { label: "300 ml", price: 15 },
@@ -179,7 +166,7 @@ export const JUICES: MenuItem[] = [
     name: "Green Juice",
     price: 18,
     image: juices,
-    description: "Celery, cucumber, spinach, kale, Granny Smith apple.",
+    description: "Celery, cucumber, spinach, kale and Granny Smith apple — clean, green, properly pressed.",
     benefits: "Green. Clean.",
     sizes: [
       { label: "300 ml", price: 18 },
@@ -192,7 +179,7 @@ export const JUICES: MenuItem[] = [
     name: "Ginger Shot",
     price: 8,
     image: juices,
-    description: "A small, potent ginger wellness shot.",
+    description: "A small, potent ginger shot to warm and reset the system.",
     benefits: "Warm. Restoring.",
     fixedSize: "2 oz",
   },
