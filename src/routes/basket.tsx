@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
-import { FOOD_MIN, DRINK_MIN } from "@/lib/menu-data";
+import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
 import { Minus, Plus, Trash2, ShoppingBasket, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/basket")({
@@ -10,14 +10,14 @@ export const Route = createFileRoute("/basket")({
 });
 
 function Basket() {
-  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
+  const { lines, setQty, remove, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
 
   if (lines.length === 0) {
     return (
       <Section className="py-20 text-center">
         <ShoppingBasket className="mx-auto h-12 w-12 text-leaf-deep" />
         <h1 className="mt-4 text-display text-3xl text-leaf-deep">Your basket is empty</h1>
-        <p className="mt-2 text-muted-foreground">Browse the menu and start adding fresh classics.</p>
+        <p className="mt-2 text-muted-foreground">Take a look at the menu and start adding a few classics.</p>
         <Link to="/salads" className="mt-6 inline-flex h-11 items-center rounded-full bg-leaf-deep px-6 text-sm font-semibold text-cream hover:opacity-90">
           Browse menu
         </Link>
@@ -34,13 +34,13 @@ function Basket() {
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} meals to complete this order. You have {foodCount}.
+              You need at least {FOOD_MIN} meals to complete this order. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. You have {drinkCount}.
+              You need at least {DRINK_MIN} drinks to complete this order. You currently have {drinkCount}.
             </div>
           )}
         </div>
@@ -54,12 +54,12 @@ function Basket() {
                 <div className="font-semibold text-leaf-deep">{l.name}</div>
                 <div className="text-xs text-muted-foreground">
                   {[l.size, l.protein].filter(Boolean).join(" · ") || "Standard"}
-                  {l.seafood && <span className="ml-1 text-coral">· Seafood +$5</span>}
+                  {l.seafood && <span className="ml-1 text-brown">· Seafood</span>}
                 </div>
                 {l.preferences && (
                   <div className="text-xs text-brown">No: {l.preferences}</div>
                 )}
-                <div className="mt-1 text-sm font-bold text-leaf-deep">${l.unitPrice}</div>
+                <div className="mt-1 text-sm font-bold text-leaf-deep">{PRICELESS}</div>
               </div>
               <div className="inline-flex items-center rounded-full border border-border bg-background">
                 <button onClick={() => setQty(l.lineId, l.quantity - 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Decrease"><Minus className="h-3.5 w-3.5" /></button>
@@ -77,9 +77,9 @@ function Basket() {
           <div className="text-display text-lg text-leaf-deep">Order summary</div>
           <div className="mt-3 flex justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-bold">${subtotal.toFixed(2)}</span>
+            <span className="font-bold">{PRICELESS}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Delivery ($40) added at checkout. Seafood items include +$5 each.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Final total confirmed on WhatsApp before payment.</p>
           <Link
             to={minMet ? "/checkout" : "/basket"}
             onClick={(e) => { if (!minMet) e.preventDefault(); }}
