@@ -174,7 +174,6 @@ export const JUICES: MenuItem[] = [
     ],
   },
   {
-  {
     id: "juice-ginger-shot",
     category: "juice",
     name: "Ginger Shot",
