@@ -6,7 +6,17 @@ import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { Section } from "@/components/site/Section";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
-...
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Fine Time for Cathy's Clean Green Classics" },
+      { name: "description", content: "Properly made salads, hearty healthy meals and cold-pressed juices — homestyle done well, in Trinidad and Tobago." },
+    ],
+  }),
+  component: Home,
+});
+
 const SECTIONS = [
   { to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE, desc: "Fresh greens, clean toppings and your choice of protein — built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
   { to: "/meals", title: "Healthy Meals", image: MEAL_FEATURE_IMAGE, desc: "Hearty, homestyle bowls. Properly seasoned, well-balanced and made with care.", benefit: "Wholesome. Satisfying.", objectPosition: "center 55%" },

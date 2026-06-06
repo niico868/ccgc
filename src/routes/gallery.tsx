@@ -6,7 +6,15 @@ import produce from "@/assets/gallery-produce.jpg";
 import fish from "@/assets/gallery-fish.jpg";
 import hero from "@/assets/hero-salad.jpg";
 import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
-...
+
+export const Route = createFileRoute("/gallery")({
+  head: () => ({ meta: [
+    { title: "Gallery | Fine Time for Cathy's" },
+    { name: "description", content: "Food, kitchen, and behind-the-scenes photography." },
+  ]}),
+  component: Gallery,
+});
+
 const IMAGES = [
   { src: hero, caption: "Signature Grilled Chicken Garden Salad" },
   { src: SALAD_FEATURE_IMAGE, caption: "Chef's Choice salad" },
