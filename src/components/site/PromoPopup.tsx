@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import popupAsset from "@/assets/sign-up-pop-up-background.png.asset.json";
 
 const KEY = "cgcc.promo.lastShown";
 const SIGNIN_KEY = "cgcc.signin.lastShown";
@@ -11,9 +11,6 @@ const DAY = 24 * 60 * 60 * 1000;
 export function PromoPopup() {
   const [open, setOpen] = useState(false);
   const [variant, setVariant] = useState<"signin" | "discount">("signin");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [issued, setIssued] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,70 +34,50 @@ export function PromoPopup() {
     setOpen(false);
   };
 
-  const claim = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) {
-      toast.info("Create an account to save your discount.");
-      close();
-      return;
-    }
-    const code = `WELCOME-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-    const { error } = await supabase.from("discount_codes").insert({
-      user_id: data.user.id, code, percent: 10, source: "signup_popup",
-    });
-    if (error) { toast.error("Could not save code."); return; }
-    setIssued(code);
-    toast.success("Discount saved to your account.");
-  };
-
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 px-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl bg-card shadow-soft">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/45 px-4 backdrop-blur-sm">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-[30px] border border-white/60 bg-card shadow-[0_22px_48px_rgba(31,90,53,0.2)]">
+        <img src={popupAsset.url} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,248,234,0.78),rgba(255,255,255,0.92))]" />
         <button onClick={close} aria-label="Close"
-          className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground">
+          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/75 text-muted-foreground hover:text-foreground">
           <X className="h-4 w-4" />
         </button>
 
-        {variant === "signin" ? (
-          <>
-            <div className="bg-leaf-deep px-7 py-7 text-cream">
-              <div className="text-xs uppercase tracking-[0.2em] opacity-80">Welcome</div>
-              <h3 className="mt-1 text-display text-2xl">Sign in or create your account</h3>
-              <p className="mt-2 text-sm text-cream/90">Save your order history and unlock signup discounts.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3 p-7">
-              <Link to="/auth" search={{ mode: "signin" }} onClick={close} className="h-11 inline-flex items-center justify-center rounded-xl border border-leaf-deep text-sm font-semibold text-leaf-deep hover:bg-secondary">Sign in</Link>
-              <Link to="/auth" search={{ mode: "signup" }} onClick={close} className="h-11 inline-flex items-center justify-center rounded-xl bg-leaf-deep text-sm font-semibold text-cream hover:opacity-90">Create account</Link>
-              <button onClick={close} className="col-span-2 text-xs text-brown">Maybe later</button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="bg-leaf-deep px-7 py-7 text-cream">
-              <div className="text-xs uppercase tracking-[0.2em] opacity-80">Limited offer</div>
-              <h3 className="mt-1 text-display text-2xl">Claim your 10% discount</h3>
-              <p className="mt-2 text-sm text-cream/90">Saved straight to your account.</p>
-            </div>
-            {issued ? (
-              <div className="space-y-4 p-7 text-center">
-                <p className="text-sm text-brown">Use this code at checkout:</p>
-                <div className="rounded-2xl border border-leaf-soft/30 bg-leaf-soft/10 px-4 py-3 font-mono text-xl font-bold text-leaf-deep">{issued}</div>
-                <button onClick={close} className="h-11 w-full rounded-xl bg-leaf-deep text-sm font-semibold text-cream">Done</button>
+        <div className="relative p-7 sm:p-8">
+          {variant === "signin" ? (
+            <>
+              <div className="inline-flex rounded-full border border-white/70 bg-white/65 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-leaf-deep shadow-sm">
+                Loyalty &amp; fast checkout
               </div>
-            ) : (
-              <form onSubmit={claim} className="space-y-3 p-7">
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name (optional)" className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm" />
-                <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" type="email" className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm" />
-                <button type="submit" className="h-11 w-full rounded-xl bg-leaf-deep text-sm font-semibold text-cream hover:opacity-90">
-                  Claim my discount
-                </button>
-              </form>
-            )}
-          </>
-        )}
+              <h3 className="mt-4 text-display text-3xl text-leaf-deep">Create an account for loyalty benefits and easier ordering.</h3>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-foreground/80">
+                Save your details once, keep your order history close, and make repeat orders feel much faster.
+              </p>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <Link to="/auth" search={{ mode: "signin" }} onClick={close} className="inline-flex h-11 items-center justify-center rounded-full border border-leaf-deep/20 bg-white/75 text-sm font-semibold text-leaf-deep hover:bg-white">Sign in</Link>
+                <Link to="/auth" search={{ mode: "signup" }} onClick={close} className="inline-flex h-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#E76F51,#D84A2B)] text-sm font-semibold text-white shadow-[0_10px_24px_rgba(231,111,81,0.25)]">Create account</Link>
+                <button onClick={close} className="col-span-2 text-xs text-brown">Maybe later</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="inline-flex rounded-full border border-white/70 bg-white/65 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-leaf-deep shadow-sm">
+                Your account is ready
+              </div>
+              <h3 className="mt-4 text-display text-3xl text-leaf-deep">Order even easier next time.</h3>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-foreground/80">
+                You're signed in, so your next order can move faster through the site and checkout.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <Link to="/account" onClick={close} className="inline-flex h-11 items-center justify-center rounded-full bg-leaf-deep px-6 text-sm font-semibold text-cream">Go to account</Link>
+                <button onClick={close} className="inline-flex h-11 items-center justify-center rounded-full border border-leaf-deep/20 bg-white/75 px-6 text-sm font-semibold text-leaf-deep">Close</button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

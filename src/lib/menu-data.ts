@@ -3,9 +3,14 @@ import chefsChoiceAsset from "@/assets/chefs-choice-salad.png.asset.json";
 import broccoliPowerAsset from "@/assets/broccoli-power-bowl.jpeg.asset.json";
 import choppedSaladAsset from "@/assets/chopped-salad.png.asset.json";
 import proteinPackedAsset from "@/assets/protein-packed-bowl.jpeg.asset.json";
+import grilledSaladAsset from "@/assets/grilled-salad-bowl.png.asset.json";
 import quinoaChowMeinAsset from "@/assets/chinese-style-quinoa-chow-mein-bowl.png.asset.json";
 import sweetPotatoBasilAsset from "@/assets/sweet-potato-basil-mash-with-chimichurri-chicken.png.asset.json";
 import cuminBasmatiAsset from "@/assets/cumin-basmati-rice-with-tandoori-chicken.png.asset.json";
+import roastedVegetableMealAsset from "@/assets/roasted-vegetable-medley-with-thai-butter-chicken.png.asset.json";
+import beetRootAsset from "@/assets/beet-root-cold-press.png.asset.json";
+import watermelonAsset from "@/assets/watermelon-cold-press.png.asset.json";
+import gingerShotAsset from "@/assets/ginger-shot-cold-press.png.asset.json";
 
 export type Size = { label: string; price: number };
 
@@ -38,8 +43,9 @@ export const SEAFOOD_SURCHARGE = 5;
 const SALAD_BASE = 40;
 const MEAL_BASE = 45;
 
-export const SALAD_FEATURE_IMAGE = chefsChoiceAsset.url;
-export const MEAL_FEATURE_IMAGE = sweetPotatoBasilAsset.url;
+export const SALAD_FEATURE_IMAGE = grilledSaladAsset.url;
+export const MEAL_FEATURE_IMAGE = roastedVegetableMealAsset.url;
+export const JUICE_FEATURE_IMAGE = watermelonAsset.url;
 
 export const SALADS: MenuItem[] = [
   {
@@ -87,7 +93,7 @@ export const SALADS: MenuItem[] = [
     category: "salad",
     name: "Grilled Salad Bowl",
     price: SALAD_BASE,
-    image: choppedSaladAsset.url,
+    image: grilledSaladAsset.url,
     description: "Roasted vegetables, chickpeas, pickled onion, cucumber and parsley over fresh greens.",
     benefits: "Warm. Wholesome.",
     proteinOptions: SALAD_PROTEINS,
@@ -133,7 +139,7 @@ export const MEALS: MenuItem[] = [
     category: "meal",
     name: "Roasted Vegetable Medley with Thai Butter Chicken",
     price: MEAL_BASE,
-    image: sweetPotatoBasilAsset.url,
+    image: roastedVegetableMealAsset.url,
     description:
       "A hearty roasted vegetable medley served with our in-house Thai butter chicken — rich, savoury and balanced with warm Thai-inspired flavour.",
     benefits: "Rich. Nourishing.",
@@ -147,7 +153,7 @@ export const JUICES: MenuItem[] = [
     category: "juice",
     name: "Beetroot",
     price: 20,
-    image: juices,
+    image: beetRootAsset.url,
     description: "Pure pressed beetroot for that deep, earthy lift after a long morning.",
     benefits: "Earthy. Restorative.",
     sizes: [
@@ -156,13 +162,13 @@ export const JUICES: MenuItem[] = [
     ],
   },
   {
-    id: "juice-mixed-vegetables",
+    id: "juice-watermelon",
     category: "juice",
-    name: "Mixed Vegetables",
+    name: "Watermelon",
     price: 15,
-    image: juices,
-    description: "A bright blend of fresh vegetables and seasonal fruit, balanced and easy on the palate.",
-    benefits: "Balanced. Fresh.",
+    image: watermelonAsset.url,
+    description: "Cold-pressed watermelon with a bright, cooling finish that feels crisp and refreshing.",
+    benefits: "Cooling. Bright.",
     sizes: [
       { label: "300 ml", price: 15 },
       { label: "500 ml", price: 22 },
@@ -186,7 +192,7 @@ export const JUICES: MenuItem[] = [
     category: "juice",
     name: "Ginger Shot",
     price: 8,
-    image: juices,
+    image: gingerShotAsset.url,
     description: "A small, potent ginger shot to warm and reset the system.",
     benefits: "Warm. Restoring.",
     fixedSize: "2 oz",
