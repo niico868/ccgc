@@ -1,4 +1,3 @@
-import juices from "@/assets/section-juices.jpg";
 import chefsChoiceAsset from "@/assets/chefs-choice-salad.png.asset.json";
 import broccoliPowerAsset from "@/assets/broccoli-power-bowl.jpeg.asset.json";
 import choppedSaladAsset from "@/assets/chopped-salad.png.asset.json";
@@ -175,18 +174,6 @@ export const JUICES: MenuItem[] = [
     ],
   },
   {
-    id: "juice-green-juice",
-    category: "juice",
-    name: "Green Juice",
-    price: 18,
-    image: juices,
-    description: "Celery, cucumber, spinach, kale and Granny Smith apple — clean, green, properly pressed.",
-    benefits: "Green. Clean.",
-    sizes: [
-      { label: "300 ml", price: 18 },
-      { label: "500 ml", price: 30 },
-    ],
-  },
   {
     id: "juice-ginger-shot",
     category: "juice",
