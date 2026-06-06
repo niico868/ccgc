@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Clock, Quote, Truck } from "lucide-react";
 import hero from "@/assets/hero-salad.jpg";
-import salads from "@/assets/section-salads.jpg";
-import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
+import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { Section } from "@/components/site/Section";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
@@ -19,8 +18,8 @@ export const Route = createFileRoute("/")({
 });
 
 const SECTIONS = [
-  { to: "/salads", title: "Custom Salads", image: salads, desc: "Fresh greens, clean toppings and your choice of protein — built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
-  { to: "/meals", title: "Healthy Meals", image: meals, desc: "Hearty, homestyle bowls. Properly seasoned, well-balanced and made with care.", benefit: "Wholesome. Satisfying.", objectPosition: "center 55%" },
+  { to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE, desc: "Fresh greens, clean toppings and your choice of protein — built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
+  { to: "/meals", title: "Healthy Meals", image: MEAL_FEATURE_IMAGE, desc: "Hearty, homestyle bowls. Properly seasoned, well-balanced and made with care.", benefit: "Wholesome. Satisfying.", objectPosition: "center 55%" },
   { to: "/juices", title: "Cold-Pressed Juices", image: juices, desc: "Pressed fresh from clean produce — to lift, restore and refresh.", benefit: "Fresh. Pure.", objectPosition: "center 70%" },
 ];
 
