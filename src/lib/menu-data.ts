@@ -1,6 +1,11 @@
-import salads from "@/assets/section-salads.jpg";
-import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
+import chefsChoiceAsset from "@/assets/chefs-choice-salad.png.asset.json";
+import broccoliPowerAsset from "@/assets/broccoli-power-bowl.jpeg.asset.json";
+import choppedSaladAsset from "@/assets/chopped-salad.png.asset.json";
+import proteinPackedAsset from "@/assets/protein-packed-bowl.jpeg.asset.json";
+import quinoaChowMeinAsset from "@/assets/chinese-style-quinoa-chow-mein-bowl.png.asset.json";
+import sweetPotatoBasilAsset from "@/assets/sweet-potato-basil-mash-with-chimichurri-chicken.png.asset.json";
+import cuminBasmatiAsset from "@/assets/cumin-basmati-rice-with-tandoori-chicken.png.asset.json";
 
 export type Size = { label: string; price: number };
 
@@ -33,13 +38,16 @@ export const SEAFOOD_SURCHARGE = 5;
 const SALAD_BASE = 40;
 const MEAL_BASE = 45;
 
+export const SALAD_FEATURE_IMAGE = chefsChoiceAsset.url;
+export const MEAL_FEATURE_IMAGE = sweetPotatoBasilAsset.url;
+
 export const SALADS: MenuItem[] = [
   {
     id: "salad-ccgc-specialty",
     category: "salad",
     name: "CCGC Specialty Salad — Chef's Choice",
     price: SALAD_BASE,
-    image: salads,
+    image: chefsChoiceAsset.url,
     description: "A salad built around Cathy's pick of the freshest produce on the morning's prep counter.",
     benefits: "Chef's Pick. Always Fresh.",
     proteinOptions: SALAD_PROTEINS,
@@ -49,7 +57,7 @@ export const SALADS: MenuItem[] = [
     category: "salad",
     name: "Broccoli Power Bowl",
     price: SALAD_BASE,
-    image: salads,
+    image: broccoliPowerAsset.url,
     description: "Romaine, broccoli, seasonal fruit, toasted seeds, sweet corn and tender diced chicken breast.",
     benefits: "Hearty. Satisfying.",
     proteinOptions: SALAD_PROTEINS,
@@ -59,7 +67,7 @@ export const SALADS: MenuItem[] = [
     category: "salad",
     name: "Chopped Salad",
     price: SALAD_BASE,
-    image: salads,
+    image: choppedSaladAsset.url,
     description: "Crisp chopped greens with feta, olives, radish, sweet corn and properly layered chicken.",
     benefits: "Crisp. Well-Balanced.",
     proteinOptions: SALAD_PROTEINS,
@@ -69,7 +77,7 @@ export const SALADS: MenuItem[] = [
     category: "salad",
     name: "Protein Packed Bowl",
     price: SALAD_BASE,
-    image: salads,
+    image: proteinPackedAsset.url,
     description: "Quinoa, boiled egg, feta, garden vegetables, nuts and grains — a proper, filling plate.",
     benefits: "Filling. Clean.",
     proteinOptions: [...SALAD_PROTEINS, "Egg"],
@@ -79,7 +87,7 @@ export const SALADS: MenuItem[] = [
     category: "salad",
     name: "Grilled Salad Bowl",
     price: SALAD_BASE,
-    image: salads,
+    image: choppedSaladAsset.url,
     description: "Roasted vegetables, chickpeas, pickled onion, cucumber and parsley over fresh greens.",
     benefits: "Warm. Wholesome.",
     proteinOptions: SALAD_PROTEINS,
@@ -92,7 +100,7 @@ export const MEALS: MenuItem[] = [
     category: "meal",
     name: "Chinese-Style Quinoa Chow Mein Bowl",
     price: MEAL_BASE,
-    image: meals,
+    image: quinoaChowMeinAsset.url,
     description:
       "Fluffy quinoa sautéed chow mein–style with chunky vegetables, served with oven-baked Chinese-style chicken for a clean, full-flavoured, protein-rich plate.",
     benefits: "Proper. Full-Flavoured.",
@@ -103,7 +111,7 @@ export const MEALS: MenuItem[] = [
     category: "meal",
     name: "Sweet Potato Basil Mash with Chimichurri Chicken",
     price: MEAL_BASE,
-    image: meals,
+    image: sweetPotatoBasilAsset.url,
     description:
       "Creamy sweet potato and basil mash served with sautéed garlic-parsley vegetables, grilled chicken, fresh chimichurri, and a light topping of alfalfa or broccoli sprouts.",
     benefits: "Wholesome. Homestyle.",
@@ -114,7 +122,7 @@ export const MEALS: MenuItem[] = [
     category: "meal",
     name: "Cumin Basmati Rice with Tandoori Chicken",
     price: MEAL_BASE,
-    image: meals,
+    image: cuminBasmatiAsset.url,
     description:
       "Cumin-infused basmati rice served with Indian-spiced oven-roasted vegetables and topped with tender tandoori-style chicken.",
     benefits: "Hearty. Well-Seasoned.",
@@ -125,7 +133,7 @@ export const MEALS: MenuItem[] = [
     category: "meal",
     name: "Roasted Vegetable Medley with Thai Butter Chicken",
     price: MEAL_BASE,
-    image: meals,
+    image: sweetPotatoBasilAsset.url,
     description:
       "A hearty roasted vegetable medley served with our in-house Thai butter chicken — rich, savoury and balanced with warm Thai-inspired flavour.",
     benefits: "Rich. Nourishing.",

@@ -1,11 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import salads from "@/assets/section-salads.jpg";
-import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
+import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 
 const ALL = [
-  { key: "salad", to: "/salads", title: "Custom Salads", image: salads },
-  { key: "meal", to: "/meals", title: "Healthy Meals", image: meals },
+  { key: "salad", to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE },
+  { key: "meal", to: "/meals", title: "Healthy Meals", image: MEAL_FEATURE_IMAGE },
   { key: "juice", to: "/juices", title: "Cold-Pressed Juices", image: juices },
 ] as const;
 

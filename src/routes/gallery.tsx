@@ -1,25 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
-import salads from "@/assets/section-salads.jpg";
-import meals from "@/assets/section-meals.jpg";
 import juices from "@/assets/section-juices.jpg";
 import kitchen from "@/assets/gallery-kitchen.jpg";
 import produce from "@/assets/gallery-produce.jpg";
 import fish from "@/assets/gallery-fish.jpg";
 import hero from "@/assets/hero-salad.jpg";
-
-export const Route = createFileRoute("/gallery")({
-  head: () => ({ meta: [
-    { title: "Gallery | Fine Time for Cathy's" },
-    { name: "description", content: "Food, kitchen, and behind-the-scenes photography." },
-  ]}),
-  component: Gallery,
-});
-
+import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
+...
 const IMAGES = [
   { src: hero, caption: "Signature Grilled Chicken Garden Salad" },
-  { src: salads, caption: "House salad of the day" },
-  { src: meals, caption: "Wellness bowl" },
+  { src: SALAD_FEATURE_IMAGE, caption: "Chef's Choice salad" },
+  { src: MEAL_FEATURE_IMAGE, caption: "Healthy meal favourite" },
   { src: fish, caption: "Baked fish clean plate" },
   { src: juices, caption: "Cold-pressed trio" },
   { src: produce, caption: "Fresh from the market" },
