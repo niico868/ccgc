@@ -33,16 +33,17 @@ export function MenuCard({ item }: { item: MenuItem }) {
   };
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition hover:shadow-soft">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)]">
       <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
         <img
           src={item.image}
           alt={item.name}
           loading="lazy"
-          className="h-full w-full object-cover transition duration-700 hover:scale-105"
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
           style={item.category === "juice" ? { objectPosition: "center 70%" } : undefined}
         />
       </div>
+      <div className="flex h-1 w-full bg-[linear-gradient(90deg,#F6E96B_0%,#A9D95A_55%,#2F7D32_100%)]" />
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-display text-lg leading-tight text-leaf-deep">{item.name}</h3>
@@ -129,7 +130,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
           </div>
           <button
             onClick={onAdd}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-leaf-deep text-sm font-semibold text-cream transition hover:opacity-90"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#E76F51,#D84A2B)] text-sm font-semibold text-white shadow-[0_10px_24px_rgba(231,111,81,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(231,111,81,0.28)]"
           >
             <ShoppingBasket className="h-4 w-4" /> Add to Basket
           </button>

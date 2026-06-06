@@ -7,6 +7,7 @@ import { MinimumNotice } from "./MinimumNotice";
 import { WhatsAppButton } from "./WhatsAppButton";
 import { OrderingAccordion, CompactPageHeader } from "./OrderingAccordion";
 import { FirstTimerCard } from "./OrderRules";
+import { BuildYourOwnSaladDialog } from "./BuildYourOwnSaladDialog";
 import { SALADS, MEALS, JUICES, type MenuItem } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 
@@ -65,18 +66,15 @@ export function CategoryMenuView({ active }: { active: Key }) {
   const [shown, setShown] = useState<Key>(active);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Sync when URL changes (parent route remounts with different active)
   useEffect(() => { setShown(active); }, [active]);
 
   const goTo = (k: Key) => {
     if (k === shown) return;
     setShown(k);
     const target = CATEGORIES.find((c) => c.key === k)!;
-    // Update URL without scroll jump.
     navigate({ to: target.to, replace: true });
   };
 
-  // Swipe support
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -113,7 +111,7 @@ export function CategoryMenuView({ active }: { active: Key }) {
       <CompactPageHeader eyebrow={current.eyebrow} title={current.title} intro={current.intro} />
 
       <Section className="pt-6 pb-2">
-        <div className="mx-auto flex max-w-2xl flex-wrap justify-center gap-2 rounded-full border border-border bg-cream p-1.5 shadow-card">
+        <div className="mx-auto flex max-w-2xl flex-wrap justify-center gap-2 rounded-full border border-white/60 bg-white/65 p-1.5 shadow-card backdrop-blur">
           {CATEGORIES.map((c) => {
             const isActive = c.key === shown;
             return (
@@ -134,7 +132,6 @@ export function CategoryMenuView({ active }: { active: Key }) {
         <p className="mt-3 text-center text-[11px] text-muted-foreground sm:hidden">Tip: swipe left or right to switch sections.</p>
       </Section>
 
-      {/* All three sections preloaded; only the active one is visible. */}
       <div className="relative">
         {CATEGORIES.map((c) => (
           <div key={c.key} className={c.key === shown ? "" : "hidden"} aria-hidden={c.key !== shown}>
@@ -149,6 +146,11 @@ export function CategoryMenuView({ active }: { active: Key }) {
                 >
                   <Section className="pt-6 pb-4">
                     <MinimumNotice kind={c.minKind} />
+                    {shown === "salad" && (
+                      <div className="mt-5 flex justify-center">
+                        <BuildYourOwnSaladDialog />
+                      </div>
+                    )}
                   </Section>
                   <Section className="pb-10">
                     <motion.div
@@ -189,7 +191,6 @@ export function CategoryMenuView({ active }: { active: Key }) {
       )}
       <Section className="pb-14"><OrderingAccordion /></Section>
 
-      {/* Hidden cross-links for SEO / preloading */}
       <nav className="sr-only" aria-label="All menu sections">
         {CATEGORIES.map((c) => (
           <Link key={c.to} to={c.to}>{c.label}</Link>

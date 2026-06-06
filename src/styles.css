@@ -40,6 +40,8 @@
   --color-brown: var(--brown);
   --color-coral: var(--coral);
   --color-wa: var(--wa);
+  --color-lime: var(--lime);
+  --color-charcoal-green: var(--charcoal-green);
 
   --font-display: "DM Serif Display", Georgia, serif;
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
@@ -51,65 +53,69 @@
 
 :root {
   --radius: 1rem;
-
-  /* Brand palette — warm cream, deep leaf, fresh herb, sunlit yellow, soft coral, charcoal green */
   --cream: #FFF8EA;
-  --leaf-deep: #1F5A35;   /* Deep Leaf Green */
+  --leaf-deep: #1F5A35;
   --leaf: #1F5A35;
-  --leaf-soft: #6FAF6B;   /* Fresh Herb Green */
-  --citrus: #E9C94C;      /* Sunlit Yellow */
-  --coral: #E76F51;       /* Soft Citrus Coral */
+  --leaf-soft: #6FAF6B;
+  --lime: #A7D948;
+  --citrus: #E9C94C;
+  --coral: #E76F51;
   --tomato: #E76F51;
   --brown: #6B4A2B;
   --wa: #2F8C57;
+  --charcoal-green: #263328;
 
   --background: #FFF8EA;
-  --foreground: #263328;  /* Charcoal Green */
-
+  --foreground: #263328;
   --card: #FFFDF6;
   --card-foreground: #263328;
   --popover: #FFFDF6;
   --popover-foreground: #263328;
-
   --primary: #1F5A35;
   --primary-foreground: #FFF8EA;
-
   --secondary: #F4ECD6;
   --secondary-foreground: #1F5A35;
-
   --muted: #F4ECD6;
   --muted-foreground: #6B6A5F;
-
   --accent: #E9C94C;
   --accent-foreground: #263328;
-
   --destructive: #C84A2E;
   --destructive-foreground: #FFF8EA;
-
   --border: #E4D9BD;
   --input: #E4D9BD;
   --ring: #6FAF6B;
-
-  --chart-1: #1F5A35;
-  --chart-2: #6FAF6B;
-  --chart-3: #E9C94C;
-  --chart-4: #E76F51;
-  --chart-5: #6B4A2B;
 }
 
 @layer base {
   * { border-color: var(--color-border); }
   html { scroll-behavior: smooth; }
   body {
-    background-color: var(--color-background);
+    background:
+      radial-gradient(circle at top left, rgba(246, 233, 107, 0.28), transparent 22%),
+      radial-gradient(circle at top right, rgba(167, 217, 72, 0.22), transparent 24%),
+      linear-gradient(160deg, #FFFDF2 0%, #E9F7D3 45%, #B7DB72 100%);
+    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-optical-sizing: auto;
   }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 10% 18%, rgba(111, 175, 107, 0.12) 0, rgba(111, 175, 107, 0.12) 2px, transparent 2px),
+      radial-gradient(circle at 82% 30%, rgba(233, 201, 76, 0.1) 0, rgba(233, 201, 76, 0.1) 2px, transparent 2px),
+      radial-gradient(circle at 32% 78%, rgba(31, 90, 53, 0.06) 0, rgba(31, 90, 53, 0.06) 1.5px, transparent 1.5px);
+    background-size: 180px 180px, 220px 220px, 200px 200px;
+    opacity: 0.45;
+    z-index: -1;
+  }
   h1, h2, h3, h4, h5, .text-display {
     font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
 }
 

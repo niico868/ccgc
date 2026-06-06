@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@/assets/logo.png";
+import logoAsset from "@/assets/ccgc-logo.png.asset.json";
 
 const NAV = [
   { to: "/salads", label: "Salads" },
@@ -19,7 +19,7 @@ const NAV = [
   { to: "/gallery", label: "Gallery" },
   { to: "/faq", label: "FAQ" },
   { to: "/contact", label: "Contact" },
-];
+] as const;
 
 export function Header() {
   const { count, minMet } = useBasket();
@@ -40,16 +40,15 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-cream/95 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
-        <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-card ring-1 ring-border shadow-card">
-            <img src={logo} alt="Fine Time for Cathy's Clean Green Classics" className="h-10 w-10 object-contain" />
+    <header className="sticky top-0 z-40 border-b border-white/50 bg-white/78 backdrop-blur-xl">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
+        <Link to="/" className="flex min-w-0 items-center gap-3" onClick={() => setOpen(false)}>
+          <div className="relative flex items-center justify-center rounded-[28px] bg-[radial-gradient(circle_at_center,rgba(246,233,107,0.55)_0%,rgba(183,232,91,0.2)_45%,transparent_75%)] px-1 py-0.5">
+            <img src={logoAsset.url} alt="Fine Time for Cathy's Clean Green Classics" className="h-16 w-auto object-contain sm:h-18 lg:h-20" />
           </div>
-          <div className="leading-none">
-            <div className="font-script text-2xl text-leaf-deep lg:text-3xl">
-              Fine Time for Cathy's Clean Green Classics
-            </div>
+          <div className="hidden min-w-0 leading-none sm:block">
+            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-deep/85">Radiant Green Kitchen</div>
+            <div className="mt-1 text-xs text-foreground/65">Fresh homemade food from Trinidad &amp; Tobago</div>
           </div>
         </Link>
 
@@ -70,7 +69,7 @@ export function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-leaf-deep/40 bg-cream text-leaf-deep transition hover:border-leaf-deep"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-leaf-deep/25 bg-white/70 text-leaf-deep transition hover:border-leaf-deep"
                 aria-label="Account menu"
               >
                 <User className="h-4 w-4" />
@@ -79,7 +78,7 @@ export function Header() {
             <DropdownMenuContent align="end" className="w-56">
               {email ? (
                 <>
-                  <div className="px-2 py-1.5 text-xs text-muted-foreground truncate">{email}</div>
+                  <div className="truncate px-2 py-1.5 text-xs text-muted-foreground">{email}</div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild><Link to="/account">My account</Link></DropdownMenuItem>
                   <DropdownMenuItem onClick={signOut}>Sign out</DropdownMenuItem>
@@ -95,7 +94,7 @@ export function Header() {
 
           <Link
             to="/basket"
-            className="relative inline-flex h-10 items-center gap-2 rounded-full border border-leaf-deep/40 bg-cream px-4 text-sm font-semibold text-leaf-deep transition hover:border-leaf-deep"
+            className="relative inline-flex h-10 items-center gap-2 rounded-full border border-leaf-deep/25 bg-white/70 px-4 text-sm font-semibold text-leaf-deep transition hover:border-leaf-deep"
           >
             <ShoppingBasket className="h-4 w-4" />
             <span className="hidden sm:inline">Basket</span>
@@ -112,7 +111,7 @@ export function Header() {
           </Link>
           <button
             onClick={() => setOpen((o) => !o)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border xl:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white/60 xl:hidden"
             aria-label="Menu"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -121,7 +120,7 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="border-t border-border bg-cream xl:hidden">
+        <div className="border-t border-border bg-white/92 xl:hidden">
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-1 px-4 py-3">
             {NAV.map((n) => (
               <Link
