@@ -5,9 +5,10 @@ import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { toast } from "sonner";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, BadgePercent } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/checkout")({
@@ -15,11 +16,15 @@ export const Route = createFileRoute("/checkout")({
   component: Checkout,
 });
 
+type WelcomeCode = { id: string; code: string; percent: number };
+
 function Checkout() {
   const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount } = useBasket();
   const navigate = useNavigate();
   const [done, setDone] = useState(false);
   const [lastMsg, setLastMsg] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
+  const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
     fulfillment: "Delivery" as "Delivery" | "Pickup",
@@ -33,8 +38,36 @@ function Checkout() {
     if (lines.length === 0 && !done) navigate({ to: "/basket" });
   }, [lines.length, done, navigate]);
 
+  // Autofill from profile + load first-order discount
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setUserId(user.id);
+      const [{ data: p }, { data: existingOrders }, { data: codes }] = await Promise.all([
+        supabase.from("profiles").select("first_name,last_name,email,phone").eq("id", user.id).maybeSingle(),
+        supabase.from("orders").select("id", { count: "exact" }).limit(1),
+        supabase.from("discount_codes").select("id,code,percent,redeemed_at").is("redeemed_at", null).order("created_at", { ascending: true }).limit(1),
+      ]);
+      if (p) {
+        const name = [p.first_name, p.last_name].filter(Boolean).join(" ").trim();
+        setForm((f) => ({
+          ...f,
+          name: f.name || name,
+          email: f.email || p.email || user.email || "",
+          phone: f.phone || p.phone || "",
+        }));
+      }
+      const isFirstOrder = !existingOrders || existingOrders.length === 0;
+      if (isFirstOrder && codes && codes.length > 0) {
+        setWelcome({ id: codes[0].id, code: codes[0].code, percent: codes[0].percent });
+      }
+    })();
+  }, []);
+
   const deliveryFee = form.fulfillment === "Delivery" ? 40 : 0;
-  const total = subtotal + deliveryFee;
+  const discountAmount = welcome ? Math.round(subtotal * (welcome.percent / 100) * 100) / 100 : 0;
+  const total = Math.max(0, subtotal + deliveryFee - discountAmount);
   const input = "h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none focus:border-leaf-deep";
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -46,7 +79,9 @@ function Checkout() {
     if (l.protein) parts.push(`(${l.protein})`);
     if (l.seafood) parts.push("[seafood]");
     if (l.preferences) parts.push(`[no: ${l.preferences}]`);
-    return `• ${parts.join(" ")}`;
+    let line = `• ${parts.join(" ")}`;
+    if (l.notes) line += `\n    ↳ ${l.notes}`;
+    return line;
   }).join("\n"), [lines]);
 
   const submit = (e: React.FormEvent) => {
@@ -56,6 +91,10 @@ function Checkout() {
       return;
     }
     const orderId = "CGCC-" + Date.now().toString(36).toUpperCase();
+
+    const discountLine = welcome
+      ? `\nDiscount: ${welcome.code} (${welcome.percent}% off)`
+      : "";
 
     const msg = `Hi Cathy, I'd like to confirm my order from Fine Time for Cathy's Clean Green Classics.
 
@@ -67,7 +106,7 @@ Email: ${form.email || "-"}
 
 Order:
 ${orderLines}
-
+${discountLine}
 Fulfillment: ${form.fulfillment}
 Pickup Location: ${form.fulfillment === "Pickup" ? form.pickup : "-"}
 Delivery Address: ${form.fulfillment === "Delivery" ? form.address : "-"}
@@ -77,41 +116,42 @@ Notes: ${form.notes || "-"}
 
 Placed through the website. Please confirm the final total.`;
 
-    // Open WhatsApp SYNCHRONOUSLY inside the click handler to avoid popup blockers.
     const url = `https://wa.me/18684884248?text=${encodeURIComponent(msg)}`;
     const win = window.open(url, "_blank", "noopener,noreferrer");
     if (!win) window.location.href = url;
 
     setLastMsg(msg);
-    const order = { orderId, ...form, lines, subtotal, deliveryFee, total, at: new Date().toISOString() };
+    const order = { orderId, ...form, lines, subtotal, deliveryFee, discountAmount, discountCode: welcome?.code ?? null, total, at: new Date().toISOString() };
     try {
       const existing = JSON.parse(localStorage.getItem("cgcc.orders") || "[]");
       existing.push(order);
       localStorage.setItem("cgcc.orders", JSON.stringify(existing));
     } catch {}
 
-    import("@/integrations/supabase/client").then(({ supabase }) => {
-      supabase.auth.getUser().then(({ data }) => {
-        if (data.user) {
-          supabase.from("orders").insert({
-            user_id: data.user.id,
-            order_ref: orderId,
-            customer_name: form.name,
-            phone: form.phone,
-            email: form.email || null,
-            fulfillment: form.fulfillment,
-            pickup_location: form.fulfillment === "Pickup" ? form.pickup : null,
-            delivery_address: form.fulfillment === "Delivery" ? form.address : null,
-            payment_method: form.payment,
-            notes: form.notes || null,
-            items: lines as unknown as Json,
-            subtotal,
-            delivery_fee: deliveryFee,
-            total,
-          }).then(() => {});
+    if (userId) {
+      supabase.from("orders").insert({
+        user_id: userId,
+        order_ref: orderId,
+        customer_name: form.name,
+        phone: form.phone,
+        email: form.email || null,
+        fulfillment: form.fulfillment,
+        pickup_location: form.fulfillment === "Pickup" ? form.pickup : null,
+        delivery_address: form.fulfillment === "Delivery" ? form.address : null,
+        payment_method: form.payment,
+        notes: form.notes || null,
+        items: lines as unknown as Json,
+        subtotal,
+        delivery_fee: deliveryFee,
+        discount_code: welcome?.code ?? null,
+        discount_amount: discountAmount,
+        total,
+      }).then(() => {
+        if (welcome) {
+          supabase.from("discount_codes").update({ redeemed_at: new Date().toISOString() }).eq("id", welcome.id).then(() => {});
         }
       });
-    });
+    }
 
     setDone(true);
     clear();
@@ -139,6 +179,16 @@ Placed through the website. Please confirm the final total.`;
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
       <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you over to WhatsApp to lock it in with Cathy.</p>
+
+      {welcome && (
+        <div className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.4),rgba(167,217,72,0.18))] px-5 py-4 shadow-[0_10px_24px_rgba(31,90,53,0.12)]">
+          <BadgePercent className="h-6 w-6 shrink-0 text-leaf-deep" />
+          <div className="text-sm text-leaf-deep">
+            <div className="font-bold">Welcome gift: <span className="font-mono">{welcome.code}</span> ({welcome.percent}% off) is applied to this order.</div>
+            <div className="text-xs text-brown">One-time first-order discount — used on this purchase.</div>
+          </div>
+        </div>
+      )}
 
       {!minMet && (
         <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm">
@@ -215,6 +265,7 @@ Placed through the website. Please confirm the final total.`;
                   )}
                   {l.seafood && <span className="block text-xs text-brown">Seafood</span>}
                   {l.preferences && <span className="block text-xs text-muted-foreground">No: {l.preferences}</span>}
+                  {l.notes && <span className="block text-xs text-muted-foreground">{l.notes}</span>}
                 </span>
                 <span className="font-bold">{PRICELESS}</span>
               </li>
@@ -223,6 +274,9 @@ Placed through the website. Please confirm the final total.`;
           <div className="border-t border-border pt-3 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{PRICELESS}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{PRICELESS}</span></div>
+            {welcome && (
+              <div className="flex justify-between text-leaf-deep"><span>Discount ({welcome.percent}%)</span><span>−{PRICELESS}</span></div>
+            )}
             <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>{PRICELESS}</span></div>
           </div>
           <button
