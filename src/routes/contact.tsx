@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { Clock, Instagram, Mail, MapPin, MessageCircle, Phone, Truck } from "lucide-react";
 import { waLink } from "@/lib/whatsapp";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [
@@ -17,6 +18,22 @@ function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: p } = await supabase.from("profiles").select("first_name,last_name,email,phone").eq("id", user.id).maybeSingle();
+      if (!p) return;
+      const name = [p.first_name, p.last_name].filter(Boolean).join(" ").trim();
+      setForm((f) => ({
+        name: f.name || name,
+        email: f.email || p.email || user.email || "",
+        phone: f.phone || p.phone || "",
+        message: f.message,
+      }));
+    })();
+  }, []);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();

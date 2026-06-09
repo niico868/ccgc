@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Quote, Truck } from "lucide-react";
+import { ArrowRight, Clock, Truck } from "lucide-react";
 import hero from "@/assets/hero-salad.jpg";
 import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE, JUICE_FEATURE_IMAGE } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { Section } from "@/components/site/Section";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { StickyNote } from "@/components/site/StickyNote";
+import { Reviews } from "@/components/site/Reviews";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,11 +24,6 @@ const SECTIONS = [
   { to: "/juices", title: "Cold-Pressed Juices", image: JUICE_FEATURE_IMAGE, desc: "Pressed fresh from clean produce — to lift, restore and refresh.", benefit: "Fresh. Pure.", objectPosition: "center 60%" },
 ];
 
-const REVIEWS = [
-  { name: "Aaliyah R.", text: "The Broccoli Power Bowl is the best lunch in my week. Fresh, filling, beautifully packed." },
-  { name: "Marcus D.", text: "Cathy's juices taste like they were pressed five minutes before they reached me." },
-  { name: "Simone J.", text: "Proper food, beautifully done. Everyone at the table asked who made it." },
-];
 
 function Home() {
   return (
@@ -104,15 +100,7 @@ function Home() {
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">Loved by regulars</div>
           <h2 className="mt-2 text-display text-3xl text-leaf-deep lg:text-4xl">What our community is saying</h2>
         </div>
-        <div className="grid gap-5 md:grid-cols-3">
-          {REVIEWS.map((r) => (
-            <figure key={r.name} className="rounded-[26px] border border-leaf-soft/20 bg-white/85 p-7 shadow-[0_18px_35px_rgba(31,90,53,0.1)] backdrop-blur-sm">
-              <Quote className="h-7 w-7 text-citrus" />
-              <blockquote className="mt-3 text-sm leading-relaxed text-foreground/90">\"{r.text}\"</blockquote>
-              <figcaption className="mt-4 text-xs font-semibold uppercase tracking-wider text-brown">{r.name}</figcaption>
-            </figure>
-          ))}
-        </div>
+        <Reviews />
       </Section>
     </>
   );
