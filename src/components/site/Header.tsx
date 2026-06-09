@@ -25,12 +25,24 @@ export function Header() {
   const { count, minMet } = useBasket();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
   const badgeReady = count > 0 && minMet;
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user.email ?? null));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setEmail(s?.user.email ?? null));
+    const sync = async (uid?: string | null) => {
+      if (!uid) { setIsAdmin(false); return; }
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).eq("role", "admin");
+      setIsAdmin((data ?? []).length > 0);
+    };
+    supabase.auth.getSession().then(({ data }) => {
+      setEmail(data.session?.user.email ?? null);
+      sync(data.session?.user.id ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setEmail(s?.user.email ?? null);
+      sync(s?.user.id ?? null);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -81,6 +93,7 @@ export function Header() {
                   <div className="truncate px-2 py-1.5 text-xs text-muted-foreground">{email}</div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild><Link to="/account">My account</Link></DropdownMenuItem>
+                  {isAdmin && <DropdownMenuItem asChild><Link to="/admin">Admin · Reviews</Link></DropdownMenuItem>}
                   <DropdownMenuItem onClick={signOut}>Sign out</DropdownMenuItem>
                 </>
               ) : (

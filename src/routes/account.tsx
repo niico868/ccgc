@@ -10,8 +10,13 @@ export const Route = createFileRoute("/account")({
 });
 
 type Profile = { first_name: string | null; last_name: string | null; email: string | null; phone: string | null };
-type Order = { id: string; order_ref: string; total: number; status: string; created_at: string };
-type Discount = { id: string; code: string; percent: number; created_at: string };
+type OrderItem = { name?: string; quantity?: number; size?: string; protein?: string; seafood?: boolean; preferences?: string; notes?: string; category?: string };
+type Order = {
+  id: string; order_ref: string; total: number; status: string; created_at: string;
+  items: OrderItem[] | null; fulfillment: string | null; pickup_location: string | null;
+  delivery_address: string | null; discount_code: string | null; discount_amount: number | null;
+};
+type Discount = { id: string; code: string; percent: number; created_at: string; redeemed_at: string | null };
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -26,8 +31,8 @@ function AccountPage() {
       if (!user) { navigate({ to: "/auth", search: { mode: "signin" } }); return; }
       const [{ data: p }, { data: o }, { data: c }] = await Promise.all([
         supabase.from("profiles").select("first_name,last_name,email,phone").eq("id", user.id).maybeSingle(),
-        supabase.from("orders").select("id,order_ref,total,status,created_at").order("created_at", { ascending: false }),
-        supabase.from("discount_codes").select("id,code,percent,created_at").order("created_at", { ascending: false }),
+        supabase.from("orders").select("id,order_ref,total,status,created_at,items,fulfillment,pickup_location,delivery_address,discount_code,discount_amount").order("created_at", { ascending: false }),
+        supabase.from("discount_codes").select("id,code,percent,created_at,redeemed_at").order("created_at", { ascending: false }),
       ]);
       setProfile(p as Profile | null);
       setOrders((o ?? []) as Order[]);
@@ -57,13 +62,13 @@ function AccountPage() {
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
         <div className="text-display text-lg text-leaf-deep">Saved discount codes</div>
         {codes.length === 0 ? (
-          <p className="mt-2 text-sm text-brown">No codes saved yet. Keep an eye out for our signup offer.</p>
+          <p className="mt-2 text-sm text-brown">No codes saved yet.</p>
         ) : (
           <ul className="mt-3 space-y-2 text-sm">
             {codes.map((c) => (
-              <li key={c.id} className="flex justify-between rounded-xl border border-leaf-soft/30 bg-leaf-soft/10 px-4 py-2 font-mono">
+              <li key={c.id} className={`flex justify-between rounded-xl border px-4 py-2 font-mono ${c.redeemed_at ? "border-border bg-muted text-muted-foreground line-through" : "border-leaf-soft/30 bg-leaf-soft/10"}`}>
                 <span className="font-bold text-leaf-deep">{c.code}</span>
-                <span className="text-brown">{c.percent}% off</span>
+                <span className="text-brown">{c.percent}% off {c.redeemed_at ? "· used" : ""}</span>
               </li>
             ))}
           </ul>
@@ -77,15 +82,38 @@ function AccountPage() {
         ) : (
           <ul className="mt-3 divide-y divide-border text-sm">
             {orders.map((o) => (
-              <li key={o.id} className="flex items-center justify-between py-3">
-                <div>
-                  <div className="font-semibold text-leaf-deep">{o.order_ref}</div>
-                  <div className="text-xs text-brown">{new Date(o.created_at).toLocaleString()}</div>
+              <li key={o.id} className="py-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-leaf-deep">{o.order_ref}</div>
+                    <div className="text-xs text-brown">{new Date(o.created_at).toLocaleString()}</div>
+                    {o.fulfillment && (
+                      <div className="mt-0.5 text-xs text-brown">
+                        {o.fulfillment}{o.pickup_location ? ` · ${o.pickup_location}` : ""}{o.delivery_address ? ` · ${o.delivery_address}` : ""}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-leaf-deep">{PRICELESS}</div>
+                    <div className="text-xs text-brown capitalize">{o.status}</div>
+                    {o.discount_code && (
+                      <div className="text-[11px] font-semibold text-leaf-soft">Code {o.discount_code} applied</div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-bold text-leaf-deep">{PRICELESS}</div>
-                  <div className="text-xs text-brown capitalize">{o.status}</div>
-                </div>
+                {Array.isArray(o.items) && o.items.length > 0 && (
+                  <ul className="mt-3 space-y-1 rounded-xl bg-secondary/40 p-3 text-xs text-foreground/85">
+                    {o.items.map((it, i) => (
+                      <li key={i}>
+                        <span className="font-semibold">{it.quantity ?? 1} × {it.name ?? "Item"}</span>
+                        {(it.size || it.protein) && <span className="text-brown"> · {[it.size, it.protein].filter(Boolean).join(" / ")}</span>}
+                        {it.seafood && <span className="text-brown"> · seafood</span>}
+                        {it.preferences && <div className="text-brown">No: {it.preferences}</div>}
+                        {it.notes && <div className="text-brown">{it.notes}</div>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
