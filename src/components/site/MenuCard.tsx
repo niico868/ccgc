@@ -2,19 +2,23 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
-import { PRICELESS, SEAFOOD_LABELS, SEAFOOD_SURCHARGE } from "@/lib/menu-data";
-import { Minus, Plus, ShoppingBasket } from "lucide-react";
+import { PRICELESS, SEAFOOD_LABELS, SEAFOOD_SURCHARGE, SALAD_INGREDIENTS } from "@/lib/menu-data";
+import { Minus, Plus, ShoppingBasket, ChevronDown } from "lucide-react";
 
 export function MenuCard({ item }: { item: MenuItem }) {
   const { add } = useBasket();
   const [protein, setProtein] = useState(item.proteinOptions?.[0] ?? "");
   const [sizeIdx, setSizeIdx] = useState(0);
-  const [preferences, setPreferences] = useState("");
+  const [excluded, setExcluded] = useState<string[]>([]);
+  const [exclOpen, setExclOpen] = useState(false);
   const [qty, setQty] = useState(1);
 
   const size = item.sizes?.[sizeIdx];
   const seafood = !!protein && SEAFOOD_LABELS.includes(protein);
   const unitPrice = (size ? size.price : item.price) + (seafood ? SEAFOOD_SURCHARGE : 0);
+
+  const toggleExcluded = (ing: string) =>
+    setExcluded((p) => (p.includes(ing) ? p.filter((x) => x !== ing) : [...p, ing]));
 
   const onAdd = () => {
     add({
@@ -26,14 +30,14 @@ export function MenuCard({ item }: { item: MenuItem }) {
       protein: protein || undefined,
       size: size?.label || item.fixedSize,
       seafood,
-      preferences: preferences.trim() || undefined,
+      preferences: excluded.length ? excluded.join(", ") : undefined,
     });
     toast.success(`${qty} × ${item.name} added`);
     setQty(1);
   };
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)]">
       <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
         <img
           src={item.image}
@@ -63,7 +67,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
                   key={s.label}
                   type="button"
                   onClick={() => setSizeIdx(i)}
-                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition active:scale-95 ${
                     sizeIdx === i ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-background hover:border-leaf-deep"
                   }`}
                 >
@@ -83,7 +87,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
                   key={p}
                   type="button"
                   onClick={() => setProtein(p)}
-                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition active:scale-95 ${
                     protein === p ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-background hover:border-leaf-deep"
                   }`}
                 >
@@ -95,16 +99,44 @@ export function MenuCard({ item }: { item: MenuItem }) {
         )}
 
         {item.category === "salad" && (
-          <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Anything you'd rather we leave out
-            </label>
-            <input
-              value={preferences}
-              onChange={(e) => setPreferences(e.target.value)}
-              placeholder="e.g. no olives, no onions"
-              className="mt-1 h-10 w-full rounded-xl border border-border bg-background px-3 text-xs outline-none focus:border-leaf-deep"
-            />
+          <div className="rounded-xl border border-border bg-background">
+            <button
+              type="button"
+              onClick={() => setExclOpen((o) => !o)}
+              className="flex w-full items-center justify-between px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-leaf-deep"
+              aria-expanded={exclOpen}
+            >
+              <span>
+                Ingredients to leave out
+                {excluded.length > 0 && (
+                  <span className="ml-2 rounded-full bg-leaf-deep px-2 py-0.5 text-[10px] text-cream">{excluded.length}</span>
+                )}
+              </span>
+              <ChevronDown className={`h-4 w-4 transition ${exclOpen ? "rotate-180" : ""}`} />
+            </button>
+            {exclOpen && (
+              <div className="grid max-h-44 grid-cols-2 gap-1 overflow-y-auto border-t border-border p-2 animate-fade-in">
+                {SALAD_INGREDIENTS.map((ing) => {
+                  const active = excluded.includes(ing);
+                  return (
+                    <label
+                      key={ing}
+                      className={`flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs transition ${
+                        active ? "bg-leaf-deep/10 text-leaf-deep" : "hover:bg-secondary"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={active}
+                        onChange={() => toggleExcluded(ing)}
+                        className="h-3.5 w-3.5 accent-[var(--leaf-deep)]"
+                      />
+                      <span>{ing}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -114,7 +146,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
               type="button"
               onClick={() => setQty((q) => Math.max(1, q - 1))}
               aria-label="Decrease quantity"
-              className="inline-flex h-10 w-10 items-center justify-center text-leaf-deep hover:text-leaf-soft"
+              className="inline-flex h-10 w-10 items-center justify-center text-leaf-deep transition hover:text-leaf-soft active:scale-90"
             >
               <Minus className="h-4 w-4" />
             </button>
@@ -123,14 +155,14 @@ export function MenuCard({ item }: { item: MenuItem }) {
               type="button"
               onClick={() => setQty((q) => q + 1)}
               aria-label="Increase quantity"
-              className="inline-flex h-10 w-10 items-center justify-center text-leaf-deep hover:text-leaf-soft"
+              className="inline-flex h-10 w-10 items-center justify-center text-leaf-deep transition hover:text-leaf-soft active:scale-90"
             >
               <Plus className="h-4 w-4" />
             </button>
           </div>
           <button
             onClick={onAdd}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#E76F51,#D84A2B)] text-sm font-semibold text-white shadow-[0_10px_24px_rgba(231,111,81,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(231,111,81,0.28)]"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-leaf-deep text-sm font-semibold text-cream shadow-[0_10px_24px_rgba(31,90,53,0.25)] transition duration-200 hover:-translate-y-0.5 hover:bg-[color-mix(in_oklab,var(--leaf-deep)_88%,white)] hover:shadow-[0_14px_28px_rgba(31,90,53,0.3)] active:scale-[0.98]"
           >
             <ShoppingBasket className="h-4 w-4" /> Add to Basket
           </button>
