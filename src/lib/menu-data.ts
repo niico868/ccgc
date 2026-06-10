@@ -39,8 +39,32 @@ export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
 export const SEAFOOD_SURCHARGE = 5;
 
-const SALAD_BASE = 40;
-const MEAL_BASE = 45;
+const SALAD_BASE = 45;
+const MEAL_BASE = 50;
+
+/** Ingredients commonly found in CCGC salads — used by the "leave out" dropdown. */
+export const SALAD_INGREDIENTS = [
+  "Romaine lettuce",
+  "Mixed greens",
+  "Spinach",
+  "Broccoli florets",
+  "Cucumber",
+  "Sweet corn",
+  "Cherry tomatoes",
+  "Bell peppers",
+  "Red onion",
+  "Pickled onion",
+  "Carrots",
+  "Avocado",
+  "Chickpeas",
+  "Quinoa",
+  "Boiled egg",
+  "Feta",
+  "Olives",
+  "Roasted vegetables",
+  "Seasonal fruit",
+  "Toasted seeds",
+] as const;
 
 export const SALAD_FEATURE_IMAGE = grilledSaladAsset.url;
 export const MEAL_FEATURE_IMAGE = roastedVegetableMealAsset.url;
@@ -146,40 +170,58 @@ export const MEALS: MenuItem[] = [
   },
 ];
 
+/**
+ * Juice prices reflect per-bottle equivalents from bulk packs:
+ *   - 300 ml cold-press: $100 / 6 ≈ $17 each (only sold in 6s)
+ *   - Ginger shots: $50 / 6 ≈ $9 each (only sold in 6s)
+ */
 export const JUICES: MenuItem[] = [
   {
     id: "juice-beetroot",
     category: "juice",
     name: "Beetroot",
-    price: 20,
+    price: 17,
     image: beetRootAsset.url,
     description: "Pure pressed beetroot for that deep, earthy lift after a long morning.",
     benefits: "Earthy. Restorative.",
     sizes: [
-      { label: "300 ml", price: 20 },
-      { label: "500 ml", price: 30 },
+      { label: "300 ml", price: 17 },
+      { label: "500 ml", price: 28 },
     ],
   },
   {
     id: "juice-watermelon",
     category: "juice",
     name: "Watermelon",
-    price: 15,
+    price: 17,
     image: watermelonAsset.url,
     description: "Cold-pressed watermelon with a bright, cooling finish that feels crisp and refreshing.",
     benefits: "Cooling. Bright.",
     sizes: [
-      { label: "300 ml", price: 15 },
-      { label: "500 ml", price: 22 },
+      { label: "300 ml", price: 17 },
+      { label: "500 ml", price: 28 },
+    ],
+  },
+  {
+    id: "juice-mixed-veg",
+    category: "juice",
+    name: "Mixed Veg",
+    price: 17,
+    image: beetRootAsset.url,
+    description: "Mixture of fruits and vegetables for that green boost — carrot, pineapple, melon and cucumber.",
+    benefits: "Green Boost. Refreshing.",
+    sizes: [
+      { label: "300 ml", price: 17 },
+      { label: "500 ml", price: 28 },
     ],
   },
   {
     id: "juice-ginger-shot",
     category: "juice",
     name: "Ginger Shot",
-    price: 8,
+    price: 9,
     image: gingerShotAsset.url,
-    description: "A small, potent ginger shot to warm and reset the system.",
+    description: "A small, potent ginger shot to warm and reset the system. Sold in packs of 6.",
     benefits: "Warm. Restoring.",
     fixedSize: "2 oz",
   },

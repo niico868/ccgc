@@ -7,7 +7,7 @@ import { MinimumNotice } from "./MinimumNotice";
 import { WhatsAppButton } from "./WhatsAppButton";
 import { OrderingAccordion, CompactPageHeader } from "./OrderingAccordion";
 import { FirstTimerCard } from "./OrderRules";
-import { BuildYourOwnSaladDialog } from "./BuildYourOwnSaladDialog";
+
 import { SALADS, MEALS, JUICES, type MenuItem } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 
@@ -32,7 +32,7 @@ const CATEGORIES: CategoryDef[] = [
     label: "Salads",
     eyebrow: "Custom Salads",
     title: "Cathy's Clean Green Classics Salads",
-    intro: "Made-to-order salads with your choice of protein. Minimum 5 meals per food order.",
+    intro: "Made-to-order salads with your choice of protein.",
     items: SALADS,
     minKind: "food",
     waMsg: "Hi! I'd like to order salads.",
@@ -43,7 +43,7 @@ const CATEGORIES: CategoryDef[] = [
     label: "Healthy Meals",
     eyebrow: "Healthy Meals",
     title: "Healthy Meals",
-    intro: "Hearty, well-prepared bowls — homestyle done properly. Minimum 5 meals per food order.",
+    intro: "Hearty, well-prepared bowls — homestyle done properly.",
     items: MEALS,
     minKind: "food",
     waMsg: "Hi! I'd like to order healthy meals.",
@@ -54,7 +54,7 @@ const CATEGORIES: CategoryDef[] = [
     label: "Cold-Pressed Juices",
     eyebrow: "Cold-Pressed Juices",
     title: "Pure Cold-Pressed Drinks",
-    intro: "Pressed fresh from clean produce. Minimum 6 drinks per juice order.",
+    intro: "Pressed fresh from clean produce. Diabetic-friendly options.",
     items: JUICES,
     minKind: "drink",
     waMsg: "Hi! I'd like to order cold-pressed juices.",
@@ -146,11 +146,6 @@ export function CategoryMenuView({ active }: { active: Key }) {
                 >
                   <Section className="pt-6 pb-4">
                     <MinimumNotice kind={c.minKind} />
-                    {shown === "salad" && (
-                      <div className="mt-5 flex justify-center">
-                        <BuildYourOwnSaladDialog />
-                      </div>
-                    )}
                   </Section>
                   <Section className="pb-10">
                     <motion.div

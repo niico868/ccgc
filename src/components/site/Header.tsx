@@ -1,6 +1,8 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { Menu, ShoppingBasket, X, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { FOOD_MIN } from "@/lib/menu-data";
 import { useBasket } from "@/lib/basket";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -22,12 +24,23 @@ const NAV = [
 ] as const;
 
 export function Header() {
-  const { count, minMet } = useBasket();
+  const { count, foodCount } = useBasket();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
-  const badgeReady = count > 0 && minMet;
+  const badgeReady = count >= FOOD_MIN;
+  const prevFoodRef = useRef(foodCount);
+
+  useEffect(() => {
+    if (prevFoodRef.current < FOOD_MIN && foodCount >= FOOD_MIN) {
+      toast.success("Basket ready — minimum reached!", {
+        icon: <ShoppingBasket className="h-4 w-4" />,
+        position: "bottom-right",
+      });
+    }
+    prevFoodRef.current = foodCount;
+  }, [foodCount]);
 
   useEffect(() => {
     const sync = async (uid?: string | null) => {
@@ -113,10 +126,10 @@ export function Header() {
             <span className="hidden sm:inline">Basket</span>
             {count > 0 && (
               <span
-                className={`absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white transition ${
-                  badgeReady ? "bg-coral" : "bg-muted-foreground"
+                className={`absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white shadow-md transition ${
+                  badgeReady ? "bg-[#1a9850]" : "bg-[#d73027]"
                 }`}
-                title={badgeReady ? "Ready for checkout" : "Minimum not yet met"}
+                title={badgeReady ? "Ready for checkout" : `Add ${FOOD_MIN - count} more to reach the minimum`}
               >
                 {count}
               </span>

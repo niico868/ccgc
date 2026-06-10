@@ -36,13 +36,13 @@ function Home() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-24 pt-16 text-cream lg:grid-cols-[1.15fr_0.85fr] lg:pb-28 lg:pt-24 lg:px-8">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/45 bg-[rgba(255,248,234,0.78)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-leaf-deep shadow-[0_12px_30px_rgba(31,90,53,0.12)] backdrop-blur-[14px]">
-              Daily orders close at 9AM. Delivery starts at 2PM.
+              Mon &amp; Wed orders close at 8 AM · Delivery 12 PM – 5 PM
             </div>
             <h1 className="mt-5 text-display text-4xl leading-[1.02] text-cream drop-shadow-sm lg:text-6xl">
-              Fresh, radiant food from Cathy's kitchen.
+              Make a healthy start to your day.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-cream/95 lg:text-lg">
-              Homestyle salads, hearty healthy meals and cold-pressed juices — properly made, packed with care, and ready for your next order.
+              Hearty salads and meals with diabetic-friendly cold-pressed juices — properly made, packed with care, and ready for your next order.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to="/salads" className="inline-flex h-12 items-center gap-2 rounded-full bg-[linear-gradient(135deg,#E76F51,#D84A2B)] px-8 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(231,111,81,0.25)] transition hover:-translate-y-0.5">
@@ -64,17 +64,27 @@ function Home() {
 
       <div className="border-b border-border bg-leaf-deep text-cream">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-3 text-center text-sm font-medium lg:px-8">
-          <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-citrus" /> Orders close the day before fulfillment. No same-day orders.</span>
+          <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-citrus" /> Mon &amp; Wed cutoff 8 AM · Other days the day before.</span>
           <span className="hidden h-1 w-1 rounded-full bg-cream/40 sm:inline-block" />
-          <span className="inline-flex items-center gap-2"><Truck className="h-4 w-4 text-citrus" /> Delivery from 2 PM</span>
+          <span className="inline-flex items-center gap-2"><Truck className="h-4 w-4 text-citrus" /> Delivery &amp; pickup 12 PM – 5 PM</span>
         </div>
       </div>
 
-      <Section className="py-20 lg:py-24">
+      <Section className="py-12 lg:py-16">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-leaf-soft/30 bg-cream/80 px-6 py-7 text-center shadow-card backdrop-blur lg:px-10 lg:py-9">
+          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">Catering to shut-ins</div>
+          <h2 className="mt-2 text-display text-2xl text-leaf-deep lg:text-3xl">Meal prep &amp; delivery for those at home</h2>
+          <p className="mt-3 text-sm leading-relaxed text-foreground/80 lg:text-base">
+            We cater to shut-ins — the elderly and health-challenged — with a steady meal-prep and delivery service so a proper, homestyle plate is never far away.
+          </p>
+        </div>
+      </Section>
+
+      <Section className="py-16 lg:py-20">
         <div className="mb-10 text-center">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">On the menu</div>
           <h2 className="mt-2 text-display text-3xl text-leaf-deep lg:text-4xl">Clean Green Classics</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brown">Real food, beautifully made. Minimum 5 meals per food order, 6 drinks per juice order.</p>
+          <p className="mx-auto mt-3 max-w-xl text-brown">Real food, beautifully made.</p>
         </div>
         <div className="mx-auto flex max-w-4xl flex-col gap-5">
           {SECTIONS.map((s) => (
