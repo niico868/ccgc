@@ -30,7 +30,10 @@ function Checkout() {
     fulfillment: "Delivery" as "Delivery" | "Pickup",
     pickup: "St Clair (11 AM to 1 PM)",
     address: "",
-    payment: "Bank Transfer" as "Cash" | "Bank Transfer" | "Online Card Payment",
+    deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
+    payment: "Bank Transfer" as "Cash" | "Bank Transfer",
+    splitDelivery: false,
+    splitNotes: "",
     notes: "",
   });
 
@@ -65,13 +68,15 @@ function Checkout() {
     })();
   }, []);
 
-  const deliveryFee = form.fulfillment === "Delivery" ? 40 : 0;
+  const deliveryFee = form.fulfillment === "Delivery"
+    ? (form.deliveryZone === "Trincity & environs" ? 20 : 30)
+    : 0;
   const discountAmount = welcome ? Math.round(subtotal * (welcome.percent / 100) * 100) / 100 : 0;
   const total = Math.max(0, subtotal + deliveryFee - discountAmount);
-  const input = "h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none focus:border-leaf-deep";
+  const input = "h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none focus:border-leaf-deep transition";
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value as never }));
+    setForm((f) => ({ ...f, [k]: (e.target as HTMLInputElement).type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value as never }));
 
   const orderLines = useMemo(() => lines.map((l) => {
     const parts = [`${l.quantity} × ${l.name}`];
@@ -233,8 +238,31 @@ Placed through the website. Please confirm the final total.`;
               ) : (
                 <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={input} />
               )}
+              {form.fulfillment === "Delivery" && (
+                <select value={form.deliveryZone} onChange={set("deliveryZone")} className={`${input} sm:col-span-2`}>
+                  <option>Curepe to Arima</option>
+                  <option>Trincity &amp; environs</option>
+                </select>
+              )}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Limited delivery along the east-west corridor from 2 PM.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Delivery &amp; pickup windows: 12 PM – 5 PM. Curepe → Arima $30 · Trincity &amp; environs $20.</p>
+
+            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-secondary/40 p-3">
+              <input type="checkbox" checked={form.splitDelivery} onChange={set("splitDelivery")} className="mt-1 h-4 w-4 accent-[var(--leaf-deep)]" />
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-leaf-deep">Split this bundle for freshness</div>
+                <div className="text-xs text-muted-foreground">Take part of the order now and the rest on a later day. <span className="italic">Delivery rate will apply each time.</span></div>
+                {form.splitDelivery && (
+                  <textarea
+                    value={form.splitNotes}
+                    onChange={set("splitNotes")}
+                    rows={2}
+                    placeholder="Tell us how to split — e.g. 3 salads Monday, 2 meals Wednesday"
+                    className="mt-2 w-full rounded-lg border border-border bg-background p-2 text-xs outline-none focus:border-leaf-deep"
+                  />
+                )}
+              </div>
+            </label>
           </div>
 
           <div>
@@ -242,8 +270,19 @@ Placed through the website. Please confirm the final total.`;
             <select value={form.payment} onChange={set("payment")} className={`${input} mt-3`}>
               <option>Cash</option>
               <option>Bank Transfer</option>
-              <option>Online Card Payment</option>
             </select>
+            {form.payment === "Bank Transfer" && (
+              <div className="mt-3 rounded-xl border border-leaf-soft/40 bg-leaf-soft/10 p-4 text-sm text-leaf-deep animate-fade-in">
+                <div className="font-semibold">Bank transfer details</div>
+                <ul className="mt-2 space-y-1 text-xs text-foreground/80">
+                  <li><b>Bank:</b> Republic Bank</li>
+                  <li><b>Account name:</b> Cathy's Clean Green Classics</li>
+                  <li><b>Account #:</b> (provided on WhatsApp)</li>
+                  <li><b>Reference:</b> your order ID</li>
+                </ul>
+                <div className="mt-2 text-xs italic text-brown">Please send proof of payment on WhatsApp after submitting.</div>
+              </div>
+            )}
           </div>
 
           <div>
