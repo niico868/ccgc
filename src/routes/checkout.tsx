@@ -112,10 +112,10 @@ Email: ${form.email || "-"}
 Order:
 ${orderLines}
 ${discountLine}
-Fulfillment: ${form.fulfillment}
+Fulfillment: ${form.fulfillment}${form.fulfillment === "Delivery" ? ` (${form.deliveryZone})` : ""}
 Pickup Location: ${form.fulfillment === "Pickup" ? form.pickup : "-"}
 Delivery Address: ${form.fulfillment === "Delivery" ? form.address : "-"}
-
+${form.splitDelivery ? `Split bundle: ${form.splitNotes || "(see notes)"}` : ""}
 Payment Method: ${form.payment}
 Notes: ${form.notes || "-"}
 
