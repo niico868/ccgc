@@ -24,7 +24,7 @@ const NAV = [
 ] as const;
 
 export function Header() {
-  const { count, foodCount, minMet } = useBasket();
+  const { count, foodCount } = useBasket();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
