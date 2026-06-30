@@ -5,10 +5,16 @@ import {
 } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({ meta: [
-    { title: "FAQ | Fine Time for Cathy's" },
-    { name: "description", content: "Frequently asked questions about ordering, delivery, pickup and our menu." },
-  ]}),
+  head: () => ({
+    meta: [
+      { title: "FAQ | Fine Time for Cathy's" },
+      { name: "description", content: "Frequently asked questions about ordering, delivery, pickup and our menu." },
+      { property: "og:url", content: "https://ccgc.lovable.app/faq" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://ccgc.lovable.app/faq" },
+    ],
+  }),
   component: FAQ,
 });
 

@@ -7,10 +7,16 @@ import { waLink } from "@/lib/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({ meta: [
-    { title: "Contact | Fine Time for Cathy's Clean Green Classics" },
-    { name: "description", content: "Leave us a message, or reach us on WhatsApp, Instagram, phone or email." },
-  ]}),
+  head: () => ({
+    meta: [
+      { title: "Contact | Fine Time for Cathy's Clean Green Classics" },
+      { name: "description", content: "Leave us a message, or reach us on WhatsApp, Instagram, phone or email." },
+      { property: "og:url", content: "https://ccgc.lovable.app/contact" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://ccgc.lovable.app/contact" },
+    ],
+  }),
   component: Contact,
 });
 
