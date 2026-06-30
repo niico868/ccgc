@@ -59,7 +59,7 @@ function Basket() {
                 {l.preferences && (
                   <div className="text-xs text-brown">No: {l.preferences}</div>
                 )}
-                <div className="mt-1 text-sm font-bold text-leaf-deep">{PRICELESS}</div>
+                <div className="mt-1 text-sm font-bold text-leaf-deep">{fmt(l.unitPrice * l.quantity)} <span className="text-[11px] font-medium text-muted-foreground">({fmt(l.unitPrice)} ea)</span></div>
               </div>
               <div className="inline-flex items-center rounded-full border border-border bg-background">
                 <button onClick={() => setQty(l.lineId, l.quantity - 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Decrease"><Minus className="h-3.5 w-3.5" /></button>
