@@ -4,10 +4,16 @@ import hero from "@/assets/hero-salad.jpg";
 import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 
 export const Route = createFileRoute("/gallery")({
-  head: () => ({ meta: [
-    { title: "Gallery | Fine Time for Cathy's" },
-    { name: "description", content: "Food, kitchen, and behind-the-scenes photography." },
-  ]}),
+  head: () => ({
+    meta: [
+      { title: "Gallery | Fine Time for Cathy's" },
+      { name: "description", content: "Food, kitchen, and behind-the-scenes photography." },
+      { property: "og:url", content: "https://ccgc.lovable.app/gallery" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://ccgc.lovable.app/gallery" },
+    ],
+  }),
   component: Gallery,
 });
 

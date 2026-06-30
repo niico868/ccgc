@@ -1,0 +1,13 @@
+# Fine Time for Cathy's Clean Green Classics
+
+> Fresh custom salads, healthy meals, and cold-pressed juices prepared in Trinidad & Tobago. Order online for delivery or pickup.
+
+## Pages
+
+- [/](/): Homepage — browse salads, meals, and juices.
+- [/salads](/salads): Custom salads with your choice of protein and toppings.
+- [/meals](/meals): Hearty, homestyle healthy meals.
+- [/juices](/juices): Cold-pressed juices and wellness shots.
+- [/gallery](/gallery): Food photography and behind-the-scenes shots.
+- [/faq](/faq): Ordering, delivery, pickup, and pricing questions.
+- [/contact](/contact): Reach out via form, WhatsApp, phone, or email.

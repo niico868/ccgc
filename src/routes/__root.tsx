@@ -59,12 +59,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Fine Time for Cathy's Clean Green Classics" },
       { name: "twitter:description", content: "Fresh custom salads, healthy meals, and cold-pressed juices. Made fresh in Trinidad and Tobago." },
+      { property: "og:site_name", content: "Fine Time for Cathy's Clean Green Classics" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Great+Vibes&family=Comic+Neue:wght@400;700&display=swap" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Fine Time for Cathy's Clean Green Classics",
+          description: "Fresh custom salads, healthy meals, and cold-pressed juices. Made fresh in Trinidad and Tobago.",
+          url: "https://ccgc.lovable.app",
+          telephone: "+1-868-488-4248",
+          email: "dfinetimerestaurant@gmail.com",
+          sameAs: ["https://www.instagram.com/finelivingbycathy"],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,

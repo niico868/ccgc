@@ -13,6 +13,10 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Fine Time for Cathy's Clean Green Classics" },
       { name: "description", content: "Properly made salads, hearty healthy meals and cold-pressed juices — homestyle done well, in Trinidad and Tobago." },
+      { property: "og:url", content: "https://ccgc.lovable.app/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://ccgc.lovable.app/" },
     ],
   }),
   component: Home,
