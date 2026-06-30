@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
-import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
+import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { Minus, Plus, Trash2, ShoppingBasket, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/basket")({
