@@ -77,9 +77,9 @@ function Basket() {
           <div className="text-display text-lg text-leaf-deep">Order summary</div>
           <div className="mt-3 flex justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-bold">{PRICELESS}</span>
+            <span className="font-bold">{fmt(subtotal)}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Final total confirmed on WhatsApp before payment.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Items are sold in batches (5 meals/salads, 6 drinks). Final total — including delivery — is confirmed on WhatsApp.</p>
           <Link
             to={minMet ? "/checkout" : "/basket"}
             onClick={(e) => { if (!minMet) e.preventDefault(); }}
