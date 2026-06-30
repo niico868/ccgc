@@ -59,6 +59,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Fine Time for Cathy's Clean Green Classics" },
       { name: "twitter:description", content: "Fresh custom salads, healthy meals, and cold-pressed juices. Made fresh in Trinidad and Tobago." },
+      { property: "og:site_name", content: "Fine Time for Cathy's Clean Green Classics" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
