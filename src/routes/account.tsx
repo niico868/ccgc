@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Section } from "@/components/site/Section";
-import { PRICELESS } from "@/lib/menu-data";
+import { fmt } from "@/lib/menu-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/account")({
