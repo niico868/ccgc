@@ -10,7 +10,7 @@ export const Route = createFileRoute("/basket")({
 });
 
 function Basket() {
-  const { lines, setQty, remove, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
+  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
 
   if (lines.length === 0) {
     return (
