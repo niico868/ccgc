@@ -35,9 +35,25 @@ export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
 export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
 export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
 
+/** Customer-facing price formatter. */
+export const fmt = (n: number) => `$${n.toFixed(0)}`;
+/** @deprecated retained for backwards compatibility — use fmt() with a price. */
+export const PRICELESS = "[PRICELESS]";
+
+export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
+export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
+export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
+
 export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
 export const SEAFOOD_SURCHARGE = 5;
+
+/** Batch sizes — items are only sold in these multiples. */
+export const SALAD_BATCH = 5;
+export const MEAL_BATCH = 5;
+export const JUICE_BATCH = 6;
+export const GINGER_BATCH = 6;
+
 
 const SALAD_BASE = 45;
 const MEAL_BASE = 50;
