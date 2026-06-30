@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
-import { PRICELESS, SEAFOOD_LABELS, SEAFOOD_SURCHARGE, SALAD_INGREDIENTS } from "@/lib/menu-data";
+import { fmt, SEAFOOD_LABELS, SEAFOOD_SURCHARGE, SALAD_INGREDIENTS, SALAD_BATCH, MEAL_BATCH, JUICE_BATCH, GINGER_BATCH } from "@/lib/menu-data";
 import { Minus, Plus, ShoppingBasket, ChevronDown } from "lucide-react";
 
 export function MenuCard({ item }: { item: MenuItem }) {
@@ -51,7 +51,14 @@ export function MenuCard({ item }: { item: MenuItem }) {
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-display text-lg leading-tight text-leaf-deep">{item.name}</h3>
-          <div className="shrink-0 text-sm font-bold tracking-wide text-leaf-deep">{PRICELESS}</div>
+          <div className="shrink-0 text-right">
+            <div className="text-sm font-bold tracking-wide text-leaf-deep">{fmt(unitPrice)}<span className="text-[10px] font-medium text-muted-foreground"> /ea</span></div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
+              {item.category === "salad" && `Batch of ${SALAD_BATCH}`}
+              {item.category === "meal" && `Batch of ${MEAL_BATCH}`}
+              {item.category === "juice" && (item.id === "juice-ginger-shot" ? `Batch of ${GINGER_BATCH}` : `Batch of ${JUICE_BATCH}`)}
+            </div>
+          </div>
         </div>
         <p className="text-sm leading-relaxed text-foreground/80">{item.description}</p>
         {item.benefits && (

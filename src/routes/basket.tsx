@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
-import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
+import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { Minus, Plus, Trash2, ShoppingBasket, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/basket")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/basket")({
 });
 
 function Basket() {
-  const { lines, setQty, remove, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
+  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
 
   if (lines.length === 0) {
     return (
@@ -59,7 +59,7 @@ function Basket() {
                 {l.preferences && (
                   <div className="text-xs text-brown">No: {l.preferences}</div>
                 )}
-                <div className="mt-1 text-sm font-bold text-leaf-deep">{PRICELESS}</div>
+                <div className="mt-1 text-sm font-bold text-leaf-deep">{fmt(l.unitPrice * l.quantity)} <span className="text-[11px] font-medium text-muted-foreground">({fmt(l.unitPrice)} ea)</span></div>
               </div>
               <div className="inline-flex items-center rounded-full border border-border bg-background">
                 <button onClick={() => setQty(l.lineId, l.quantity - 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Decrease"><Minus className="h-3.5 w-3.5" /></button>
@@ -77,9 +77,9 @@ function Basket() {
           <div className="text-display text-lg text-leaf-deep">Order summary</div>
           <div className="mt-3 flex justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-bold">{PRICELESS}</span>
+            <span className="font-bold">{fmt(subtotal)}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Final total confirmed on WhatsApp before payment.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Items are sold in batches (5 meals/salads, 6 drinks). Final total — including delivery — is confirmed on WhatsApp.</p>
           <Link
             to={minMet ? "/checkout" : "/basket"}
             onClick={(e) => { if (!minMet) e.preventDefault(); }}

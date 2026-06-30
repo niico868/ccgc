@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
-import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
+import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { toast } from "sonner";
 import { CheckCircle2, AlertCircle, BadgePercent } from "lucide-react";
@@ -306,17 +306,17 @@ Placed through the website. Please confirm the final total.`;
                   {l.preferences && <span className="block text-xs text-muted-foreground">No: {l.preferences}</span>}
                   {l.notes && <span className="block text-xs text-muted-foreground">{l.notes}</span>}
                 </span>
-                <span className="font-bold">{PRICELESS}</span>
+                <span className="font-bold">{fmt(l.unitPrice * l.quantity)}</span>
               </li>
             ))}
           </ul>
           <div className="border-t border-border pt-3 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{PRICELESS}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{PRICELESS}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{fmt(subtotal)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "—"}</span></div>
             {welcome && (
-              <div className="flex justify-between text-leaf-deep"><span>Discount ({welcome.percent}%)</span><span>−{PRICELESS}</span></div>
+              <div className="flex justify-between text-leaf-deep"><span>Discount ({welcome.percent}%)</span><span>−{fmt(discountAmount)}</span></div>
             )}
-            <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>{PRICELESS}</span></div>
+            <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>{fmt(total)}</span></div>
           </div>
           <button
             type="submit"

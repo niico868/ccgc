@@ -28,16 +28,26 @@ export type MenuItem = {
   fixedSize?: string;
 };
 
-/** Customer-facing price label. All prices read [PRICELESS] on the website. */
+/** Customer-facing price formatter. */
+export const fmt = (n: number) => `$${n.toFixed(0)}`;
+/** @deprecated retained for backwards compatibility — use fmt() with a price. */
 export const PRICELESS = "[PRICELESS]";
 
 export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
 export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
 export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
 
+
 export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
 export const SEAFOOD_SURCHARGE = 5;
+
+/** Batch sizes — items are only sold in these multiples. */
+export const SALAD_BATCH = 5;
+export const MEAL_BATCH = 5;
+export const JUICE_BATCH = 6;
+export const GINGER_BATCH = 6;
+
 
 const SALAD_BASE = 45;
 const MEAL_BASE = 50;
@@ -171,61 +181,53 @@ export const MEALS: MenuItem[] = [
 ];
 
 /**
- * Juice prices reflect per-bottle equivalents from bulk packs:
- *   - 300 ml cold-press: $100 / 6 ≈ $17 each (only sold in 6s)
- *   - Ginger shots: $50 / 6 ≈ $9 each (only sold in 6s)
+ * Juice & shot pricing — sold in batches only:
+ *   - 300 ml cold-press juices: $18 each (batch of 6 = $108)
+ *   - Ginger shots: $8 each (batch of 6 = $48)
  */
 export const JUICES: MenuItem[] = [
   {
     id: "juice-beetroot",
     category: "juice",
     name: "Beetroot",
-    price: 17,
+    price: 18,
     image: beetRootAsset.url,
     description: "Pure pressed beetroot for that deep, earthy lift after a long morning.",
     benefits: "Earthy. Restorative.",
-    sizes: [
-      { label: "300 ml", price: 17 },
-      { label: "500 ml", price: 28 },
-    ],
+    fixedSize: "300 ml",
   },
   {
     id: "juice-watermelon",
     category: "juice",
     name: "Watermelon",
-    price: 17,
+    price: 18,
     image: watermelonAsset.url,
     description: "Cold-pressed watermelon with a bright, cooling finish that feels crisp and refreshing.",
     benefits: "Cooling. Bright.",
-    sizes: [
-      { label: "300 ml", price: 17 },
-      { label: "500 ml", price: 28 },
-    ],
+    fixedSize: "300 ml",
   },
   {
     id: "juice-mixed-veg",
     category: "juice",
     name: "Mixed Veg",
-    price: 17,
+    price: 18,
     image: beetRootAsset.url,
     description: "Mixture of fruits and vegetables for that green boost — carrot, pineapple, melon and cucumber.",
     benefits: "Green Boost. Refreshing.",
-    sizes: [
-      { label: "300 ml", price: 17 },
-      { label: "500 ml", price: 28 },
-    ],
+    fixedSize: "300 ml",
   },
   {
     id: "juice-ginger-shot",
     category: "juice",
     name: "Ginger Shot",
-    price: 9,
+    price: 8,
     image: gingerShotAsset.url,
-    description: "A small, potent ginger shot to warm and reset the system. Sold in packs of 6.",
+    description: "A small, potent ginger shot to warm and reset the system.",
     benefits: "Warm. Restoring.",
     fixedSize: "2 oz",
   },
 ];
+
 
 export const ALL_ITEMS = [...SALADS, ...MEALS, ...JUICES];
 export const findItem = (id: string) => ALL_ITEMS.find((i) => i.id === id);

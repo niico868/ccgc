@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Section } from "@/components/site/Section";
-import { PRICELESS } from "@/lib/menu-data";
+import { fmt } from "@/lib/menu-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/account")({
@@ -94,7 +94,7 @@ function AccountPage() {
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-leaf-deep">{PRICELESS}</div>
+                    <div className="font-bold text-leaf-deep">{fmt(o.total ?? 0)}</div>
                     <div className="text-xs text-brown capitalize">{o.status}</div>
                     {o.discount_code && (
                       <div className="text-[11px] font-semibold text-leaf-soft">Code {o.discount_code} applied</div>
