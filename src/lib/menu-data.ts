@@ -28,13 +28,6 @@ export type MenuItem = {
   fixedSize?: string;
 };
 
-/** Customer-facing price label. All prices read [PRICELESS] on the website. */
-export const PRICELESS = "[PRICELESS]";
-
-export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
-export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
-export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
-
 /** Customer-facing price formatter. */
 export const fmt = (n: number) => `$${n.toFixed(0)}`;
 /** @deprecated retained for backwards compatibility — use fmt() with a price. */
@@ -43,6 +36,7 @@ export const PRICELESS = "[PRICELESS]";
 export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
 export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
 export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
+
 
 export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
