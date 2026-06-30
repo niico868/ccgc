@@ -72,8 +72,8 @@ export function Header() {
             <img src={logoAsset.url} alt="Fine Time for Cathy's Clean Green Classics" className="h-16 w-auto object-contain sm:h-18 lg:h-20" />
           </div>
           <div className="hidden min-w-0 leading-none sm:block">
-            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-deep/85">Radiant Green Kitchen</div>
-            <div className="mt-1 text-xs text-foreground/65">Fresh homemade food from Trinidad &amp; Tobago</div>
+            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-deep/85">REAL FOOD. READY WHEN YOU ARE.</div>
+            <div className="mt-1 text-xs text-foreground/65">Nutritious salads, meals and juices prepared fresh in Trinidad &amp; Tobago</div>
           </div>
         </Link>
 
