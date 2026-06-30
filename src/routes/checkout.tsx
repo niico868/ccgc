@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
-import { FOOD_MIN, DRINK_MIN, PRICELESS } from "@/lib/menu-data";
+import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { toast } from "sonner";
 import { CheckCircle2, AlertCircle, BadgePercent } from "lucide-react";
