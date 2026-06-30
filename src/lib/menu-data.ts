@@ -181,61 +181,53 @@ export const MEALS: MenuItem[] = [
 ];
 
 /**
- * Juice prices reflect per-bottle equivalents from bulk packs:
- *   - 300 ml cold-press: $100 / 6 ≈ $17 each (only sold in 6s)
- *   - Ginger shots: $50 / 6 ≈ $9 each (only sold in 6s)
+ * Juice & shot pricing — sold in batches only:
+ *   - 300 ml cold-press juices: $18 each (batch of 6 = $108)
+ *   - Ginger shots: $8 each (batch of 6 = $48)
  */
 export const JUICES: MenuItem[] = [
   {
     id: "juice-beetroot",
     category: "juice",
     name: "Beetroot",
-    price: 17,
+    price: 18,
     image: beetRootAsset.url,
     description: "Pure pressed beetroot for that deep, earthy lift after a long morning.",
     benefits: "Earthy. Restorative.",
-    sizes: [
-      { label: "300 ml", price: 17 },
-      { label: "500 ml", price: 28 },
-    ],
+    fixedSize: "300 ml",
   },
   {
     id: "juice-watermelon",
     category: "juice",
     name: "Watermelon",
-    price: 17,
+    price: 18,
     image: watermelonAsset.url,
     description: "Cold-pressed watermelon with a bright, cooling finish that feels crisp and refreshing.",
     benefits: "Cooling. Bright.",
-    sizes: [
-      { label: "300 ml", price: 17 },
-      { label: "500 ml", price: 28 },
-    ],
+    fixedSize: "300 ml",
   },
   {
     id: "juice-mixed-veg",
     category: "juice",
     name: "Mixed Veg",
-    price: 17,
+    price: 18,
     image: beetRootAsset.url,
     description: "Mixture of fruits and vegetables for that green boost — carrot, pineapple, melon and cucumber.",
     benefits: "Green Boost. Refreshing.",
-    sizes: [
-      { label: "300 ml", price: 17 },
-      { label: "500 ml", price: 28 },
-    ],
+    fixedSize: "300 ml",
   },
   {
     id: "juice-ginger-shot",
     category: "juice",
     name: "Ginger Shot",
-    price: 9,
+    price: 8,
     image: gingerShotAsset.url,
-    description: "A small, potent ginger shot to warm and reset the system. Sold in packs of 6.",
+    description: "A small, potent ginger shot to warm and reset the system.",
     benefits: "Warm. Restoring.",
     fixedSize: "2 oz",
   },
 ];
+
 
 export const ALL_ITEMS = [...SALADS, ...MEALS, ...JUICES];
 export const findItem = (id: string) => ALL_ITEMS.find((i) => i.id === id);
