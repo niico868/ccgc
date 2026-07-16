@@ -183,14 +183,15 @@ Placed through the website. Please confirm the final total.`;
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you over to WhatsApp to lock it in with Cathy.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you over to WhatsApp to lock it in with us.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Your order details will be sent automatically. You can review the message before sending.</p>
 
       {welcome && (
         <div className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.4),rgba(167,217,72,0.18))] px-5 py-4 shadow-[0_10px_24px_rgba(31,90,53,0.12)]">
           <BadgePercent className="h-6 w-6 shrink-0 text-leaf-deep" />
           <div className="text-sm text-leaf-deep">
             <div className="font-bold">Welcome gift: <span className="font-mono">{welcome.code}</span> ({welcome.percent}% off) is applied to this order.</div>
-            <div className="text-xs text-brown">One-time first-order discount — used on this purchase.</div>
+            <div className="text-xs text-brown">One-time first-order discount, used on this purchase.</div>
           </div>
         </div>
       )}
@@ -257,7 +258,7 @@ Placed through the website. Please confirm the final total.`;
                     value={form.splitNotes}
                     onChange={set("splitNotes")}
                     rows={2}
-                    placeholder="Tell us how to split — e.g. 3 salads Monday, 2 meals Wednesday"
+                    placeholder="Tell us how to split, e.g. 3 salads Monday, 2 meals Wednesday"
                     className="mt-2 w-full rounded-lg border border-border bg-background p-2 text-xs outline-none focus:border-leaf-deep"
                   />
                 )}

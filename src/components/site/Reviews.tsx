@@ -14,9 +14,9 @@ type Review = {
 };
 
 const SEED: Review[] = [
-  { id: "seed-1", author_name: "Aaliyah R.", body: "The Broccoli Power Bowl is the best lunch in my week. Fresh, filling, beautifully packed.", rating: 5, status: "approved", created_at: new Date().toISOString() },
-  { id: "seed-2", author_name: "Marcus D.", body: "Cathy's juices taste like they were pressed five minutes before they reached me.", rating: 5, status: "approved", created_at: new Date().toISOString() },
-  { id: "seed-3", author_name: "Simone J.", body: "Proper food, beautifully done. Everyone at the table asked who made it.", rating: 5, status: "approved", created_at: new Date().toISOString() },
+  { id: "seed-1", author_name: "Aaliyah R", body: "We used Cathy's salads for a brunch event and it was a huge hit. The bowls were not only delicious but also added a easy eating touch to the whole experience. Guests loved it. Highly recommend for any event.", rating: 5, status: "approved", created_at: new Date().toISOString() },
+  { id: "seed-2", author_name: "Simone John", body: "Clean green classics is an amazing spot for anyone looking for delicious and healthy food. Their menu offers a great variety of fresh salads, nutritious meals, but I would suggest placing some healthy desserts on the menu (everything is already so guilt-free).", rating: 5, status: "approved", created_at: new Date().toISOString() },
+  { id: "seed-3", author_name: "Clinton Moreno", body: "The boss lady suggested the tuna salad the last time I ordered and it DID NOT DISAPPOINT, definitely my new fav. Literally sped here to leave a review.", rating: 5, status: "approved", created_at: new Date().toISOString() },
 ];
 
 export function Reviews() {
@@ -97,16 +97,23 @@ export function Reviews() {
             <Link to="/auth" search={{ mode: "signin" }} className="font-semibold text-leaf-deep underline">Sign in</Link> to share your experience.
           </p>
         ) : mineExists ? (
-          <p className="mt-2 text-sm text-foreground/75">Thanks for sharing — you've already left a review. It will appear once approved.</p>
+          <p className="mt-2 text-sm text-foreground/75">Thanks for sharing, you've already left a review. It will appear once approved.</p>
         ) : (
           <form onSubmit={submit} className="mt-3 space-y-3">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
-                <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n} stars`}>
-                  <Star className={`h-6 w-6 ${n <= rating ? "fill-citrus text-citrus" : "text-muted-foreground"}`} />
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setRating(n)}
+                  aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
+                  className="cursor-pointer rounded-full p-1 transition hover:scale-110 hover:bg-citrus/20 active:scale-95"
+                >
+                  <Star className={`h-7 w-7 transition-colors ${n <= rating ? "fill-citrus text-citrus" : "text-muted-foreground/60 hover:text-citrus/70"}`} />
                 </button>
               ))}
             </div>
+            <p className="text-xs text-brown">Tap a star to set your rating.</p>
             <textarea
               rows={4}
               value={body}

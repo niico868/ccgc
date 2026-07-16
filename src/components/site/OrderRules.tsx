@@ -3,7 +3,7 @@ import { Clock, MapPin, Truck, CalendarDays } from "lucide-react";
 export function OrderRules() {
   const items = [
     { icon: CalendarDays, title: "Made fresh to order", desc: "Every meal is prepared the day of fulfillment. No same-day orders." },
-    { icon: Clock, title: "Mon & Wed orders close at 8 AM", desc: "Place your order the day before — by 8 AM on Monday and Wednesday for those days." },
+    { icon: Clock, title: "Mon & Wed orders close at 8 AM", desc: "Place your order the day before, by 8 AM on Monday and Wednesday for those days." },
     { icon: Truck, title: "Delivery & pickup 12 PM – 5 PM", desc: "Curepe to Arima $30 · Trincity & environs $20." },
     { icon: MapPin, title: "Pickup windows", desc: "St Clair 11 AM – 1 PM · Orange Grove, Tacarigua 2 PM – 6 PM." },
   ];
@@ -32,9 +32,9 @@ export function FirstTimerCard() {
     <div className="relative overflow-hidden rounded-3xl border-2 border-leaf-soft/30 bg-cream p-7 lg:p-9">
       <div className="relative">
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">New to Cathy's?</div>
-        <h3 className="mt-2 text-display text-2xl text-leaf-deep">Welcome — we're glad you're here.</h3>
+        <h3 className="mt-2 text-display text-2xl text-leaf-deep">Welcome, we're glad you're here.</h3>
         <div className="mt-4 grid gap-4 text-sm text-foreground/85 sm:grid-cols-2">
-          <p className="text-brown">Every plate is made the day of fulfillment, so orders close the day before — no same-day requests. Mon &amp; Wed cutoffs are 8 AM.</p>
+          <p className="text-brown">Every plate is made the day of fulfillment, so orders close the day before. No same-day requests. Mon &amp; Wed cutoffs are 8 AM.</p>
           <p className="text-brown">Choose chicken, fish, shrimp or vegan. Fish and shrimp are available on request.</p>
           <div>
             <div className="font-semibold text-leaf-deep">Pickup &amp; delivery</div>

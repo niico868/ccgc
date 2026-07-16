@@ -34,7 +34,7 @@ export function Header() {
 
   useEffect(() => {
     if (prevFoodRef.current < FOOD_MIN && foodCount >= FOOD_MIN) {
-      toast.success("Basket ready — minimum reached!", {
+      toast.success("Basket ready, minimum reached!", {
         icon: <ShoppingBasket className="h-4 w-4" />,
         position: "bottom-right",
       });
