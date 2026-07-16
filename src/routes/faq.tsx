@@ -24,11 +24,11 @@ const QA = [
   { q: "When does delivery start?", a: "Delivery begins at 2:00 PM and runs along the east-west corridor." },
   { q: "How much is delivery?", a: "Delivery is a flat fee. Add your address at checkout and we'll confirm the final cost on WhatsApp." },
   { q: "Where can I pick up my order?", a: "Pickup 1: St Clair, 11 AM – 1 PM. Pickup 2: Orange Grove, Tacarigua, 2 PM – 6 PM." },
-  { q: "What about prices?", a: "Salads are $45 each (batch of 5). Healthy meals are $50 each (batch of 5); seafood adds $5 per meal. Cold-pressed juices are $18 each (batch of 6). Ginger shots are $8 each (batch of 6). Everything is sold in batches only — Cathy will confirm your final total, including delivery, on WhatsApp." },
-  { q: "Do you offer seafood?", a: "Yes — fish and shrimp options are available on salads and meals on request." },
+  { q: "What about prices?", a: "Salads are $45 each (batch of 5). Healthy meals are $50 each (batch of 5); seafood adds $5 per meal. Cold-pressed juices are $18 each (batch of 6). Ginger shots are $8 each (batch of 6). Everything is sold in batches only, and Cathy will confirm your final total, including delivery, on WhatsApp." },
+  { q: "Do you offer seafood?", a: "Yes, fish and shrimp options are available on salads and meals on request." },
   { q: "What are the order minimums?", a: "Minimum 5 meals per food order and 6 drinks per juice order." },
-  { q: "How do I confirm my order?", a: "Place your order through the website. After checkout, we'll open WhatsApp with your order details — press send so Cathy can confirm and arrange payment." },
-  { q: "Do I need an account?", a: "Yes — accounts are quick to set up at checkout (or via the account menu) and let you save your order history and any discount codes." },
+  { q: "How do I confirm my order?", a: "Place your order through the website. After checkout, we'll open WhatsApp with your order details, then press send so Cathy can confirm and arrange payment." },
+  { q: "Do I need an account?", a: "Yes, accounts are quick to set up at checkout (or via the account menu) and let you save your order history and any discount codes." },
 ];
 
 function FAQ() {

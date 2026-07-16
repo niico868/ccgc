@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Fine Time for Cathy's Clean Green Classics" },
-      { name: "description", content: "Properly made salads, hearty healthy meals and cold-pressed juices — homestyle done well, in Trinidad and Tobago." },
+      { name: "description", content: "Properly made salads, hearty healthy meals and cold-pressed juices, homestyle done well, in Trinidad and Tobago." },
       { property: "og:url", content: "https://ccgc.lovable.app/" },
     ],
     links: [
@@ -23,9 +23,9 @@ export const Route = createFileRoute("/")({
 });
 
 const SECTIONS = [
-  { to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE, desc: "Fresh greens, clean toppings and your choice of protein — built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
+  { to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE, desc: "Fresh greens, clean toppings and your choice of protein, built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
   { to: "/meals", title: "Healthy Meals", image: MEAL_FEATURE_IMAGE, desc: "Hearty, homestyle bowls. Properly seasoned, well-balanced and made with care.", benefit: "Wholesome. Satisfying.", objectPosition: "center 55%" },
-  { to: "/juices", title: "Cold-Pressed Juices", image: JUICE_FEATURE_IMAGE, desc: "Pressed fresh from clean produce — to lift, restore and refresh.", benefit: "Fresh. Pure.", objectPosition: "center 60%" },
+  { to: "/juices", title: "Cold-Pressed Juices", image: JUICE_FEATURE_IMAGE, desc: "Pressed fresh from clean produce, to lift, restore and refresh.", benefit: "Fresh. Pure.", objectPosition: "center 60%" },
 ];
 
 
@@ -46,7 +46,7 @@ function Home() {
               Make a healthy start to your day.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-cream/95 lg:text-lg">
-              Hearty salads and meals with diabetic-friendly cold-pressed juices — properly made, packed with care, and ready for your next order.
+              Hearty salads and meals with diabetic-friendly cold-pressed juices, properly made, packed with care, and ready for your next order.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to="/salads" className="inline-flex h-12 items-center gap-2 rounded-full bg-[linear-gradient(135deg,#E76F51,#D84A2B)] px-8 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(231,111,81,0.25)] transition hover:-translate-y-0.5">
@@ -79,7 +79,7 @@ function Home() {
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">Catering to shut-ins</div>
           <h2 className="mt-2 text-display text-2xl text-leaf-deep lg:text-3xl">Meal prep &amp; delivery for those at home</h2>
           <p className="mt-3 text-sm leading-relaxed text-foreground/80 lg:text-base">
-            We cater to shut-ins — the elderly and health-challenged — with a steady meal-prep and delivery service so a proper, homestyle plate is never far away.
+            We cater to shut-ins, the elderly and health-challenged with a steady meal-prep and delivery service so a proper, homestyle plate is never far away.
           </p>
         </div>
       </Section>

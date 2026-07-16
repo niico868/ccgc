@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Pause, Play, Volume2, VolumeX, Music2 } from "lucide-react";
+import { Pause, Volume2, VolumeX } from "lucide-react";
 import themeAsset from "@/assets/fine-time-theme.mp3.asset.json";
+import musicPlayAsset from "@/assets/music-play.png.asset.json";
 
 const SRC = themeAsset.url;
 const PREF_KEY = "cgcc.theme.prefs.v1";
@@ -35,7 +36,6 @@ export function ThemePlayer() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Hydrate prefs on mount
   useEffect(() => {
     if (!mounted) return;
     const p = loadPrefs();
@@ -47,13 +47,11 @@ export function ThemePlayer() {
       a.muted = p.muted;
       if (p.time && isFinite(p.time)) a.currentTime = p.time;
       if (p.playing) {
-        // Try to resume; browsers may block until interaction.
         a.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
       }
     }
   }, [mounted]);
 
-  // Persist time periodically
   useEffect(() => {
     const id = window.setInterval(() => {
       const a = audioRef.current;
@@ -137,75 +135,86 @@ export function ThemePlayer() {
         onLoadedMetadata={onLoaded}
         onEnded={() => { setPlaying(false); savePrefs({ playing: false, time: 0 }); }}
       />
-      <div className={`flex items-center gap-3 rounded-full border border-leaf-deep/20 bg-cream/95 px-3 py-2 shadow-soft backdrop-blur transition-all ${
-        expanded ? "w-[280px] sm:w-[320px]" : "w-auto"
-      }`}>
+      {!expanded ? (
         <button
           onClick={toggle}
           aria-label={playing ? "Pause theme song" : "Play theme song"}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-leaf-deep text-cream transition hover:opacity-90"
+          onDoubleClick={() => setExpanded(true)}
+          className="group relative inline-flex h-11 w-11 items-center justify-center rounded-full transition hover:scale-110 active:scale-95"
         >
-          {playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+          <img
+            src={musicPlayAsset.url}
+            alt=""
+            className="h-11 w-11 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
+          />
+          {playing && (
+            <span className="absolute inset-0 flex items-center justify-center">
+              <Pause className="h-4 w-4 text-leaf-deep drop-shadow" />
+            </span>
+          )}
         </button>
-
-        {!expanded ? (
+      ) : (
+        <div className="flex items-center gap-3 rounded-full border border-leaf-deep/20 bg-cream/95 px-3 py-2 shadow-soft backdrop-blur w-[280px] sm:w-[320px]">
           <button
-            onClick={() => setExpanded(true)}
-            className="inline-flex items-center gap-1.5 pr-1 text-xs font-semibold text-leaf-deep"
-            aria-label="Open theme song player"
+            onClick={toggle}
+            aria-label={playing ? "Pause theme song" : "Play theme song"}
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition hover:scale-105"
           >
-            <Music2 className="h-3.5 w-3.5 text-citrus" />
-            Fine Time Theme
+            {playing ? (
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-leaf-deep text-cream">
+                <Pause className="h-4 w-4" />
+              </span>
+            ) : (
+              <img src={musicPlayAsset.url} alt="" className="h-9 w-9 object-contain" />
+            )}
           </button>
-        ) : (
-          <>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <div className="truncate text-[11px] font-bold uppercase tracking-wider text-leaf-deep">
-                  Fine Time Theme
-                </div>
-                <div className="text-[10px] tabular-nums text-brown">
-                  {fmt(progress)} / {fmt(duration)}
-                </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="truncate text-[11px] font-bold uppercase tracking-wider text-leaf-deep">
+                Fine Time Theme
               </div>
-              <input
-                type="range"
-                min={0}
-                max={duration || 0}
-                step={0.1}
-                value={progress}
-                onChange={seek}
-                aria-label="Seek"
-                className="mt-1 h-1 w-full cursor-pointer accent-leaf-deep"
-              />
+              <div className="text-[10px] tabular-nums text-brown">
+                {fmt(progress)} / {fmt(duration)}
+              </div>
             </div>
-            <button
-              onClick={toggleMute}
-              aria-label={muted ? "Unmute" : "Mute"}
-              className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-leaf-deep hover:bg-secondary"
-            >
-              {muted || volume === 0 ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-            </button>
             <input
               type="range"
               min={0}
-              max={1}
-              step={0.05}
-              value={muted ? 0 : volume}
-              onChange={changeVol}
-              aria-label="Volume"
-              className="hidden h-1 w-16 cursor-pointer accent-leaf-deep sm:block"
+              max={duration || 0}
+              step={0.1}
+              value={progress}
+              onChange={seek}
+              aria-label="Seek"
+              className="mt-1 h-1 w-full cursor-pointer accent-leaf-deep"
             />
-            <button
-              onClick={() => setExpanded(false)}
-              aria-label="Collapse player"
-              className="text-[10px] font-semibold text-brown hover:text-leaf-deep"
-            >
-              ✕
-            </button>
-          </>
-        )}
-      </div>
+          </div>
+          <button
+            onClick={toggleMute}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-leaf-deep hover:bg-secondary"
+          >
+            {muted || volume === 0 ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+          </button>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.05}
+            value={muted ? 0 : volume}
+            onChange={changeVol}
+            aria-label="Volume"
+            className="hidden h-1 w-16 cursor-pointer accent-leaf-deep sm:block"
+          />
+          <button
+            onClick={() => setExpanded(false)}
+            aria-label="Collapse player"
+            className="text-[10px] font-semibold text-brown hover:text-leaf-deep"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

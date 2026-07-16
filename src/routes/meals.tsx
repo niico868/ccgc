@@ -5,7 +5,7 @@ export const Route = createFileRoute("/meals")({
   head: () => ({
     meta: [
       { title: "Healthy Meals | Cathy's Clean Green Classics" },
-      { name: "description", content: "Hearty, homestyle bowls — well-seasoned, balanced and properly prepared." },
+      { name: "description", content: "Hearty, homestyle bowls: well-seasoned, balanced and properly prepared." },
       { property: "og:url", content: "https://ccgc.lovable.app/meals" },
     ],
     links: [

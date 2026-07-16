@@ -43,7 +43,7 @@ const CATEGORIES: CategoryDef[] = [
     label: "Healthy Meals",
     eyebrow: "Healthy Meals",
     title: "Healthy Meals",
-    intro: "Hearty, well-prepared bowls — homestyle done properly.",
+    intro: "Hearty, well-prepared bowls: homestyle done properly.",
     items: MEALS,
     minKind: "food",
     waMsg: "Hi! I'd like to order healthy meals.",
