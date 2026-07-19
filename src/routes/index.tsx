@@ -42,7 +42,7 @@ function Home() {
   return (
     <>
       <section className="relative isolate overflow-hidden">
-        <img src={hero} alt="Fresh grilled chicken salad bowl on a wooden counter" width={1920} height={1080} className="absolute inset-0 -z-10 h-full w-full object-cover" />
+        <img src={hero} alt="Fresh grilled chicken salad bowl on a wooden counter" width={1920} height={1080} fetchPriority="high" decoding="async" className="absolute inset-0 -z-10 h-full w-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(31,90,53,0.82)_0%,rgba(31,90,53,0.56)_42%,rgba(31,90,53,0.15)_100%)]" />
         <div className="absolute left-[10%] top-[16%] -z-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(246,233,107,0.45)_0%,rgba(169,217,90,0.16)_58%,transparent_76%)] blur-2xl" />
 
