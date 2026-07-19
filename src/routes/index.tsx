@@ -8,16 +8,25 @@ import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { StickyNote } from "@/components/site/StickyNote";
 import { Reviews } from "@/components/site/Reviews";
 
+const TITLE = "Fresh Salads, Meals & Cold-Pressed Juices in Trinidad | Cathy's Clean Green Classics";
+const DESC = "Order made-to-order salads, hearty homestyle meals and diabetic-friendly cold-pressed juices. Fresh from Trinidad and Tobago, with delivery and pickup.";
+const URL = "https://cathysgreenkitchen.com/";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fine Time for Cathy's Clean Green Classics" },
-      { name: "description", content: "Properly made salads, hearty healthy meals and cold-pressed juices, homestyle done well, in Trinidad and Tobago." },
-      { property: "og:url", content: "https://ccgc.lovable.app/" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:url", content: URL },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://cathysgreenkitchen.com/og-image.jpg" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
+      { name: "twitter:image", content: "https://cathysgreenkitchen.com/og-image.jpg" },
     ],
-    links: [
-      { rel: "canonical", href: "https://ccgc.lovable.app/" },
-    ],
+    links: [{ rel: "canonical", href: URL }],
   }),
   component: Home,
 });
@@ -33,7 +42,7 @@ function Home() {
   return (
     <>
       <section className="relative isolate overflow-hidden">
-        <img src={hero} alt="Fresh grilled chicken salad bowl on a wooden counter" width={1920} height={1080} className="absolute inset-0 -z-10 h-full w-full object-cover" />
+        <img src={hero} alt="Fresh grilled chicken salad bowl on a wooden counter" width={1920} height={1080} fetchPriority="high" decoding="async" className="absolute inset-0 -z-10 h-full w-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(31,90,53,0.82)_0%,rgba(31,90,53,0.56)_42%,rgba(31,90,53,0.15)_100%)]" />
         <div className="absolute left-[10%] top-[16%] -z-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(246,233,107,0.45)_0%,rgba(169,217,90,0.16)_58%,transparent_76%)] blur-2xl" />
 

@@ -6,16 +6,23 @@ import { Clock, Instagram, Mail, MapPin, MessageCircle, Phone, Truck } from "luc
 import { waLink } from "@/lib/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
 
+const TITLE = "Contact Cathy's Clean Green Classics | WhatsApp, Phone & Email";
+const DESC = "Message us on WhatsApp at +1 (868) 488-4248, email dfinetimerestaurant@gmail.com, or send a note. Serving Trinidad and Tobago.";
+const URL = "https://cathysgreenkitchen.com/contact";
+
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact | Fine Time for Cathy's Clean Green Classics" },
-      { name: "description", content: "Leave us a message, or reach us on WhatsApp, Instagram, phone or email." },
-      { property: "og:url", content: "https://ccgc.lovable.app/contact" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:url", content: URL },
+      { property: "og:type", content: "website" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
     ],
-    links: [
-      { rel: "canonical", href: "https://ccgc.lovable.app/contact" },
-    ],
+    links: [{ rel: "canonical", href: URL }],
   }),
   component: Contact,
 });

@@ -1,17 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CategoryMenuView } from "@/components/site/CategoryMenuView";
 import { Section } from "@/components/site/Section";
+import { JUICES } from "@/lib/menu-data";
+
+const TITLE = "Diabetic-Friendly Cold-Pressed Juices | Cathy's Clean Green Classics";
+const DESC = "Beetroot, watermelon, mixed vegetable juices and ginger wellness shots, no added sugar. Batches of 6, cold-pressed fresh in Trinidad and Tobago.";
+const URL = "https://cathysgreenkitchen.com/juices";
 
 export const Route = createFileRoute("/juices")({
   head: () => ({
     meta: [
-      { title: "Cold-Pressed Juices | Cathy's Clean Green Classics" },
-      { name: "description", content: "Beetroot, mixed vegetables, green juice and ginger shots. Minimum 6 drinks per order." },
-      { property: "og:url", content: "https://ccgc.lovable.app/juices" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:url", content: URL },
+      { property: "og:type", content: "website" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
     ],
-    links: [
-      { rel: "canonical", href: "https://ccgc.lovable.app/juices" },
-    ],
+    links: [{ rel: "canonical", href: URL }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Menu",
+        name: "Cold-Pressed Juices",
+        hasMenuSection: [{
+          "@type": "MenuSection",
+          name: "Juices & Shots",
+          hasMenuItem: JUICES.map((j) => ({
+            "@type": "MenuItem",
+            name: j.name,
+            description: j.description,
+            offers: { "@type": "Offer", price: j.price, priceCurrency: "TTD" },
+          })),
+        }],
+      }),
+    }],
   }),
   component: JuicesPage,
 });
