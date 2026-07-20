@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as BasketRouteImport } from './routes/basket'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminSeoRouteImport } from './routes/admin-seo'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
@@ -73,6 +74,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSeoRoute = AdminSeoRouteImport.update({
+  id: '/admin-seo',
+  path: '/admin-seo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
+  '/admin-seo': typeof AdminSeoRoute
   '/auth': typeof AuthRoute
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
+  '/admin-seo': typeof AdminSeoRoute
   '/auth': typeof AuthRoute
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
+  '/admin-seo': typeof AdminSeoRoute
   '/auth': typeof AuthRoute
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/admin-seo'
     | '/auth'
     | '/basket'
     | '/checkout'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/admin-seo'
     | '/auth'
     | '/basket'
     | '/checkout'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/admin-seo'
     | '/auth'
     | '/basket'
     | '/checkout'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRoute
+  AdminSeoRoute: typeof AdminSeoRoute
   AuthRoute: typeof AuthRoute
   BasketRoute: typeof BasketRoute
   CheckoutRoute: typeof CheckoutRoute
@@ -271,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-seo': {
+      id: '/admin-seo'
+      path: '/admin-seo'
+      fullPath: '/admin-seo'
+      preLoaderRoute: typeof AdminSeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRoute,
+  AdminSeoRoute: AdminSeoRoute,
   AuthRoute: AuthRoute,
   BasketRoute: BasketRoute,
   CheckoutRoute: CheckoutRoute,
