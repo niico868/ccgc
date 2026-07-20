@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate, Link, useServerFn } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Section } from "@/components/site/Section";

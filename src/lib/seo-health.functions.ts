@@ -30,9 +30,9 @@ async function gscFetch(path: string, init: RequestInit = {}) {
     },
   });
   const text = await res.text();
-  let body: unknown = text;
+  let body: any = text;
   try { body = JSON.parse(text); } catch {}
-  return { ok: res.ok, status: res.status, body };
+  return { ok: res.ok, status: res.status, body: body as any };
 }
 
 export const getSeoHealth = createServerFn({ method: "GET" })
