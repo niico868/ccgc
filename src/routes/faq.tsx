@@ -22,6 +22,37 @@ const QA = [
   { q: "Do I need an account?", a: "No, an account is completely optional. You can check out as a guest any time. Creating an account simply saves your details for faster future orders and keeps your order history in one place." },
 ];
 
+export const Route = createFileRoute("/faq")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:url", content: URL },
+      { property: "og:type", content: "website" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
+    ],
+    links: [{ rel: "canonical", href: URL }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: QA.map((qa) => ({
+          "@type": "Question",
+          name: qa.q,
+          acceptedAnswer: { "@type": "Answer", text: qa.a },
+        })),
+      }),
+    }],
+  }),
+  component: FAQ,
+});
+
+
+
 
 
 function FAQ() {
