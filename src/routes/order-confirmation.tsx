@@ -165,11 +165,20 @@ function Confirmation() {
               href={waLink(waMessage)}
               target="_blank"
               rel="noreferrer"
+              onClick={() => {
+                if (order.orderRef && order.idempotencyKey) {
+                  supabase.rpc(
+                    "mark_order_whatsapp_doublecheck" as never,
+                    { _order_ref: order.orderRef, _idem: order.idempotencyKey } as never,
+                  ).then(() => { /* fire and forget */ });
+                }
+              }}
               className="inline-flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-semibold text-white shadow-md hover:opacity-90"
             >
               <MessageCircle className="h-4 w-4" /> Send Order to WhatsApp for Double-Check
             </a>
           )}
+
           <Link
             to="/"
             className="inline-flex h-11 items-center rounded-full border border-border bg-background px-6 text-sm font-semibold hover:border-leaf-deep hover:text-leaf-deep"
