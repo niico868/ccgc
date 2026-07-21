@@ -164,14 +164,6 @@ export function CategoryMenuView({ active }: { active: Key }) {
                         </motion.div>
                       ))}
                     </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                      className="mt-6 flex justify-center"
-                    >
-                      <WhatsAppButton href={waLink(c.waMsg)}>Order on WhatsApp</WhatsAppButton>
-                    </motion.div>
                   </Section>
                 </motion.div>
               )}
