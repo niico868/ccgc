@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
-import { fmt, SEAFOOD_LABELS, SEAFOOD_SURCHARGE, SALAD_INGREDIENTS, SALAD_BATCH, MEAL_BATCH, JUICE_BATCH, GINGER_BATCH } from "@/lib/menu-data";
+import { fmt, SEAFOOD_LABELS, SEAFOOD_SURCHARGE, SALAD_INGREDIENTS } from "@/lib/menu-data";
 import { Minus, Plus, ShoppingBasket, ChevronDown } from "lucide-react";
 
 export function MenuCard({ item }: { item: MenuItem }) {
