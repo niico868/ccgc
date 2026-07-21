@@ -77,10 +77,26 @@ function AdminPage() {
   return (
     <Section className="py-12 space-y-6">
       <div>
-        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Admin · Reviews</h1>
-        <p className="text-sm text-brown">Approve, edit, hide or delete customer reviews.</p>
+        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Admin</h1>
+        <p className="text-sm text-brown">Manage live orders and customer reviews.</p>
       </div>
 
+      <div className="flex gap-2 border-b border-border">
+        {(["orders", "reviews"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`-mb-px border-b-2 px-4 py-2 text-sm font-semibold capitalize transition ${
+              tab === t ? "border-leaf-deep text-leaf-deep" : "border-transparent text-brown hover:text-leaf-deep"
+            }`}
+          >{t}</button>
+        ))}
+      </div>
+
+      {tab === "orders" && <AdminOrders />}
+
+      {tab === "reviews" && (
+        <>
       <div className="flex flex-wrap gap-2">
         {(["pending", "approved", "hidden", "all"] as const).map((f) => (
           <button
