@@ -210,7 +210,14 @@ function Checkout() {
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Complete your order right here on the website. We'll confirm and follow up with the final total.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you back a confirmation with your order reference. Cathy's team will then follow up to confirm the final total and next steps.</p>
+
+      <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${sameDay ? "border-leaf-soft/40 bg-leaf-soft/10 text-leaf-deep" : "border-brown/30 bg-brown/5 text-brown"}`}>
+        {sameDay
+          ? "Same-day orders are open until 8:00 AM Trinidad time. After that, please choose the next salad day."
+          : "Same-day ordering has closed for today. Please choose the next available salad day below."}
+      </div>
+
 
       {welcome && (
         <div className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.4),rgba(167,217,72,0.18))] px-5 py-4 shadow-[0_10px_24px_rgba(31,90,53,0.12)]">
