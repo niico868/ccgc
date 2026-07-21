@@ -15,7 +15,6 @@ import { Route as OrderConfirmationRouteImport } from './routes/order-confirmati
 import { Route as MealsRouteImport } from './routes/meals'
 import { Route as JuicesRouteImport } from './routes/juices'
 import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as BasketRouteImport } from './routes/basket'
@@ -53,11 +52,6 @@ const JuicesRoute = JuicesRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -110,7 +104,6 @@ export interface FileRoutesByFullPath {
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
-  '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
   '/meals': typeof MealsRoute
@@ -127,7 +120,6 @@ export interface FileRoutesByTo {
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
-  '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
   '/meals': typeof MealsRoute
@@ -145,7 +137,6 @@ export interface FileRoutesById {
   '/basket': typeof BasketRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
-  '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
   '/meals': typeof MealsRoute
@@ -164,7 +155,6 @@ export interface FileRouteTypes {
     | '/basket'
     | '/checkout'
     | '/contact'
-    | '/faq'
     | '/gallery'
     | '/juices'
     | '/meals'
@@ -181,7 +171,6 @@ export interface FileRouteTypes {
     | '/basket'
     | '/checkout'
     | '/contact'
-    | '/faq'
     | '/gallery'
     | '/juices'
     | '/meals'
@@ -198,7 +187,6 @@ export interface FileRouteTypes {
     | '/basket'
     | '/checkout'
     | '/contact'
-    | '/faq'
     | '/gallery'
     | '/juices'
     | '/meals'
@@ -216,7 +204,6 @@ export interface RootRouteChildren {
   BasketRoute: typeof BasketRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
-  FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
   JuicesRoute: typeof JuicesRoute
   MealsRoute: typeof MealsRoute
@@ -267,13 +254,6 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -344,7 +324,6 @@ const rootRouteChildren: RootRouteChildren = {
   BasketRoute: BasketRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
-  FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
   JuicesRoute: JuicesRoute,
   MealsRoute: MealsRoute,
