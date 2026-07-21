@@ -133,8 +133,37 @@ function Checkout() {
           .eq("id", welcome.id);
       }
 
+      try {
+        sessionStorage.setItem(
+          `order:${result.orderRef}`,
+          JSON.stringify({
+            orderRef: result.orderRef,
+            customerName: form.name.trim(),
+            phone: form.phone.trim(),
+            email: form.email.trim(),
+            fulfillment: form.fulfillment,
+            pickupLocation: form.fulfillment === "Pickup" ? form.pickup : "",
+            deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : "",
+            deliveryZone: form.fulfillment === "Delivery" ? form.deliveryZone : "",
+            paymentMethod: form.payment,
+            notes: notesCombined,
+            splitDelivery: form.splitDelivery,
+            items: lines.map((l) => ({
+              name: l.name, quantity: l.quantity, unitPrice: l.unitPrice,
+              category: l.category, protein: l.protein, size: l.size,
+              seafood: l.seafood, preferences: l.preferences, notes: l.notes,
+            })),
+            subtotal, deliveryFee,
+            discountCode: welcome?.code ?? null, discountPercent: welcome?.percent ?? 0,
+            discountAmount, total,
+            submittedAt: new Date().toISOString(),
+          }),
+        );
+      } catch { /* ignore quota */ }
+
       clear();
       navigate({ to: "/order-confirmation", search: { ref: result.orderRef } });
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Order submission failed";
       setSubmitError(msg);
