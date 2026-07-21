@@ -49,7 +49,7 @@ function Home() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-24 pt-16 text-cream lg:grid-cols-[1.15fr_0.85fr] lg:pb-28 lg:pt-24 lg:px-8">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/45 bg-[rgba(255,248,234,0.78)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-leaf-deep shadow-[0_12px_30px_rgba(31,90,53,0.12)] backdrop-blur-[14px]">
-              Mon &amp; Wed orders close at 8 AM · Delivery 12 PM – 5 PM
+              Mon &amp; Wed orders close at 8 AM · Delivery from 11 AM
             </div>
             <h1 className="mt-5 text-display text-4xl leading-[1.02] text-cream drop-shadow-sm lg:text-6xl">
               Make a healthy start to your day.
