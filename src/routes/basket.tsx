@@ -83,17 +83,30 @@ function Basket() {
             <span className="text-muted-foreground">Subtotal</span>
             <span className="font-bold">{fmt(subtotal)}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Items are sold in batches (5 meals/salads, 6 drinks). Final total, including delivery, is confirmed on WhatsApp.</p>
-          <Link
-            to={minMet ? "/checkout" : "/basket"}
-            onClick={(e) => { if (!minMet) e.preventDefault(); }}
-            aria-disabled={!minMet}
-            className={`mt-5 inline-flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold transition ${
-              minMet ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
-            }`}
-          >
-            {minMet ? "Confirm Order" : "Minimum not met"}
-          </Link>
+          <p className="mt-2 text-xs text-muted-foreground">Minimums: 5 food items (salads and healthy meals combined) and 6 drinks (juices and ginger shots combined). Final total, including delivery, is confirmed on WhatsApp.</p>
+          {(() => {
+            const foodShort = foodCount > 0 && !foodOk ? FOOD_MIN - foodCount : 0;
+            const drinkShort = drinkCount > 0 && !drinkOk ? DRINK_MIN - drinkCount : 0;
+            let label = "Submit Order";
+            if (!minMet) {
+              if (foodShort > 0 && drinkShort === 0) label = `Add ${foodShort} more food items to complete order`;
+              else if (drinkShort > 0 && foodShort === 0) label = `Add ${drinkShort} more drinks to complete order`;
+              else if (foodShort > 0 && drinkShort > 0) label = `Add ${foodShort} food + ${drinkShort} drinks to complete order`;
+              else label = "Minimum not met";
+            }
+            return (
+              <Link
+                to={minMet ? "/checkout" : "/basket"}
+                onClick={(e) => { if (!minMet) e.preventDefault(); }}
+                aria-disabled={!minMet}
+                className={`mt-5 inline-flex h-12 w-full items-center justify-center rounded-xl px-3 text-center text-sm font-semibold transition ${
+                  minMet ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })()}
           <Link to="/salads" className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-xl border border-border text-sm font-semibold hover:border-leaf-deep hover:text-leaf-deep">
             Add more items
           </Link>
