@@ -98,11 +98,14 @@ function Checkout() {
 
     const { data: { session } } = await supabase.auth.getSession();
 
+    const selectedDay = saladDays.find((d) => d.value === form.fulfillmentDate);
     const notesCombined = [
       form.notes?.trim(),
+      selectedDay ? `Fulfillment day: ${selectedDay.label}` : "",
       form.splitDelivery ? `Split bundle: ${form.splitNotes?.trim() || "(see notes)"}` : "",
       form.fulfillment === "Delivery" ? `Zone: ${form.deliveryZone}` : "",
     ].filter(Boolean).join(" · ");
+
 
     try {
       const result = await runSubmit({
