@@ -14,8 +14,10 @@ export function MenuCard({ item }: { item: MenuItem }) {
   const [qty, setQty] = useState(1);
 
   const size = item.sizes?.[sizeIdx];
+  const basePrice = size ? size.price : item.price;
   const seafood = !!protein && SEAFOOD_LABELS.includes(protein);
-  const unitPrice = (size ? size.price : item.price) + (seafood ? SEAFOOD_SURCHARGE : 0);
+  const seafoodAdd = seafood ? SEAFOOD_SURCHARGE : 0;
+  const unitPrice = basePrice + seafoodAdd;
 
   const toggleExcluded = (ing: string) =>
     setExcluded((p) => (p.includes(ing) ? p.filter((x) => x !== ing) : [...p, ing]));
@@ -25,6 +27,8 @@ export function MenuCard({ item }: { item: MenuItem }) {
       itemId: item.id,
       name: item.name,
       unitPrice,
+      basePrice,
+      seafoodAdd,
       quantity: qty,
       category: item.category,
       protein: protein || undefined,
