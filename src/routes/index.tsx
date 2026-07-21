@@ -77,9 +77,9 @@ function Home() {
 
       <div className="border-b border-border bg-leaf-deep text-cream">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-3 text-center text-sm font-medium lg:px-8">
-          <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-citrus" /> Mon &amp; Wed cutoff 8 AM · Other days the day before.</span>
+          <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-citrus" /> Cutoff 8 AM on Mon &amp; Wed. Same-day orders open until 8 AM.</span>
           <span className="hidden h-1 w-1 rounded-full bg-cream/40 sm:inline-block" />
-          <span className="inline-flex items-center gap-2"><Truck className="h-4 w-4 text-citrus" /> Delivery &amp; pickup 12 PM – 5 PM</span>
+          <span className="inline-flex items-center gap-2"><Truck className="h-4 w-4 text-citrus" /> Delivery from 11 AM. Pickup Orange Grove 11 AM to 6 PM.</span>
         </div>
       </div>
 
