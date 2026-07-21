@@ -192,6 +192,7 @@ export function CategoryMenuView({ active }: { active: Key }) {
           <Link key={c.to} to={c.to}>{c.label}</Link>
         ))}
       </nav>
+      <ReviewCheckoutBar />
     </div>
   );
 }

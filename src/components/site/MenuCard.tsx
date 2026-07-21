@@ -54,9 +54,9 @@ export function MenuCard({ item }: { item: MenuItem }) {
           <div className="shrink-0 text-right">
             <div className="text-sm font-bold tracking-wide text-leaf-deep">{fmt(unitPrice)}<span className="text-[10px] font-medium text-muted-foreground"> /ea</span></div>
             <div className="text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
-              {item.category === "salad" && `Batch of ${SALAD_BATCH}`}
-              {item.category === "meal" && `Batch of ${MEAL_BATCH}`}
-              {item.category === "juice" && (item.id === "juice-ginger-shot" ? `Batch of ${GINGER_BATCH}` : `Batch of ${JUICE_BATCH}`)}
+              {item.category === "salad" && "Mix & match, 5-item food minimum"}
+              {item.category === "meal" && "Mix & match, 5-item food minimum"}
+              {item.category === "juice" && "Mix & match, 6-drink order minimum"}
             </div>
           </div>
         </div>
