@@ -17,7 +17,8 @@ type StoredOrderItem = {
   preferences?: string; notes?: string;
 };
 type StoredOrder = {
-  orderRef: string; customerName: string; phone: string; email: string;
+  orderRef: string; idempotencyKey?: string;
+  customerName: string; phone: string; email: string;
   fulfillment: "Delivery" | "Pickup";
   pickupLocation: string; deliveryAddress: string; deliveryZone: string;
   paymentMethod: string; notes: string; splitDelivery: boolean;
@@ -26,6 +27,7 @@ type StoredOrder = {
   discountCode: string | null; discountPercent: number; discountAmount: number;
   total: number; submittedAt: string;
 };
+
 
 export const Route = createFileRoute("/order-confirmation")({
   head: () => ({ meta: [{ title: "Order Confirmed | Cathy's Clean Green Classics" }] }),
