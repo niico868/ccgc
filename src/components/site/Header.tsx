@@ -106,7 +106,7 @@ export function Header() {
                   <div className="truncate px-2 py-1.5 text-xs text-muted-foreground">{email}</div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild><Link to="/account">My account</Link></DropdownMenuItem>
-                  {isAdmin && <DropdownMenuItem asChild><Link to="/admin">Admin · Reviews</Link></DropdownMenuItem>}
+                  {isAdmin && <DropdownMenuItem asChild><Link to="/admin">Admin</Link></DropdownMenuItem>}
                   <DropdownMenuItem onClick={signOut}>Sign out</DropdownMenuItem>
                 </>
               ) : (
