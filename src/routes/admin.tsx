@@ -1,38 +1,34 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, Trash2, Check, EyeOff, Save, MessageCircle } from "lucide-react";
 import { fmt } from "@/lib/menu-data";
+import { waLink } from "@/lib/whatsapp";
+import {
+  Phone, MessageCircle, Copy, Mail, ChevronDown, ChevronUp,
+  Search, LogOut, ClipboardList, CheckSquare, Settings as SettingsIcon,
+} from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin | Cathy's Clean Green Classics" }] }),
+  head: () => ({ meta: [{ title: "Cathy's Orders | Admin Dashboard" }] }),
   component: AdminPage,
 });
 
-type Review = {
-  id: string; author_name: string; rating: number; body: string;
-  status: "pending" | "approved" | "hidden"; created_at: string;
-};
-
-const ORDER_STATUSES = ["received", "confirmed", "prepping", "ready", "out_for_delivery", "completed", "cancelled"] as const;
-type OrderStatus = typeof ORDER_STATUSES[number];
-
-const STATUS_LABEL: Record<OrderStatus, string> = {
-  received: "Submitted",
-  confirmed: "Confirmed",
-  prepping: "Preparing",
-  ready: "Ready",
-  out_for_delivery: "Out for delivery",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
-
-type OrderItem = {
-  name: string; quantity: number; unitPrice?: number;
-  protein?: string; seafood?: boolean; size?: string;
-  preferences?: string; notes?: string;
+type OrderItemRow = {
+  id: string;
+  order_id: string;
+  product_id: string;
+  product_name: string;
+  category: string;
+  quantity: number;
+  protein: string | null;
+  size: string | null;
+  seafood: boolean;
+  unit_price: number;
+  line_total: number;
+  excluded_ingredients: string | null;
+  item_instructions: string | null;
 };
 
 type Order = {
@@ -44,230 +40,324 @@ type Order = {
   fulfillment: string | null;
   pickup_location: string | null;
   delivery_address: string | null;
+  delivery_zone: string | null;
+  fulfillment_window: string | null;
+  required_fulfillment_date: string | null;
+  split_for_freshness: boolean;
   payment_method: string | null;
+  payment_received: boolean;
+  amount_received: number;
   notes: string | null;
-  items: OrderItem[];
+  allergy_info: string | null;
+  drop_off_instructions: string | null;
+  admin_note: string | null;
   subtotal: number;
   delivery_fee: number;
   discount_code: string | null;
   discount_amount: number;
   total: number;
-  status: OrderStatus;
-  status_updated_at: string;
-  admin_note: string | null;
+  simple_status: "pending" | "done";
+  completed_at: string | null;
   created_at: string;
-  used_whatsapp_doublecheck: boolean;
-  whatsapp_doublecheck_at: string | null;
 };
+
+type Tab = "orders" | "completed" | "settings";
 
 function AdminPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [tab, setTab] = useState<"orders" | "reviews">("orders");
+  const [tab, setTab] = useState<Tab>("orders");
+  const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate({ to: "/auth", search: { mode: "signin" } }); return; }
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin");
+      setUserEmail(user.email ?? "");
+      const { data: roles } = await supabase.from("user_roles")
+        .select("role").eq("user_id", user.id).eq("role", "admin");
       setIsAdmin((roles ?? []).length > 0);
       setLoading(false);
     })();
   }, [navigate]);
 
-  if (loading) return <Section className="py-20 text-center text-brown">Loading…</Section>;
-  if (!isAdmin) return (
-    <Section className="py-20 text-center">
-      <h1 className="text-display text-3xl text-leaf-deep">Admin access only</h1>
-      <p className="mt-2 text-sm text-brown">You don't have permission to view this page.</p>
-    </Section>
-  );
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", search: { mode: "signin" } });
+  };
+
+  if (loading) {
+    return <Section className="py-20 text-center text-lg text-brown">Loading…</Section>;
+  }
+  if (!isAdmin) {
+    return (
+      <Section className="py-20 text-center">
+        <h1 className="text-display text-3xl text-leaf-deep">Admin access only</h1>
+        <p className="mt-3 text-base text-brown">
+          Your account ({userEmail}) doesn't have admin access to this dashboard.
+        </p>
+        <div className="mt-6">
+          <Link to="/" className="rounded-xl border border-border bg-white px-5 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
+            Return to website
+          </Link>
+        </div>
+      </Section>
+    );
+  }
 
   return (
-    <Section className="py-12 space-y-6">
-      <div>
-        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Admin</h1>
-        <p className="text-sm text-brown">Manage incoming orders and customer reviews.</p>
-      </div>
+    <div className="min-h-screen bg-cream/40">
+      <header className="sticky top-0 z-30 border-b-2 border-leaf-deep/15 bg-white shadow-sm">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <div className="text-display text-2xl text-leaf-deep">Cathy's Dashboard</div>
+          <nav className="flex flex-wrap gap-2" aria-label="Admin sections">
+            <NavBtn active={tab === "orders"} onClick={() => setTab("orders")} icon={<ClipboardList className="h-5 w-5" />} label="Orders" />
+            <NavBtn active={tab === "completed"} onClick={() => setTab("completed")} icon={<CheckSquare className="h-5 w-5" />} label="Completed" />
+            <NavBtn active={tab === "settings"} onClick={() => setTab("settings")} icon={<SettingsIcon className="h-5 w-5" />} label="Settings" />
+            <button
+              onClick={signOut}
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-2 text-base font-semibold text-leaf-deep hover:bg-secondary"
+            >
+              <LogOut className="h-5 w-5" /> Sign Out
+            </button>
+          </nav>
+        </div>
+      </header>
 
-      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
-        {(["orders", "reviews"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`rounded-full px-5 py-1.5 text-sm font-semibold capitalize transition ${
-              tab === t ? "bg-leaf-deep text-cream" : "border border-border bg-white text-leaf-deep hover:border-leaf-soft"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {tab === "orders" ? <OrdersPanel /> : <ReviewsPanel />}
-    </Section>
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        {tab === "orders" && <OrdersView status="pending" />}
+        {tab === "completed" && <OrdersView status="done" />}
+        {tab === "settings" && <SettingsView email={userEmail} />}
+      </main>
+    </div>
   );
 }
 
-function OrdersPanel() {
+function NavBtn({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-base font-semibold transition ${
+        active ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-white text-leaf-deep hover:bg-secondary"
+      }`}
+    >
+      {icon} {label}
+    </button>
+  );
+}
+
+/* ─────────────────────────── ORDERS / COMPLETED ─────────────────────────── */
+
+type DateFilter = "today" | "tomorrow" | "all";
+
+function OrdersView({ status }: { status: "pending" | "done" }) {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filter, setFilter] = useState<"active" | OrderStatus | "all">("active");
+  const [itemsByOrder, setItemsByOrder] = useState<Record<string, OrderItemRow[]>>({});
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [dateFilter, setDateFilter] = useState<DateFilter>(status === "pending" ? "today" : "all");
+  const [search, setSearch] = useState("");
+  const [confirmDone, setConfirmDone] = useState<Order | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("orders")
+    const { data: os, error } = await supabase.from("orders")
       .select("*")
+      .eq("simple_status" as never, status as never)
       .order("created_at", { ascending: false })
-      .limit(200);
-    if (error) toast.error(error.message);
-    setOrders((data ?? []) as unknown as Order[]);
+      .limit(500);
+    if (error) { toast.error(error.message); setLoading(false); return; }
+    const list = (os ?? []) as unknown as Order[];
+    setOrders(list);
+    if (list.length > 0) {
+      const ids = list.map((o) => o.id);
+      const { data: its } = await supabase.from("order_items").select("*").in("order_id", ids);
+      const grouped: Record<string, OrderItemRow[]> = {};
+      ((its ?? []) as unknown as OrderItemRow[]).forEach((r) => {
+        (grouped[r.order_id] ||= []).push(r);
+      });
+      setItemsByOrder(grouped);
+    } else {
+      setItemsByOrder({});
+    }
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [status]);
 
-  const updateStatus = async (o: Order, status: OrderStatus) => {
-    const { error } = await supabase.from("orders").update({ status }).eq("id", o.id);
+  const todayISO = ttDateISO(new Date());
+  const tomorrowISO = ttDateISO(new Date(Date.now() + 86400000));
+
+  const filtered = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    return orders.filter((o) => {
+      if (status === "pending") {
+        if (dateFilter === "today" && o.required_fulfillment_date !== todayISO) return false;
+        if (dateFilter === "tomorrow" && o.required_fulfillment_date !== tomorrowISO) return false;
+      }
+      if (s) {
+        const hay = `${o.customer_name ?? ""} ${o.order_ref} ${o.phone ?? ""}`.toLowerCase();
+        if (!hay.includes(s)) return false;
+      }
+      return true;
+    });
+  }, [orders, dateFilter, search, status, todayISO, tomorrowISO]);
+
+  const pendingCount = filtered.length;
+  const totalFood = filtered.reduce((s, o) => s + (itemsByOrder[o.id] ?? []).filter((i) => i.category !== "juice").reduce((a, b) => a + b.quantity, 0), 0);
+  const totalJuice = filtered.reduce((s, o) => s + (itemsByOrder[o.id] ?? []).filter((i) => i.category === "juice").reduce((a, b) => a + b.quantity, 0), 0);
+
+  const setPaymentReceived = async (o: Order, received: boolean) => {
+    const { error } = await supabase.from("orders").update({
+      payment_received: received,
+      payment_received_at: received ? new Date().toISOString() : null,
+      amount_received: received ? Number(o.total) : 0,
+    } as never).eq("id", o.id);
     if (error) { toast.error(error.message); return; }
-    toast.success(`Marked as ${STATUS_LABEL[status]}`);
-    await load();
+    toast.success(received ? "Payment marked as received" : "Payment cleared");
+    load();
+  };
+
+  const markDone = async (o: Order) => {
+    const { error } = await supabase.from("orders").update({
+      simple_status: "done", status: "completed", completed_at: new Date().toISOString(),
+    } as never).eq("id", o.id);
+    setConfirmDone(null);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Order marked as done");
+    load();
+  };
+
+  const moveBackToPending = async (o: Order) => {
+    const { error } = await supabase.from("orders").update({
+      simple_status: "pending", status: "received", completed_at: null,
+    } as never).eq("id", o.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Order moved back to Pending");
+    load();
   };
 
   const saveNote = async (o: Order, note: string) => {
-    const { error } = await supabase.from("orders").update({ admin_note: note }).eq("id", o.id);
+    const { error } = await supabase.from("orders").update({ admin_note: note } as never).eq("id", o.id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Note saved");
-    await load();
+    toast.success("Internal note saved");
+    load();
   };
 
-  const filtered = orders.filter((o) => {
-    if (filter === "all") return true;
-    if (filter === "active") return !["completed", "cancelled"].includes(o.status);
-    return o.status === filter;
-  });
-
-  if (loading) return <p className="text-sm text-brown">Loading orders…</p>;
-
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {(["active", ...ORDER_STATUSES, "all"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition ${
-              filter === f ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-white text-leaf-deep hover:border-leaf-soft"
-            }`}
-          >
-            {f === "active" || f === "all" ? f : STATUS_LABEL[f as OrderStatus]}
-            <span className="ml-1 opacity-70">
-              ({orders.filter((o) =>
-                f === "all" ? true :
-                f === "active" ? !["completed", "cancelled"].includes(o.status) :
-                o.status === f
-              ).length})
-            </span>
-          </button>
-        ))}
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">
+          {status === "pending" ? "Cathy's Orders" : "Completed Orders"}
+        </h1>
+        <p className="mt-1 text-base text-brown">
+          {status === "pending" ? "Orders waiting to be completed" : "Orders you have already finished"}
+        </p>
       </div>
 
-      {filtered.length === 0 ? (
-        <p className="text-sm text-brown">No orders in this view.</p>
+      {status === "pending" && (
+        <div className="flex flex-wrap gap-3">
+          {(["today", "tomorrow", "all"] as DateFilter[]).map((f) => (
+            <button
+              key={f}
+              onClick={() => setDateFilter(f)}
+              className={`rounded-xl border-2 px-5 py-3 text-base font-semibold transition ${
+                dateFilter === f ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-white text-leaf-deep hover:bg-secondary"
+              }`}
+            >
+              {f === "today" ? "Today" : f === "tomorrow" ? "Tomorrow" : "All Pending"}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brown" aria-hidden />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search customer or order number"
+          className="h-14 w-full rounded-xl border-2 border-border bg-white pl-12 pr-4 text-base outline-none focus:border-leaf-deep"
+        />
+      </div>
+
+      {status === "pending" && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard label="Pending orders" value={pendingCount} />
+          <StatCard label="Total food items" value={totalFood} />
+          <StatCard label="Total juice bottles" value={totalJuice} />
+        </div>
+      )}
+
+      {loading ? (
+        <p className="py-10 text-center text-base text-brown">Loading orders…</p>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-2xl border-2 border-dashed border-border bg-white p-10 text-center">
+          <p className="text-lg text-brown">No orders in this view.</p>
+        </div>
       ) : (
         <ul className="space-y-3">
           {filtered.map((o) => {
+            const items = itemsByOrder[o.id] ?? [];
+            const totalQty = items.reduce((s, i) => s + i.quantity, 0);
+            const type = orderType(items);
             const isOpen = expanded === o.id;
-            const requested = new Date(o.created_at).toLocaleString("en-TT", {
-              month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-            });
             return (
-              <li key={o.id} className="rounded-2xl border border-border bg-card shadow-card">
-                <button
-                  type="button"
-                  onClick={() => setExpanded(isOpen ? null : o.id)}
-                  className="grid w-full grid-cols-2 gap-2 p-4 text-left lg:grid-cols-6 lg:items-center"
-                >
-                  <div>
-                    <div className="font-mono text-sm font-bold text-leaf-deep">{o.order_ref}</div>
-                    <div className="text-[11px] text-muted-foreground">{requested}</div>
-                  </div>
-                  <div className="text-sm font-semibold">{o.customer_name || "—"}</div>
-                  <div className="text-sm">
-                    <div>{o.fulfillment || "—"}</div>
-                    <div className="text-[11px] text-muted-foreground truncate">
-                      {o.fulfillment === "Delivery" ? o.delivery_address : o.pickup_location}
+              <li key={o.id} className="overflow-hidden rounded-2xl border-2 border-border bg-white shadow-sm">
+                <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1.4fr_0.6fr_0.8fr_0.9fr_auto] sm:items-center">
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(isOpen ? null : o.id)}
+                    className="flex items-center gap-2 text-left"
+                    aria-expanded={isOpen}
+                  >
+                    <div>
+                      <div className="text-lg font-semibold text-leaf-deep">
+                        {o.customer_name || "—"}
+                      </div>
+                      <div className="text-xs text-brown font-mono">{o.order_ref}</div>
                     </div>
+                    {isOpen ? <ChevronUp className="h-5 w-5 text-leaf-deep" /> : <ChevronDown className="h-5 w-5 text-leaf-deep" />}
+                  </button>
+                  <div className="text-base">
+                    <span className="font-semibold text-leaf-deep">{totalQty}</span>{" "}
+                    <span className="text-brown">items</span>
                   </div>
-                  <div className="text-sm font-bold text-leaf-deep">{fmt(Number(o.total) || 0)}</div>
-                  <div>
-                    <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
-                      o.status === "completed" ? "bg-leaf-soft/25 text-leaf-deep" :
-                      o.status === "cancelled" ? "bg-muted text-muted-foreground" :
-                      o.status === "received" ? "bg-citrus/40 text-leaf-deep" :
-                      "bg-leaf-soft/15 text-leaf-deep"
-                    }`}>{STATUS_LABEL[o.status]}</span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
-                    {o.used_whatsapp_doublecheck && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/15 px-2 py-0.5 font-semibold text-[#128C7E]">
-                        <MessageCircle className="h-3 w-3" /> WhatsApp double-check
-                      </span>
+                  <div className="text-base text-leaf-deep">{type}</div>
+                  <div className="text-sm text-brown">
+                    Placed {shortDate(o.created_at)}
+                    {o.required_fulfillment_date && (
+                      <div className="text-sm text-leaf-deep">Required {shortDateISO(o.required_fulfillment_date)}</div>
                     )}
                   </div>
-                </button>
+                  <div>
+                    {status === "pending" ? (
+                      <button
+                        onClick={() => setConfirmDone(o)}
+                        className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-leaf-soft/20"
+                      >
+                        <span className="inline-block h-5 w-5 rounded border-2 border-leaf-deep" aria-hidden /> Mark Done
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => moveBackToPending(o)}
+                        className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary"
+                      >
+                        Move Back to Pending
+                      </button>
+                    )}
+                  </div>
+                </div>
 
                 {isOpen && (
-                  <div className="space-y-4 border-t border-border p-5">
-                    <div className="grid gap-3 text-sm sm:grid-cols-2">
-                      <div><b>Contact:</b> {o.phone}{o.email ? ` · ${o.email}` : ""}</div>
-                      <div><b>Payment:</b> {o.payment_method || "—"}</div>
-                      {o.notes && <div className="sm:col-span-2"><b>Notes:</b> {o.notes}</div>}
-                    </div>
-
-                    <div>
-                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Items</div>
-                      <ul className="mt-2 space-y-1 text-sm">
-                        {(o.items || []).map((it, i) => {
-                          const extras = [it.size, it.protein, it.seafood ? "Seafood" : null].filter(Boolean).join(" · ");
-                          return (
-                            <li key={i}>
-                              {it.quantity} × {it.name}
-                              {extras && <span className="text-xs text-muted-foreground"> ({extras})</span>}
-                              {it.preferences && <span className="text-xs text-brown"> — no {it.preferences}</span>}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                      <div className="mt-3 text-xs text-muted-foreground">
-                        Subtotal {fmt(Number(o.subtotal) || 0)} · Delivery {fmt(Number(o.delivery_fee) || 0)}
-                        {o.discount_code && ` · Discount ${o.discount_code} −${fmt(Number(o.discount_amount) || 0)}`}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Move status</div>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {ORDER_STATUSES.map((s) => (
-                          <button
-                            key={s}
-                            onClick={() => updateStatus(o, s)}
-                            disabled={o.status === s}
-                            className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition ${
-                              o.status === s
-                                ? "border-leaf-deep bg-leaf-deep text-cream"
-                                : "border-border bg-white text-leaf-deep hover:border-leaf-soft"
-                            }`}
-                          >
-                            {STATUS_LABEL[s]}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <AdminNoteEditor initial={o.admin_note ?? ""} onSave={(n) => saveNote(o, n)} />
+                  <div className="space-y-6 border-t-2 border-border bg-cream/30 p-5">
+                    <ExpandedOrder
+                      order={o}
+                      items={items}
+                      onSetPaymentReceived={(v) => setPaymentReceived(o, v)}
+                      onSaveNote={(n) => saveNote(o, n)}
+                    />
                   </div>
                 )}
               </li>
@@ -275,147 +365,299 @@ function OrdersPanel() {
           })}
         </ul>
       )}
+
+      {confirmDone && (
+        <ConfirmDoneModal
+          order={confirmDone}
+          onCancel={() => setConfirmDone(null)}
+          onConfirm={() => markDone(confirmDone)}
+        />
+      )}
     </div>
   );
 }
 
-function AdminNoteEditor({ initial, onSave }: { initial: string; onSave: (n: string) => void }) {
-  const [val, setVal] = useState(initial);
-  const dirty = val !== initial;
+function StatCard({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border-2 border-leaf-soft/40 bg-white p-5 shadow-sm">
+      <div className="text-sm font-semibold uppercase tracking-wider text-brown">{label}</div>
+      <div className="mt-1 text-4xl font-bold text-leaf-deep">{value}</div>
+    </div>
+  );
+}
+
+function ExpandedOrder({
+  order, items, onSetPaymentReceived, onSaveNote,
+}: {
+  order: Order;
+  items: OrderItemRow[];
+  onSetPaymentReceived: (v: boolean) => void;
+  onSaveNote: (n: string) => void;
+}) {
+  const [note, setNote] = useState(order.admin_note ?? "");
+  const remaining = Math.max(0, Number(order.total) - Number(order.amount_received || 0));
+
+  const waMsg = `Hi ${order.customer_name ?? "there"}, this is Cathy's Clean Green Classics confirming your website order ${order.order_ref}.`;
+
+  const copy = async (text: string, label: string) => {
+    try { await navigator.clipboard.writeText(text); toast.success(`${label} copied`); }
+    catch { toast.error("Could not copy"); }
+  };
+
+  return (
+    <>
+      {/* Customer */}
+      <Panel title="Customer">
+        <div className="grid gap-2 text-base">
+          <Row label="Name" value={order.customer_name ?? "—"} />
+          <Row label="Telephone" value={order.phone ?? "—"} />
+          <Row label="Email" value={order.email ?? "—"} />
+        </div>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {order.phone && (
+            <>
+              <a href={`tel:${order.phone}`} className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
+                <Phone className="h-5 w-5" /> Call Customer
+              </a>
+              <a href={waLink(waMsg)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-base font-semibold text-white hover:opacity-90">
+                <MessageCircle className="h-5 w-5" /> Open WhatsApp
+              </a>
+              <button onClick={() => copy(order.phone!, "Phone number")} className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
+                <Copy className="h-5 w-5" /> Copy Number
+              </button>
+            </>
+          )}
+          {order.email && (
+            <button onClick={() => copy(order.email!, "Email")} className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
+              <Mail className="h-5 w-5" /> Copy Email
+            </button>
+          )}
+        </div>
+      </Panel>
+
+      {/* Order details */}
+      <Panel title="Order">
+        <div className="grid gap-2 text-base">
+          <Row label="Order ID" value={<span className="font-mono">{order.order_ref}</span>} />
+          <Row label="Submitted" value={longDate(order.created_at)} />
+          {order.required_fulfillment_date && (
+            <Row label="Required fulfilment date" value={shortDateISO(order.required_fulfillment_date)} bold />
+          )}
+          <Row label="Total quantity" value={String(items.reduce((s, i) => s + i.quantity, 0))} />
+          <Row label="Order type" value={orderType(items)} />
+        </div>
+        <ul className="mt-4 space-y-3">
+          {items.map((it) => (
+            <li key={it.id} className="rounded-xl border-2 border-border bg-white p-4">
+              <div className="text-lg font-semibold text-leaf-deep">{it.product_name}</div>
+              <dl className="mt-2 grid gap-1 text-base sm:grid-cols-2">
+                <DL label="Quantity" value={String(it.quantity)} />
+                {it.protein && <DL label="Protein" value={it.protein + (it.seafood ? " (seafood)" : "")} />}
+                <DL label="Unit price" value={fmt(Number(it.unit_price))} />
+                <DL label="Line total" value={fmt(Number(it.line_total))} />
+                <DL label="Ingredients excluded" value={it.excluded_ingredients || "None"} />
+                <DL label="Special instructions" value={it.item_instructions || "None"} />
+              </dl>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+
+      {/* Fulfilment */}
+      <Panel title="Fulfilment">
+        <div className="grid gap-2 text-base">
+          <Row label="Method" value={order.fulfillment ?? "—"} />
+          {order.fulfillment === "Delivery" && (
+            <>
+              {order.delivery_zone && <Row label="Delivery area" value={order.delivery_zone} />}
+              {order.delivery_address && <Row label="Delivery address" value={order.delivery_address} />}
+              <Row label="Delivery charge" value={fmt(Number(order.delivery_fee) || 0)} />
+              {order.fulfillment_window && <Row label="Delivery window" value={order.fulfillment_window} />}
+              <Row label="Split for freshness" value={order.split_for_freshness ? "Yes" : "No"} />
+            </>
+          )}
+          {order.fulfillment === "Pickup" && (
+            <>
+              {order.pickup_location && <Row label="Pickup location" value={order.pickup_location} />}
+              {order.required_fulfillment_date && <Row label="Pickup date" value={shortDateISO(order.required_fulfillment_date)} />}
+              {order.fulfillment_window && <Row label="Pickup window" value={order.fulfillment_window} />}
+            </>
+          )}
+        </div>
+      </Panel>
+
+      {/* Payment */}
+      <Panel title="Payment">
+        <div className="grid gap-2 text-base">
+          <Row label="Payment method" value={order.payment_method ?? "—"} />
+          <Row label="Subtotal" value={fmt(Number(order.subtotal))} />
+          <Row label="Delivery charge" value={fmt(Number(order.delivery_fee) || 0)} />
+          <Row label="Total" value={fmt(Number(order.total))} bold />
+          <Row label="Amount received" value={fmt(Number(order.amount_received || 0))} />
+          <Row label="Remaining balance" value={fmt(remaining)} />
+        </div>
+        <label className="mt-4 inline-flex cursor-pointer items-start gap-3 rounded-xl border-2 border-leaf-deep/30 bg-white p-4">
+          <input
+            type="checkbox"
+            checked={order.payment_received}
+            onChange={(e) => onSetPaymentReceived(e.target.checked)}
+            className="mt-1 h-6 w-6 accent-[var(--leaf-deep)]"
+          />
+          <div>
+            <div className="text-base font-semibold text-leaf-deep">
+              {order.payment_received ? "✓ Payment received" : "Payment received"}
+            </div>
+            <div className="text-sm text-brown">Tick when the money has come in.</div>
+          </div>
+        </label>
+      </Panel>
+
+      {/* Notes */}
+      {(order.notes || order.allergy_info || order.drop_off_instructions) && (
+        <Panel title="Customer notes">
+          {order.notes && <NoteBlock label="Order notes" value={order.notes} />}
+          {order.allergy_info && <NoteBlock label="Allergy information" value={order.allergy_info} />}
+          {order.drop_off_instructions && <NoteBlock label="Drop-off instructions" value={order.drop_off_instructions} />}
+        </Panel>
+      )}
+
+      <Panel title="Internal staff note — customer cannot see this">
+        <textarea
+          rows={3}
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Notes for the team only"
+          className="w-full rounded-xl border-2 border-border bg-white p-3 text-base outline-none focus:border-leaf-deep"
+        />
+        <button
+          onClick={() => onSaveNote(note)}
+          className="mt-3 rounded-xl bg-leaf-deep px-5 py-3 text-base font-semibold text-cream hover:opacity-90"
+        >
+          Save internal note
+        </button>
+      </Panel>
+    </>
+  );
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-2xl border-2 border-border bg-white p-5">
+      <h3 className="text-display text-xl text-leaf-deep">{title}</h3>
+      <div className="mt-3">{children}</div>
+    </section>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: React.ReactNode; bold?: boolean }) {
+  return (
+    <div className="flex flex-wrap justify-between gap-3 border-b border-border/60 py-1 last:border-0">
+      <span className="text-brown">{label}</span>
+      <span className={bold ? "font-bold text-leaf-deep" : "text-leaf-deep"}>{value}</span>
+    </div>
+  );
+}
+
+function DL({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Internal note</div>
-      <textarea
-        value={val} onChange={(e) => setVal(e.target.value)} rows={2}
-        placeholder="Anything the team should know…"
-        className="mt-2 w-full rounded-xl border border-border bg-background p-3 text-sm outline-none focus:border-leaf-deep"
-      />
-      {dirty && (
-        <button
-          onClick={() => onSave(val)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-leaf-deep px-4 py-1.5 text-xs font-semibold text-cream hover:opacity-90"
-        >
-          <Save className="h-3.5 w-3.5" /> Save note
-        </button>
-      )}
+      <dt className="text-xs uppercase tracking-wider text-brown">{label}</dt>
+      <dd className="text-base text-leaf-deep">{value}</dd>
     </div>
   );
 }
 
-function ReviewsPanel() {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "hidden">("pending");
-  const [drafts, setDrafts] = useState<Record<string, { body: string; rating: number }>>({});
-  const [loading, setLoading] = useState(true);
-
-  const load = async () => {
-    setLoading(true);
-    const { data } = await supabase.from("reviews").select("id,author_name,rating,body,status,created_at").order("created_at", { ascending: false });
-    setReviews((data ?? []) as Review[]);
-    setLoading(false);
-  };
-
-  useEffect(() => { load(); }, []);
-
-  const setDraft = (id: string, patch: Partial<{ body: string; rating: number }>) =>
-    setDrafts((d) => ({ ...d, [id]: { body: patch.body ?? d[id]?.body ?? "", rating: patch.rating ?? d[id]?.rating ?? 5 } }));
-
-  const update = async (r: Review, patch: Partial<Review>) => {
-    const { error } = await supabase.from("reviews").update(patch).eq("id", r.id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Saved");
-    await load();
-  };
-
-  const remove = async (id: string) => {
-    if (!confirm("Delete this review?")) return;
-    const { error } = await supabase.from("reviews").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Deleted");
-    await load();
-  };
-
-  if (loading) return <p className="text-sm text-brown">Loading reviews…</p>;
-
-  const filtered = filter === "all" ? reviews : reviews.filter((r) => r.status === filter);
-
+function NoteBlock({ label, value }: { label: string; value: string }) {
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {(["pending", "approved", "hidden", "all"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
-              filter === f ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-white text-leaf-deep hover:border-leaf-soft"
-            }`}
-          >
-            {f} {f !== "all" && <span className="ml-1 opacity-70">({reviews.filter((r) => r.status === f).length})</span>}
-          </button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <p className="text-sm text-brown">No reviews in this view.</p>
-      ) : (
-        <ul className="space-y-3">
-          {filtered.map((r) => {
-            const draft = drafts[r.id] ?? { body: r.body, rating: r.rating };
-            const dirty = draft.body !== r.body || draft.rating !== r.rating;
-            return (
-              <li key={r.id} className="rounded-2xl border border-border bg-card p-5 shadow-card">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="font-semibold text-leaf-deep">{r.author_name}</div>
-                    <div className="text-xs text-brown">{new Date(r.created_at).toLocaleString()}</div>
-                  </div>
-                  <span className={`rounded-full px-3 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
-                    r.status === "approved" ? "bg-leaf-soft/20 text-leaf-deep" :
-                    r.status === "hidden" ? "bg-muted text-muted-foreground" :
-                    "bg-citrus/30 text-leaf-deep"
-                  }`}>{r.status}</span>
-                </div>
-
-                <div className="mt-3 flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button key={n} type="button" onClick={() => setDraft(r.id, { rating: n })} aria-label={`${n} stars`}>
-                      <Star className={`h-5 w-5 ${n <= draft.rating ? "fill-citrus text-citrus" : "text-muted-foreground"}`} />
-                    </button>
-                  ))}
-                </div>
-
-                <textarea
-                  rows={3}
-                  value={draft.body}
-                  onChange={(e) => setDraft(r.id, { body: e.target.value })}
-                  className="mt-3 w-full rounded-xl border border-border bg-background p-3 text-sm outline-none focus:border-leaf-deep"
-                />
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {dirty && (
-                    <button onClick={() => update(r, { body: draft.body, rating: draft.rating })} className="inline-flex items-center gap-1.5 rounded-full bg-leaf-deep px-4 py-1.5 text-xs font-semibold text-cream hover:opacity-90">
-                      <Save className="h-3.5 w-3.5" /> Save edits
-                    </button>
-                  )}
-                  {r.status !== "approved" && (
-                    <button onClick={() => update(r, { status: "approved" })} className="inline-flex items-center gap-1.5 rounded-full border border-leaf-deep/30 bg-white px-4 py-1.5 text-xs font-semibold text-leaf-deep hover:bg-secondary">
-                      <Check className="h-3.5 w-3.5" /> Approve
-                    </button>
-                  )}
-                  {r.status !== "hidden" && (
-                    <button onClick={() => update(r, { status: "hidden" })} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-4 py-1.5 text-xs font-semibold text-foreground hover:border-leaf-soft">
-                      <EyeOff className="h-3.5 w-3.5" /> Hide
-                    </button>
-                  )}
-                  <button onClick={() => remove(r.id)} className="inline-flex items-center gap-1.5 rounded-full border border-coral/40 bg-white px-4 py-1.5 text-xs font-semibold text-coral hover:bg-coral/10">
-                    <Trash2 className="h-3.5 w-3.5" /> Delete
-                  </button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+    <div className="mb-3 last:mb-0">
+      <div className="text-sm font-semibold uppercase tracking-wider text-brown">{label}</div>
+      <div className="mt-1 whitespace-pre-wrap rounded-xl bg-cream/60 p-3 text-base text-leaf-deep">{value}</div>
     </div>
   );
+}
+
+function ConfirmDoneModal({ order, onCancel, onConfirm }: { order: Order; onCancel: () => void; onConfirm: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+        <h2 className="text-display text-2xl text-leaf-deep">
+          Mark {order.customer_name ?? "this"}'s order as done?
+        </h2>
+        <p className="mt-2 text-base text-brown">This will move the order to the Completed list.</p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row-reverse">
+          <button onClick={onConfirm} className="flex-1 rounded-xl bg-leaf-deep px-5 py-3 text-base font-semibold text-cream hover:opacity-90">
+            Yes, Mark Done
+          </button>
+          <button onClick={onCancel} className="flex-1 rounded-xl border-2 border-border bg-white px-5 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
+            Go Back
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────── SETTINGS ──────────────────────────────── */
+
+function SettingsView({ email }: { email: string }) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-display text-3xl text-leaf-deep">Settings</h1>
+        <p className="mt-1 text-base text-brown">Your account and dashboard information.</p>
+      </div>
+      <div className="rounded-2xl border-2 border-border bg-white p-5">
+        <div className="text-sm font-semibold uppercase tracking-wider text-brown">Signed in as</div>
+        <div className="mt-1 text-lg text-leaf-deep">{email || "—"}</div>
+      </div>
+      <div className="rounded-2xl border-2 border-border bg-white p-5">
+        <h3 className="text-display text-xl text-leaf-deep">Add this dashboard to your phone</h3>
+        <ol className="mt-3 list-decimal space-y-2 pl-6 text-base text-leaf-deep">
+          <li>Open this page in Safari or Chrome on your phone.</li>
+          <li>Tap the share or menu button.</li>
+          <li>Choose "Add to Home Screen".</li>
+          <li>Tap the new icon any time to jump straight to Cathy's Dashboard.</li>
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────── HELPERS ───────────────────────────────── */
+
+function orderType(items: OrderItemRow[]): string {
+  const cats = new Set(items.map((i) => i.category));
+  if (cats.size === 0) return "—";
+  if (cats.size > 1) return "Mixed";
+  const only = [...cats][0];
+  if (only === "salad") return "Salad";
+  if (only === "meal") return "Meal";
+  if (only === "juice") return "Juice";
+  return only;
+}
+
+function ttDateISO(d: Date): string {
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Port_of_Spain",
+    year: "numeric", month: "2-digit", day: "2-digit",
+  });
+  return fmt.format(d);
+}
+
+function shortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-TT", { month: "short", day: "numeric" });
+}
+
+function shortDateISO(iso: string): string {
+  // iso is YYYY-MM-DD; parse as UTC to avoid TZ shift then format calendar day
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, (m ?? 1) - 1, d ?? 1));
+  return dt.toLocaleDateString("en-TT", { timeZone: "UTC", weekday: "long", month: "long", day: "numeric" });
+}
+
+function longDate(iso: string): string {
+  return new Date(iso).toLocaleString("en-TT", {
+    weekday: "short", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit",
+  });
 }

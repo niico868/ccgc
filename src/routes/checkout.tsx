@@ -110,6 +110,9 @@ function Checkout() {
 
 
     try {
+      const fulfillmentWindow = form.fulfillment === "Pickup"
+        ? "11:00 AM to 6:00 PM"
+        : "11:00 AM to 5:00 PM";
       const result = await runSubmit({
         data: {
           idempotencyKey: idemRef.current,
@@ -120,8 +123,14 @@ function Checkout() {
           fulfillment: form.fulfillment,
           pickupLocation: form.fulfillment === "Pickup" ? form.pickup : undefined,
           deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : undefined,
+          deliveryZone: form.fulfillment === "Delivery" ? form.deliveryZone : undefined,
+          fulfillmentWindow,
+          requiredFulfillmentDate: form.fulfillmentDate || undefined,
+          splitForFreshness: form.splitDelivery,
           paymentMethod: form.payment,
           notes: notesCombined || undefined,
+          allergyInfo: form.allergy.trim() || undefined,
+          dropOffInstructions: form.dropOff.trim() || undefined,
           items: lines.map((l) => ({
             itemId: l.itemId,
             name: l.name,
@@ -338,8 +347,22 @@ function Checkout() {
           </div>
 
           <div>
+            <div className="text-display text-lg text-leaf-deep">Allergy information</div>
+            <textarea rows={2} placeholder="Any allergies or dietary restrictions we should know…" value={form.allergy} onChange={set("allergy")}
+              className="mt-3 w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf-deep" />
+          </div>
+
+          {form.fulfillment === "Delivery" && (
+            <div>
+              <div className="text-display text-lg text-leaf-deep">Drop-off instructions</div>
+              <textarea rows={2} placeholder="Gate code, landmarks, where to leave the order…" value={form.dropOff} onChange={set("dropOff")}
+                className="mt-3 w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf-deep" />
+            </div>
+          )}
+
+          <div>
             <div className="text-display text-lg text-leaf-deep">Order notes</div>
-            <textarea rows={4} placeholder="Allergies, drop-off instructions, anything else we should know…" value={form.notes} onChange={set("notes")}
+            <textarea rows={3} placeholder="Anything else we should know…" value={form.notes} onChange={set("notes")}
               className="mt-3 w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf-deep" />
           </div>
         </div>
