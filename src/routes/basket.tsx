@@ -29,18 +29,22 @@ function Basket() {
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Your Basket</h1>
 
-      {!minMet && (
+      {minMet ? (
+        <div className="mt-6 rounded-2xl border border-leaf-soft/40 bg-leaf-soft/10 p-4 text-sm font-semibold text-leaf-deep">
+          Minimum reached, you can check out when you're ready.
+        </div>
+      ) : (
         <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm">
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} meals to complete this order. You currently have {foodCount}.
+              You need at least {FOOD_MIN} food items to complete this order. Salads and healthy meals can be combined. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. You currently have {drinkCount}.
+              You need at least {DRINK_MIN} drinks to complete this order. Juices and ginger shots can be combined. You currently have {drinkCount}.
             </div>
           )}
         </div>
