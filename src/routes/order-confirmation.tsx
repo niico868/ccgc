@@ -4,7 +4,9 @@ import { CheckCircle2, MessageCircle } from "lucide-react";
 import { Section } from "@/components/site/Section";
 import { fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
+import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+
 
 const search = z.object({ ref: z.string().optional() });
 
