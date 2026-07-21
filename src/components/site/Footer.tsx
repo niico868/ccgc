@@ -28,6 +28,7 @@ export function Footer() {
             <li><Link to="/meals" className="hover:text-white">Healthy Meals</Link></li>
             <li><Link to="/juices" className="hover:text-white">Cold-Pressed Juices</Link></li>
             <li><Link to="/account" className="hover:text-white">My Account</Link></li>
+            <li><Link to="/track" className="hover:text-white">Track an Order</Link></li>
           </ul>
         </div>
         <div>

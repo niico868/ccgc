@@ -23,6 +23,8 @@ function Checkout() {
   const navigate = useNavigate();
   const [done, setDone] = useState(false);
   const [lastMsg, setLastMsg] = useState("");
+  const [lastOrderId, setLastOrderId] = useState("");
+  const [lastLast4, setLastLast4] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
   const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
   const [form, setForm] = useState({
@@ -96,6 +98,10 @@ function Checkout() {
       return;
     }
     const orderId = "CGCC-" + Date.now().toString(36).toUpperCase();
+    const last4 = form.phone.replace(/\D/g, "").slice(-4);
+    const trackUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/track?ref=${encodeURIComponent(orderId)}&p=${last4}`
+      : `/track?ref=${orderId}&p=${last4}`;
 
     const discountLine = welcome
       ? `\nDiscount: ${welcome.code} (${welcome.percent}% off)`
@@ -104,6 +110,7 @@ function Checkout() {
     const msg = `Hi Cathy, I'd like to confirm my order from Fine Time for Cathy's Clean Green Classics.
 
 Order ID: ${orderId}
+Track live: ${trackUrl}
 
 Name: ${form.name}
 Phone: ${form.phone}
@@ -126,6 +133,8 @@ Placed through the website. Please confirm the final total.`;
     if (!win) window.location.href = url;
 
     setLastMsg(msg);
+    setLastOrderId(orderId);
+    setLastLast4(last4);
     const order = { orderId, ...form, lines, subtotal, deliveryFee, discountAmount, discountCode: welcome?.code ?? null, total, at: new Date().toISOString() };
     try {
       const existing = JSON.parse(localStorage.getItem("cgcc.orders") || "[]");
@@ -133,30 +142,29 @@ Placed through the website. Please confirm the final total.`;
       localStorage.setItem("cgcc.orders", JSON.stringify(existing));
     } catch {}
 
-    if (userId) {
-      supabase.from("orders").insert({
-        user_id: userId,
-        order_ref: orderId,
-        customer_name: form.name,
-        phone: form.phone,
-        email: form.email || null,
-        fulfillment: form.fulfillment,
-        pickup_location: form.fulfillment === "Pickup" ? form.pickup : null,
-        delivery_address: form.fulfillment === "Delivery" ? form.address : null,
-        payment_method: form.payment,
-        notes: form.notes || null,
-        items: lines as unknown as Json,
-        subtotal,
-        delivery_fee: deliveryFee,
-        discount_code: welcome?.code ?? null,
-        discount_amount: discountAmount,
-        total,
-      }).then(() => {
-        if (welcome) {
-          supabase.from("discount_codes").update({ redeemed_at: new Date().toISOString() }).eq("id", welcome.id).then(() => {});
-        }
-      });
-    }
+    supabase.from("orders").insert({
+      user_id: userId,
+      order_ref: orderId,
+      customer_name: form.name,
+      phone: form.phone,
+      email: form.email || null,
+      fulfillment: form.fulfillment,
+      pickup_location: form.fulfillment === "Pickup" ? form.pickup : null,
+      delivery_address: form.fulfillment === "Delivery" ? form.address : null,
+      payment_method: form.payment,
+      notes: form.notes || null,
+      items: lines as unknown as Json,
+      subtotal,
+      delivery_fee: deliveryFee,
+      discount_code: welcome?.code ?? null,
+      discount_amount: discountAmount,
+      total,
+    }).then(({ error }) => {
+      if (error) console.error("Order insert failed", error);
+      if (welcome && userId) {
+        supabase.from("discount_codes").update({ redeemed_at: new Date().toISOString() }).eq("id", welcome.id).then(() => {});
+      }
+    });
 
     setDone(true);
     clear();
@@ -168,8 +176,29 @@ Placed through the website. Please confirm the final total.`;
         <CheckCircle2 className="mx-auto h-14 w-14 text-leaf-deep" />
         <h1 className="mt-4 text-display text-3xl text-leaf-deep">Order received.</h1>
         <p className="mx-auto mt-2 max-w-md text-muted-foreground">
-          We've opened WhatsApp with your order details. <b>Press send</b> so Cathy can confirm and arrange payment.
+          We've opened WhatsApp with your order details. <b>Press send</b> so we can confirm and arrange payment.
         </p>
+
+        <div className="mx-auto mt-6 max-w-md rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.35),rgba(167,217,72,0.15))] p-5 text-left shadow-card">
+          <div className="text-xs uppercase tracking-wider text-brown">Your order ID</div>
+          <div className="mt-1 font-mono text-xl font-bold text-leaf-deep">{lastOrderId}</div>
+          <p className="mt-3 text-xs text-brown">No WhatsApp? Bookmark the tracking link below to see live updates as we prepare your order.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link to="/track" search={{ ref: lastOrderId, p: lastLast4 }} className="inline-flex h-10 items-center rounded-full bg-leaf-deep px-5 text-xs font-semibold text-cream hover:opacity-90">
+              Track my order
+            </Link>
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/track?ref=${encodeURIComponent(lastOrderId)}&p=${lastLast4}`;
+                navigator.clipboard?.writeText(url).then(() => toast.success("Tracking link copied"));
+              }}
+              className="inline-flex h-10 items-center rounded-full border border-leaf-deep/30 bg-white px-5 text-xs font-semibold text-leaf-deep hover:bg-secondary"
+            >
+              Copy tracking link
+            </button>
+          </div>
+        </div>
+
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <WhatsAppButton href={waLink(lastMsg)}>Confirm via WhatsApp</WhatsAppButton>
           <Link to="/" className="inline-flex h-11 items-center rounded-full border border-border px-7 text-sm font-semibold hover:border-leaf-deep hover:text-leaf-deep">
