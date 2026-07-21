@@ -138,6 +138,26 @@ function Checkout() {
           .eq("id", welcome.id);
       }
 
+      // Save/refresh profile defaults for signed-in customers, so future
+      // checkouts auto-fill their details. Fields remain editable.
+      if (session?.user && result.isNew) {
+        const [firstName, ...rest] = form.name.trim().split(/\s+/);
+        const profileUpdate = {
+          first_name: firstName || "",
+          last_name: rest.join(" "),
+          email: form.email.trim() || session.user.email || "",
+          phone: form.phone.trim(),
+          default_address: form.fulfillment === "Delivery" ? form.address.trim() : undefined,
+          default_delivery_zone: form.fulfillment === "Delivery" ? form.deliveryZone : undefined,
+          default_payment_method: form.payment,
+        };
+        Object.keys(profileUpdate).forEach((k) => {
+          if ((profileUpdate as Record<string, unknown>)[k] === undefined) delete (profileUpdate as Record<string, unknown>)[k];
+        });
+        await supabase.from("profiles").update(profileUpdate as never).eq("id", session.user.id);
+      }
+
+
       try {
         sessionStorage.setItem(
           `order:${result.orderRef}`,
