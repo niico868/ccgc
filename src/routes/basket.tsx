@@ -83,7 +83,7 @@ function Basket() {
             <span className="text-muted-foreground">Subtotal</span>
             <span className="font-bold">{fmt(subtotal)}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Minimums: 5 food items (salads and healthy meals combined) and 6 drinks (juices and ginger shots combined). Final total, including delivery, is confirmed on WhatsApp.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Minimums: 5 food items (salads and healthy meals combined) and 6 drinks (juices and ginger shots combined). Final total, including delivery, is confirmed by Cathy's team after you submit.</p>
           {(() => {
             const foodShort = foodCount > 0 && !foodOk ? FOOD_MIN - foodCount : 0;
             const drinkShort = drinkCount > 0 && !drinkOk ? DRINK_MIN - drinkCount : 0;
