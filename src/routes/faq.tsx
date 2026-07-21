@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/accordion";
 
 const TITLE = "FAQ: Ordering, Delivery & Pickup | Cathy's Clean Green Classics";
-const DESC = "Answers on order cutoffs, delivery windows, pickup spots in St Clair and Orange Grove, batch pricing and how to confirm your order on WhatsApp.";
+const DESC = "Answers on order cutoffs, delivery windows, pickup spots in St Clair and Orange Grove, batch pricing and how to confirm your order online.";
 const URL = "https://cathysgreenkitchen.com/faq";
 
 export const Route = createFileRoute("/faq")({
