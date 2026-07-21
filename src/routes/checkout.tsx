@@ -362,7 +362,7 @@ function Checkout() {
           </ul>
           <div className="border-t border-border pt-3 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{fmt(subtotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "—"}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "included at pickup"}</span></div>
             {welcome && (
               <div className="flex justify-between text-leaf-deep"><span>Discount ({welcome.percent}%)</span><span>−{fmt(discountAmount)}</span></div>
             )}
