@@ -46,19 +46,24 @@ function Checkout() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       const [{ data: p }, { data: existingOrders }, { data: codes }] = await Promise.all([
-        supabase.from("profiles").select("first_name,last_name,email,phone").eq("id", user.id).maybeSingle(),
+        supabase.from("profiles").select("first_name,last_name,email,phone,default_address,default_delivery_zone,default_payment_method" as unknown as "*").eq("id", user.id).maybeSingle(),
         supabase.from("orders").select("id", { count: "exact" }).limit(1),
         supabase.from("discount_codes").select("id,code,percent,redeemed_at").is("redeemed_at", null).order("created_at", { ascending: true }).limit(1),
       ]);
       if (p) {
-        const name = [p.first_name, p.last_name].filter(Boolean).join(" ").trim();
+        const prof = p as unknown as { first_name?: string; last_name?: string; email?: string; phone?: string; default_address?: string; default_delivery_zone?: string; default_payment_method?: string };
+        const name = [prof.first_name, prof.last_name].filter(Boolean).join(" ").trim();
         setForm((f) => ({
           ...f,
           name: f.name || name,
-          email: f.email || p.email || user.email || "",
-          phone: f.phone || p.phone || "",
+          email: f.email || prof.email || user.email || "",
+          phone: f.phone || prof.phone || "",
+          address: f.address || prof.default_address || "",
+          deliveryZone: (prof.default_delivery_zone as typeof f.deliveryZone) || f.deliveryZone,
+          payment: (prof.default_payment_method as typeof f.payment) || f.payment,
         }));
       }
+
       const isFirstOrder = !existingOrders || existingOrders.length === 0;
       if (isFirstOrder && codes && codes.length > 0) {
         setWelcome({ id: codes[0].id, code: codes[0].code, percent: codes[0].percent });
