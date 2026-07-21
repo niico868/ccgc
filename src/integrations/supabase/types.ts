@@ -66,7 +66,7 @@ export type Database = {
           status_updated_at: string
           subtotal: number
           total: number
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           admin_note?: string | null
@@ -89,7 +89,7 @@ export type Database = {
           status_updated_at?: string
           subtotal?: number
           total?: number
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           admin_note?: string | null
@@ -112,7 +112,7 @@ export type Database = {
           status_updated_at?: string
           subtotal?: number
           total?: number
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
