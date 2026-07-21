@@ -56,6 +56,7 @@ export type Database = {
           email: string | null
           fulfillment: string | null
           id: string
+          idempotency_key: string | null
           items: Json
           notes: string | null
           order_ref: string
@@ -79,6 +80,7 @@ export type Database = {
           email?: string | null
           fulfillment?: string | null
           id?: string
+          idempotency_key?: string | null
           items?: Json
           notes?: string | null
           order_ref: string
@@ -102,6 +104,7 @@ export type Database = {
           email?: string | null
           fulfillment?: string | null
           id?: string
+          idempotency_key?: string | null
           items?: Json
           notes?: string | null
           order_ref?: string
@@ -233,6 +236,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      submit_order: {
+        Args: { _idem: string; _payload: Json }
+        Returns: {
+          is_new: boolean
+          order_ref: string
+        }[]
       }
     }
     Enums: {
