@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SaladsRouteImport } from './routes/salads'
+import { Route as OrderConfirmationRouteImport } from './routes/order-confirmation'
 import { Route as MealsRouteImport } from './routes/meals'
 import { Route as JuicesRouteImport } from './routes/juices'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -32,6 +33,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SaladsRoute = SaladsRouteImport.update({
   id: '/salads',
   path: '/salads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderConfirmationRoute = OrderConfirmationRouteImport.update({
+  id: '/order-confirmation',
+  path: '/order-confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MealsRoute = MealsRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
   '/meals': typeof MealsRoute
+  '/order-confirmation': typeof OrderConfirmationRoute
   '/salads': typeof SaladsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
   '/meals': typeof MealsRoute
+  '/order-confirmation': typeof OrderConfirmationRoute
   '/salads': typeof SaladsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/juices': typeof JuicesRoute
   '/meals': typeof MealsRoute
+  '/order-confirmation': typeof OrderConfirmationRoute
   '/salads': typeof SaladsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/juices'
     | '/meals'
+    | '/order-confirmation'
     | '/salads'
     | '/sitemap.xml'
   fileRoutesByTo: FileRoutesByTo
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/juices'
     | '/meals'
+    | '/order-confirmation'
     | '/salads'
     | '/sitemap.xml'
   id:
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/juices'
     | '/meals'
+    | '/order-confirmation'
     | '/salads'
     | '/sitemap.xml'
   fileRoutesById: FileRoutesById
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   JuicesRoute: typeof JuicesRoute
   MealsRoute: typeof MealsRoute
+  OrderConfirmationRoute: typeof OrderConfirmationRoute
   SaladsRoute: typeof SaladsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/salads'
       fullPath: '/salads'
       preLoaderRoute: typeof SaladsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-confirmation': {
+      id: '/order-confirmation'
+      path: '/order-confirmation'
+      fullPath: '/order-confirmation'
+      preLoaderRoute: typeof OrderConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meals': {
@@ -328,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   JuicesRoute: JuicesRoute,
   MealsRoute: MealsRoute,
+  OrderConfirmationRoute: OrderConfirmationRoute,
   SaladsRoute: SaladsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
