@@ -23,6 +23,8 @@ function Checkout() {
   const navigate = useNavigate();
   const [done, setDone] = useState(false);
   const [lastMsg, setLastMsg] = useState("");
+  const [lastOrderId, setLastOrderId] = useState("");
+  const [lastLast4, setLastLast4] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
   const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
   const [form, setForm] = useState({
