@@ -7,8 +7,6 @@ import { OrderProgress } from "./OrderProgress";
 import { ReviewCheckoutBar } from "./ReviewCheckoutBar";
 import { OrderingAccordion, CompactPageHeader } from "./OrderingAccordion";
 import { FirstTimerCard } from "./OrderRules";
-import { OrderProgress } from "./OrderProgress";
-import { ReviewCheckoutBar } from "./ReviewCheckoutBar";
 
 import { SALADS, MEALS, JUICES, type MenuItem } from "@/lib/menu-data";
 
