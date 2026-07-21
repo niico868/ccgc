@@ -1,14 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
+import { nextSaladDays, sameDayOpen } from "@/lib/fulfillment";
 import { toast } from "sonner";
 import { AlertCircle, BadgePercent, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { supabase } from "@/integrations/supabase/client";
 import { submitOrder } from "@/lib/order-submit.functions";
+
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout | Cathy's Clean Green Classics" }] }),
