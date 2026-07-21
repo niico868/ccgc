@@ -40,6 +40,8 @@ function Checkout() {
     splitDelivery: false,
     splitNotes: "",
     notes: "",
+    allergy: "",
+    dropOff: "",
   });
 
   useEffect(() => {
