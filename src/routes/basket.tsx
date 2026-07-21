@@ -52,29 +52,40 @@ function Basket() {
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px]">
         <ul className="space-y-3">
-          {lines.map((l) => (
-            <li key={l.lineId} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
-              <div className="flex-1">
-                <div className="font-semibold text-leaf-deep">{l.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {[l.size, l.protein].filter(Boolean).join(" · ") || "Standard"}
-                  {l.seafood && <span className="ml-1 text-brown">· Seafood</span>}
+          {lines.map((l) => {
+            const base = l.basePrice ?? (l.unitPrice - (l.seafood ? 5 : 0));
+            const seafoodAdd = l.seafoodAdd ?? (l.seafood ? 5 : 0);
+            return (
+              <li key={l.lineId} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
+                <div className="flex-1">
+                  <div className="font-semibold text-leaf-deep">{l.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {[l.size, l.protein].filter(Boolean).join(" · ") || "Standard"}
+                  </div>
+                  {l.preferences && (
+                    <div className="text-xs text-brown">No: {l.preferences}</div>
+                  )}
+                  {l.seafood ? (
+                    <div className="mt-1 text-[11px] leading-snug text-brown">
+                      Base {fmt(base)} each. Seafood addition {fmt(seafoodAdd)} per item. Adjusted {fmt(l.unitPrice)} each.
+                    </div>
+                  ) : null}
+                  <div className="mt-1 text-sm font-bold text-leaf-deep">
+                    {fmt(l.unitPrice * l.quantity)}
+                    <span className="text-[11px] font-medium text-muted-foreground"> ({fmt(l.unitPrice)} each × {l.quantity})</span>
+                  </div>
                 </div>
-                {l.preferences && (
-                  <div className="text-xs text-brown">No: {l.preferences}</div>
-                )}
-                <div className="mt-1 text-sm font-bold text-leaf-deep">{fmt(l.unitPrice * l.quantity)} <span className="text-[11px] font-medium text-muted-foreground">({fmt(l.unitPrice)} ea)</span></div>
-              </div>
-              <div className="inline-flex items-center rounded-full border border-border bg-background">
-                <button onClick={() => setQty(l.lineId, l.quantity - 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Decrease"><Minus className="h-3.5 w-3.5" /></button>
-                <span className="min-w-6 text-center text-sm font-bold">{l.quantity}</span>
-                <button onClick={() => setQty(l.lineId, l.quantity + 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Increase"><Plus className="h-3.5 w-3.5" /></button>
-              </div>
-              <button onClick={() => remove(l.lineId)} className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-coral" aria-label="Remove">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </li>
-          ))}
+                <div className="inline-flex items-center rounded-full border border-border bg-background">
+                  <button onClick={() => setQty(l.lineId, l.quantity - 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Decrease"><Minus className="h-3.5 w-3.5" /></button>
+                  <span className="min-w-6 text-center text-sm font-bold">{l.quantity}</span>
+                  <button onClick={() => setQty(l.lineId, l.quantity + 1)} className="inline-flex h-9 w-9 items-center justify-center text-leaf-deep hover:text-leaf-soft" aria-label="Increase"><Plus className="h-3.5 w-3.5" /></button>
+                </div>
+                <button onClick={() => remove(l.lineId)} className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-coral" aria-label="Remove">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </li>
+            );
+          })}
         </ul>
 
         <aside className="h-fit rounded-2xl border border-border bg-card p-6 shadow-card">
