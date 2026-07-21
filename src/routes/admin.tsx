@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, Trash2, Check, EyeOff, Save } from "lucide-react";
+import { AdminOrders } from "@/components/site/AdminOrders";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin | Cathy's Clean Green Classics" }] }),
