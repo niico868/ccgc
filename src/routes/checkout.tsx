@@ -274,13 +274,18 @@ function Checkout() {
                 <option>Delivery</option>
                 <option>Pickup</option>
               </select>
+              <select value={form.fulfillmentDate} onChange={set("fulfillmentDate")} className={input} required>
+                {saladDays.length === 0 && <option value="">No dates available</option>}
+                {saladDays.map((d) => (
+                  <option key={d.value} value={d.value}>{d.label}</option>
+                ))}
+              </select>
               {form.fulfillment === "Pickup" ? (
-                <select value={form.pickup} onChange={set("pickup")} className={input}>
-                  <option>St Clair (11 AM to 1 PM)</option>
-                  <option>Orange Grove, Tacarigua (2 PM to 6 PM)</option>
+                <select value={form.pickup} onChange={set("pickup")} className={`${input} sm:col-span-2`}>
+                  <option>Orange Grove, Tacarigua (11 AM to 6 PM)</option>
                 </select>
               ) : (
-                <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={input} />
+                <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={`${input} sm:col-span-2`} />
               )}
               {form.fulfillment === "Delivery" && (
                 <select value={form.deliveryZone} onChange={set("deliveryZone")} className={`${input} sm:col-span-2`}>
@@ -289,7 +294,8 @@ function Checkout() {
                 </select>
               )}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Delivery &amp; pickup windows: 12 PM – 5 PM. Curepe → Arima $30 · Trincity &amp; environs $20.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on your fulfillment day (Mon or Wed). Delivery begins at 11:00 AM along the east west corridor. Pickup at Orange Grove, Tacarigua runs from 11:00 AM to 6:00 PM. Curepe to Arima $30. Trincity and environs $20.</p>
+
 
             <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-secondary/40 p-3">
               <input type="checkbox" checked={form.splitDelivery} onChange={set("splitDelivery")} className="mt-1 h-4 w-4 accent-[var(--leaf-deep)]" />
