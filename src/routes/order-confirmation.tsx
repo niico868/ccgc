@@ -4,7 +4,9 @@ import { CheckCircle2, MessageCircle } from "lucide-react";
 import { Section } from "@/components/site/Section";
 import { fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
+import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+
 
 const search = z.object({ ref: z.string().optional() });
 
@@ -15,7 +17,8 @@ type StoredOrderItem = {
   preferences?: string; notes?: string;
 };
 type StoredOrder = {
-  orderRef: string; customerName: string; phone: string; email: string;
+  orderRef: string; idempotencyKey?: string;
+  customerName: string; phone: string; email: string;
   fulfillment: "Delivery" | "Pickup";
   pickupLocation: string; deliveryAddress: string; deliveryZone: string;
   paymentMethod: string; notes: string; splitDelivery: boolean;
@@ -24,6 +27,7 @@ type StoredOrder = {
   discountCode: string | null; discountPercent: number; discountAmount: number;
   total: number; submittedAt: string;
 };
+
 
 export const Route = createFileRoute("/order-confirmation")({
   head: () => ({ meta: [{ title: "Order Confirmed | Cathy's Clean Green Classics" }] }),
@@ -161,11 +165,20 @@ function Confirmation() {
               href={waLink(waMessage)}
               target="_blank"
               rel="noreferrer"
+              onClick={() => {
+                if (order.orderRef && order.idempotencyKey) {
+                  supabase.rpc(
+                    "mark_order_whatsapp_doublecheck" as never,
+                    { _order_ref: order.orderRef, _idem: order.idempotencyKey } as never,
+                  ).then(() => { /* fire and forget */ });
+                }
+              }}
               className="inline-flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-semibold text-white shadow-md hover:opacity-90"
             >
               <MessageCircle className="h-4 w-4" /> Send Order to WhatsApp for Double-Check
             </a>
           )}
+
           <Link
             to="/"
             className="inline-flex h-11 items-center rounded-full border border-border bg-background px-6 text-sm font-semibold hover:border-leaf-deep hover:text-leaf-deep"

@@ -67,7 +67,9 @@ export type Database = {
           status_updated_at: string
           subtotal: number
           total: number
+          used_whatsapp_doublecheck: boolean
           user_id: string | null
+          whatsapp_doublecheck_at: string | null
         }
         Insert: {
           admin_note?: string | null
@@ -91,7 +93,9 @@ export type Database = {
           status_updated_at?: string
           subtotal?: number
           total?: number
+          used_whatsapp_doublecheck?: boolean
           user_id?: string | null
+          whatsapp_doublecheck_at?: string | null
         }
         Update: {
           admin_note?: string | null
@@ -115,13 +119,18 @@ export type Database = {
           status_updated_at?: string
           subtotal?: number
           total?: number
+          used_whatsapp_doublecheck?: boolean
           user_id?: string | null
+          whatsapp_doublecheck_at?: string | null
         }
         Relationships: []
       }
       profiles: {
         Row: {
           created_at: string
+          default_address: string | null
+          default_delivery_zone: string | null
+          default_payment_method: string | null
           email: string | null
           first_name: string | null
           id: string
@@ -132,6 +141,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          default_address?: string | null
+          default_delivery_zone?: string | null
+          default_payment_method?: string | null
           email?: string | null
           first_name?: string | null
           id: string
@@ -142,6 +154,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          default_address?: string | null
+          default_delivery_zone?: string | null
+          default_payment_method?: string | null
           email?: string | null
           first_name?: string | null
           id?: string
@@ -235,6 +250,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      mark_order_whatsapp_doublecheck: {
+        Args: { _idem: string; _order_ref: string }
         Returns: boolean
       }
       submit_order: {
