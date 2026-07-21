@@ -24,6 +24,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [tab, setTab] = useState<"orders" | "reviews">("orders");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "hidden">("pending");
   const [drafts, setDrafts] = useState<Record<string, { body: string; rating: number }>>({});
