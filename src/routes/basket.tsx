@@ -29,18 +29,22 @@ function Basket() {
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Your Basket</h1>
 
-      {!minMet && (
+      {minMet ? (
+        <div className="mt-6 rounded-2xl border border-leaf-soft/40 bg-leaf-soft/10 p-4 text-sm font-semibold text-leaf-deep">
+          Minimum reached, you can check out when you're ready.
+        </div>
+      ) : (
         <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm">
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} meals to complete this order. You currently have {foodCount}.
+              You need at least {FOOD_MIN} food items to complete this order. Salads and healthy meals can be combined. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. You currently have {drinkCount}.
+              You need at least {DRINK_MIN} drinks to complete this order. Juices and ginger shots can be combined. You currently have {drinkCount}.
             </div>
           )}
         </div>
@@ -79,17 +83,30 @@ function Basket() {
             <span className="text-muted-foreground">Subtotal</span>
             <span className="font-bold">{fmt(subtotal)}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Items are sold in batches (5 meals/salads, 6 drinks). Final total, including delivery, is confirmed on WhatsApp.</p>
-          <Link
-            to={minMet ? "/checkout" : "/basket"}
-            onClick={(e) => { if (!minMet) e.preventDefault(); }}
-            aria-disabled={!minMet}
-            className={`mt-5 inline-flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold transition ${
-              minMet ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
-            }`}
-          >
-            {minMet ? "Confirm Order" : "Minimum not met"}
-          </Link>
+          <p className="mt-2 text-xs text-muted-foreground">Minimums: 5 food items (salads and healthy meals combined) and 6 drinks (juices and ginger shots combined). Final total, including delivery, is confirmed on WhatsApp.</p>
+          {(() => {
+            const foodShort = foodCount > 0 && !foodOk ? FOOD_MIN - foodCount : 0;
+            const drinkShort = drinkCount > 0 && !drinkOk ? DRINK_MIN - drinkCount : 0;
+            let label = "Submit Order";
+            if (!minMet) {
+              if (foodShort > 0 && drinkShort === 0) label = `Add ${foodShort} more food items to complete order`;
+              else if (drinkShort > 0 && foodShort === 0) label = `Add ${drinkShort} more drinks to complete order`;
+              else if (foodShort > 0 && drinkShort > 0) label = `Add ${foodShort} food + ${drinkShort} drinks to complete order`;
+              else label = "Minimum not met";
+            }
+            return (
+              <Link
+                to={minMet ? "/checkout" : "/basket"}
+                onClick={(e) => { if (!minMet) e.preventDefault(); }}
+                aria-disabled={!minMet}
+                className={`mt-5 inline-flex h-12 w-full items-center justify-center rounded-xl px-3 text-center text-sm font-semibold transition ${
+                  minMet ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })()}
           <Link to="/salads" className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-xl border border-border text-sm font-semibold hover:border-leaf-deep hover:text-leaf-deep">
             Add more items
           </Link>

@@ -3,7 +3,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Section } from "./Section";
 import { MenuCard } from "./MenuCard";
-import { MinimumNotice } from "./MinimumNotice";
+import { OrderProgress } from "./OrderProgress";
+import { ReviewCheckoutBar } from "./ReviewCheckoutBar";
 import { WhatsAppButton } from "./WhatsAppButton";
 import { OrderingAccordion, CompactPageHeader } from "./OrderingAccordion";
 import { FirstTimerCard } from "./OrderRules";
@@ -145,7 +146,7 @@ export function CategoryMenuView({ active }: { active: Key }) {
                   transition={{ duration: 0.35, ease: "easeOut" }}
                 >
                   <Section className="pt-6 pb-4">
-                    <MinimumNotice kind={c.minKind} />
+                    <OrderProgress kind={c.minKind} />
                   </Section>
                   <Section className="pb-10">
                     <motion.div
@@ -191,6 +192,7 @@ export function CategoryMenuView({ active }: { active: Key }) {
           <Link key={c.to} to={c.to}>{c.label}</Link>
         ))}
       </nav>
+      <ReviewCheckoutBar />
     </div>
   );
 }
