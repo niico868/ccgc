@@ -163,6 +163,8 @@ function Checkout() {
           `order:${result.orderRef}`,
           JSON.stringify({
             orderRef: result.orderRef,
+            idempotencyKey: idemRef.current,
+
             customerName: form.name.trim(),
             phone: form.phone.trim(),
             email: form.email.trim(),
