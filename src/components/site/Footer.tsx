@@ -38,8 +38,8 @@ export function Footer() {
             <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-citrus" /><span>dfinetimerestaurant@gmail.com</span></li>
           </ul>
           <ul className="mt-4 space-y-1 text-xs text-cream/70">
-            <li><span className="font-semibold text-white">St Clair:</span> 11 AM – 1 PM</li>
-            <li><span className="font-semibold text-white">Orange Grove, Tacarigua:</span> 2 PM – 6 PM</li>
+            <li><span className="font-semibold text-white">Pickup, Orange Grove, Tacarigua:</span> 11 AM to 6 PM</li>
+            <li><span className="font-semibold text-white">Delivery:</span> from 11 AM, east west corridor</li>
           </ul>
         </div>
       </div>

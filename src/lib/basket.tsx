@@ -7,7 +7,12 @@ export type BasketLine = {
   lineId: string;
   itemId: string;
   name: string;
+  /** Adjusted unit price customers actually pay (base + seafood addition when applicable). */
   unitPrice: number;
+  /** Original product base price, before any seafood addition. */
+  basePrice?: number;
+  /** Per-unit seafood addition included in unitPrice. */
+  seafoodAdd?: number;
   quantity: number;
   category: BasketCategory;
   protein?: string;

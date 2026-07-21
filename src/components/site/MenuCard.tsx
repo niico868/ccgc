@@ -14,8 +14,10 @@ export function MenuCard({ item }: { item: MenuItem }) {
   const [qty, setQty] = useState(1);
 
   const size = item.sizes?.[sizeIdx];
+  const basePrice = size ? size.price : item.price;
   const seafood = !!protein && SEAFOOD_LABELS.includes(protein);
-  const unitPrice = (size ? size.price : item.price) + (seafood ? SEAFOOD_SURCHARGE : 0);
+  const seafoodAdd = seafood ? SEAFOOD_SURCHARGE : 0;
+  const unitPrice = basePrice + seafoodAdd;
 
   const toggleExcluded = (ing: string) =>
     setExcluded((p) => (p.includes(ing) ? p.filter((x) => x !== ing) : [...p, ing]));
@@ -25,6 +27,8 @@ export function MenuCard({ item }: { item: MenuItem }) {
       itemId: item.id,
       name: item.name,
       unitPrice,
+      basePrice,
+      seafoodAdd,
       quantity: qty,
       category: item.category,
       protein: protein || undefined,
@@ -53,10 +57,13 @@ export function MenuCard({ item }: { item: MenuItem }) {
           <h3 className="text-display text-lg leading-tight text-leaf-deep">{item.name}</h3>
           <div className="shrink-0 text-right">
             <div className="text-sm font-bold tracking-wide text-leaf-deep">{fmt(unitPrice)}<span className="text-[10px] font-medium text-muted-foreground"> /ea</span></div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
-              {item.category === "salad" && "Mix & match, 5-item food minimum"}
-              {item.category === "meal" && "Mix & match, 5-item food minimum"}
-              {item.category === "juice" && "Mix & match, 6-drink order minimum"}
+            {seafood && (
+              <div className="mt-0.5 text-[10px] font-medium text-brown">Includes $5 seafood addition per item.</div>
+            )}
+            <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
+              {item.category === "salad" && "Mix & match, 5 item food minimum"}
+              {item.category === "meal" && "Mix & match, 5 item food minimum"}
+              {item.category === "juice" && "Mix & match, 6 drink minimum"}
             </div>
           </div>
         </div>

@@ -1,14 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
+import { nextSaladDays, sameDayOpen } from "@/lib/fulfillment";
 import { toast } from "sonner";
 import { AlertCircle, BadgePercent, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { supabase } from "@/integrations/supabase/client";
 import { submitOrder } from "@/lib/order-submit.functions";
+
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout | Cathy's Clean Green Classics" }] }),
@@ -25,10 +27,13 @@ function Checkout() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
   const idemRef = useRef<string>(crypto.randomUUID());
+  const saladDays = useMemo(() => nextSaladDays(4), []);
+  const sameDay = useMemo(() => sameDayOpen(), []);
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
     fulfillment: "Delivery" as "Delivery" | "Pickup",
-    pickup: "St Clair (11 AM to 1 PM)",
+    pickup: "Orange Grove, Tacarigua (11 AM to 6 PM)",
+    fulfillmentDate: saladDays[0]?.value ?? "",
     address: "",
     deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
     payment: "Bank Transfer" as "Cash" | "Bank Transfer",
@@ -93,11 +98,14 @@ function Checkout() {
 
     const { data: { session } } = await supabase.auth.getSession();
 
+    const selectedDay = saladDays.find((d) => d.value === form.fulfillmentDate);
     const notesCombined = [
       form.notes?.trim(),
+      selectedDay ? `Fulfillment day: ${selectedDay.label}` : "",
       form.splitDelivery ? `Split bundle: ${form.splitNotes?.trim() || "(see notes)"}` : "",
       form.fulfillment === "Delivery" ? `Zone: ${form.deliveryZone}` : "",
     ].filter(Boolean).join(" · ");
+
 
     try {
       const result = await runSubmit({
@@ -202,7 +210,14 @@ function Checkout() {
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Complete your order right here on the website. We'll confirm and follow up with the final total.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you back a confirmation with your order reference. Cathy's team will then follow up to confirm the final total and next steps.</p>
+
+      <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${sameDay ? "border-leaf-soft/40 bg-leaf-soft/10 text-leaf-deep" : "border-brown/30 bg-brown/5 text-brown"}`}>
+        {sameDay
+          ? "Same-day orders are open until 8:00 AM Trinidad time. After that, please choose the next salad day."
+          : "Same-day ordering has closed for today. Please choose the next available salad day below."}
+      </div>
+
 
       {welcome && (
         <div className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.4),rgba(167,217,72,0.18))] px-5 py-4 shadow-[0_10px_24px_rgba(31,90,53,0.12)]">
@@ -259,13 +274,18 @@ function Checkout() {
                 <option>Delivery</option>
                 <option>Pickup</option>
               </select>
+              <select value={form.fulfillmentDate} onChange={set("fulfillmentDate")} className={input} required>
+                {saladDays.length === 0 && <option value="">No dates available</option>}
+                {saladDays.map((d) => (
+                  <option key={d.value} value={d.value}>{d.label}</option>
+                ))}
+              </select>
               {form.fulfillment === "Pickup" ? (
-                <select value={form.pickup} onChange={set("pickup")} className={input}>
-                  <option>St Clair (11 AM to 1 PM)</option>
-                  <option>Orange Grove, Tacarigua (2 PM to 6 PM)</option>
+                <select value={form.pickup} onChange={set("pickup")} className={`${input} sm:col-span-2`}>
+                  <option>Orange Grove, Tacarigua (11 AM to 6 PM)</option>
                 </select>
               ) : (
-                <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={input} />
+                <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={`${input} sm:col-span-2`} />
               )}
               {form.fulfillment === "Delivery" && (
                 <select value={form.deliveryZone} onChange={set("deliveryZone")} className={`${input} sm:col-span-2`}>
@@ -274,7 +294,8 @@ function Checkout() {
                 </select>
               )}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Delivery &amp; pickup windows: 12 PM – 5 PM. Curepe → Arima $30 · Trincity &amp; environs $20.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on your fulfillment day (Mon or Wed). Delivery begins at 11:00 AM along the east west corridor. Pickup at Orange Grove, Tacarigua runs from 11:00 AM to 6:00 PM. Curepe to Arima $30. Trincity and environs $20.</p>
+
 
             <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-secondary/40 p-3">
               <input type="checkbox" checked={form.splitDelivery} onChange={set("splitDelivery")} className="mt-1 h-4 w-4 accent-[var(--leaf-deep)]" />
@@ -341,7 +362,7 @@ function Checkout() {
           </ul>
           <div className="border-t border-border pt-3 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{fmt(subtotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "—"}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "included at pickup"}</span></div>
             {welcome && (
               <div className="flex justify-between text-leaf-deep"><span>Discount ({welcome.percent}%)</span><span>−{fmt(discountAmount)}</span></div>
             )}
