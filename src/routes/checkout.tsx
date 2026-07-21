@@ -27,10 +27,13 @@ function Checkout() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
   const idemRef = useRef<string>(crypto.randomUUID());
+  const saladDays = useMemo(() => nextSaladDays(4), []);
+  const sameDay = useMemo(() => sameDayOpen(), []);
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
     fulfillment: "Delivery" as "Delivery" | "Pickup",
-    pickup: "St Clair (11 AM to 1 PM)",
+    pickup: "Orange Grove, Tacarigua (11 AM to 6 PM)",
+    fulfillmentDate: saladDays[0]?.value ?? "",
     address: "",
     deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
     payment: "Bank Transfer" as "Cash" | "Bank Transfer",
