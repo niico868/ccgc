@@ -1,15 +1,14 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
-import { waLink } from "@/lib/whatsapp";
 import { toast } from "sonner";
-import { CheckCircle2, AlertCircle, BadgePercent } from "lucide-react";
+import { AlertCircle, BadgePercent, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
-import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
+import { submitOrder } from "@/lib/order-submit.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout | Cathy's Clean Green Classics" }] }),
@@ -21,10 +20,11 @@ type WelcomeCode = { id: string; code: string; percent: number };
 function Checkout() {
   const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount } = useBasket();
   const navigate = useNavigate();
-  const [done, setDone] = useState(false);
-  const [lastMsg, setLastMsg] = useState("");
-  const [userId, setUserId] = useState<string | null>(null);
+  const runSubmit = useServerFn(submitOrder);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
+  const idemRef = useRef<string>(crypto.randomUUID());
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
     fulfillment: "Delivery" as "Delivery" | "Pickup",
@@ -38,15 +38,13 @@ function Checkout() {
   });
 
   useEffect(() => {
-    if (lines.length === 0 && !done) navigate({ to: "/basket" });
-  }, [lines.length, done, navigate]);
+    if (lines.length === 0 && !submitting) navigate({ to: "/basket" });
+  }, [lines.length, submitting, navigate]);
 
-  // Autofill from profile + load first-order discount
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      setUserId(user.id);
       const [{ data: p }, { data: existingOrders }, { data: codes }] = await Promise.all([
         supabase.from("profiles").select("first_name,last_name,email,phone").eq("id", user.id).maybeSingle(),
         supabase.from("orders").select("id", { count: "exact" }).limit(1),
@@ -78,113 +76,77 @@ function Checkout() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: (e.target as HTMLInputElement).type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value as never }));
 
-  const orderLines = useMemo(() => lines.map((l) => {
-    const parts = [`${l.quantity} × ${l.name}`];
-    if (l.size) parts.push(`(${l.size})`);
-    if (l.protein) parts.push(`(${l.protein})`);
-    if (l.seafood) parts.push("[seafood]");
-    if (l.preferences) parts.push(`[no: ${l.preferences}]`);
-    let line = `• ${parts.join(" ")}`;
-    if (l.notes) line += `\n    ↳ ${l.notes}`;
-    return line;
-  }).join("\n"), [lines]);
-
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     if (!minMet) {
       toast.error("Minimum order not yet met.");
       return;
     }
-    const orderId = "CGCC-" + Date.now().toString(36).toUpperCase();
+    setSubmitting(true);
+    setSubmitError(null);
 
-    const discountLine = welcome
-      ? `\nDiscount: ${welcome.code} (${welcome.percent}% off)`
-      : "";
+    const { data: { session } } = await supabase.auth.getSession();
 
-    const msg = `Hi Cathy, I'd like to confirm my order from Fine Time for Cathy's Clean Green Classics.
+    const notesCombined = [
+      form.notes?.trim(),
+      form.splitDelivery ? `Split bundle: ${form.splitNotes?.trim() || "(see notes)"}` : "",
+      form.fulfillment === "Delivery" ? `Zone: ${form.deliveryZone}` : "",
+    ].filter(Boolean).join(" · ");
 
-Order ID: ${orderId}
-
-Name: ${form.name}
-Phone: ${form.phone}
-Email: ${form.email || "-"}
-
-Order:
-${orderLines}
-${discountLine}
-Fulfillment: ${form.fulfillment}${form.fulfillment === "Delivery" ? ` (${form.deliveryZone})` : ""}
-Pickup Location: ${form.fulfillment === "Pickup" ? form.pickup : "-"}
-Delivery Address: ${form.fulfillment === "Delivery" ? form.address : "-"}
-${form.splitDelivery ? `Split bundle: ${form.splitNotes || "(see notes)"}` : ""}
-Payment Method: ${form.payment}
-Notes: ${form.notes || "-"}
-
-Placed through the website. Please confirm the final total.`;
-
-    const url = `https://wa.me/18684884248?text=${encodeURIComponent(msg)}`;
-    const win = window.open(url, "_blank", "noopener,noreferrer");
-    if (!win) window.location.href = url;
-
-    setLastMsg(msg);
-    const order = { orderId, ...form, lines, subtotal, deliveryFee, discountAmount, discountCode: welcome?.code ?? null, total, at: new Date().toISOString() };
     try {
-      const existing = JSON.parse(localStorage.getItem("cgcc.orders") || "[]");
-      existing.push(order);
-      localStorage.setItem("cgcc.orders", JSON.stringify(existing));
-    } catch {}
-
-    if (userId) {
-      supabase.from("orders").insert({
-        user_id: userId,
-        order_ref: orderId,
-        customer_name: form.name,
-        phone: form.phone,
-        email: form.email || null,
-        fulfillment: form.fulfillment,
-        pickup_location: form.fulfillment === "Pickup" ? form.pickup : null,
-        delivery_address: form.fulfillment === "Delivery" ? form.address : null,
-        payment_method: form.payment,
-        notes: form.notes || null,
-        items: lines as unknown as Json,
-        subtotal,
-        delivery_fee: deliveryFee,
-        discount_code: welcome?.code ?? null,
-        discount_amount: discountAmount,
-        total,
-      }).then(() => {
-        if (welcome) {
-          supabase.from("discount_codes").update({ redeemed_at: new Date().toISOString() }).eq("id", welcome.id).then(() => {});
-        }
+      const result = await runSubmit({
+        data: {
+          idempotencyKey: idemRef.current,
+          bearer: session?.access_token ?? null,
+          customerName: form.name.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim() || undefined,
+          fulfillment: form.fulfillment,
+          pickupLocation: form.fulfillment === "Pickup" ? form.pickup : undefined,
+          deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : undefined,
+          paymentMethod: form.payment,
+          notes: notesCombined || undefined,
+          items: lines.map((l) => ({
+            itemId: l.itemId,
+            name: l.name,
+            unitPrice: l.unitPrice,
+            quantity: l.quantity,
+            category: l.category,
+            protein: l.protein,
+            size: l.size,
+            seafood: l.seafood,
+            preferences: l.preferences,
+            notes: l.notes,
+          })),
+          subtotal,
+          deliveryFee,
+          discountCode: welcome?.code ?? null,
+          discountAmount,
+          total,
+        },
       });
+
+      if (welcome && result.isNew) {
+        await supabase.from("discount_codes")
+          .update({ redeemed_at: new Date().toISOString() })
+          .eq("id", welcome.id);
+      }
+
+      clear();
+      navigate({ to: "/order-confirmation", search: { ref: result.orderRef } });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Order submission failed";
+      setSubmitError(msg);
+      toast.error("Your order could not be submitted. Nothing has been removed from your basket. Please try again.");
+      setSubmitting(false);
     }
-
-    setDone(true);
-    clear();
   };
-
-  if (done) {
-    return (
-      <Section className="py-20 text-center">
-        <CheckCircle2 className="mx-auto h-14 w-14 text-leaf-deep" />
-        <h1 className="mt-4 text-display text-3xl text-leaf-deep">Order received.</h1>
-        <p className="mx-auto mt-2 max-w-md text-muted-foreground">
-          We've opened WhatsApp with your order details. <b>Press send</b> so Cathy can confirm and arrange payment.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <WhatsAppButton href={waLink(lastMsg)}>Confirm via WhatsApp</WhatsAppButton>
-          <Link to="/" className="inline-flex h-11 items-center rounded-full border border-border px-7 text-sm font-semibold hover:border-leaf-deep hover:text-leaf-deep">
-            Back home
-          </Link>
-        </div>
-      </Section>
-    );
-  }
 
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you over to WhatsApp to lock it in with us.</p>
-      <p className="mt-1 text-sm text-muted-foreground">Your order details will be sent automatically. You can review the message before sending.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Complete your order right here on the website. We'll confirm and follow up with the final total.</p>
 
       {welcome && (
         <div className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.4),rgba(167,217,72,0.18))] px-5 py-4 shadow-[0_10px_24px_rgba(31,90,53,0.12)]">
@@ -201,15 +163,25 @@ Placed through the website. Please confirm the final total.`;
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} meals to complete this order. You currently have {foodCount}.
+              You need at least {FOOD_MIN} food items to complete this order. Salads and healthy meals can be combined. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. You currently have {drinkCount}.
+              You need at least {DRINK_MIN} drinks to complete this order. Juices and ginger shots can be combined. You currently have {drinkCount}.
             </div>
           )}
+        </div>
+      )}
+
+      {submitError && (
+        <div className="mt-6 flex items-start gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm text-coral">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <div>
+            <div className="font-semibold">Your order could not be submitted. Nothing has been removed from your basket. Please try again.</div>
+            <div className="mt-1 text-xs opacity-80">Details: {submitError}</div>
+          </div>
         </div>
       )}
 
@@ -278,10 +250,10 @@ Placed through the website. Please confirm the final total.`;
                 <ul className="mt-2 space-y-1 text-xs text-foreground/80">
                   <li><b>Bank:</b> Republic Bank</li>
                   <li><b>Account name:</b> Cathy's Clean Green Classics</li>
-                  <li><b>Account #:</b> (provided on WhatsApp)</li>
+                  <li><b>Account #:</b> Shared on order confirmation</li>
                   <li><b>Reference:</b> your order ID</li>
                 </ul>
-                <div className="mt-2 text-xs italic text-brown">Please send proof of payment on WhatsApp after submitting.</div>
+                <div className="mt-2 text-xs italic text-brown">Please send proof of payment after we confirm your order.</div>
               </div>
             )}
           </div>
@@ -321,14 +293,16 @@ Placed through the website. Please confirm the final total.`;
           </div>
           <button
             type="submit"
-            disabled={!minMet}
-            className={`inline-flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold transition ${
-              minMet ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
+            disabled={!minMet || submitting}
+            className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${
+              minMet && !submitting ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
             }`}
           >
-            {minMet ? "Confirm Order" : "Minimum not met"}
+            {submitting ? (
+              <><Loader2 className="h-4 w-4 animate-spin" /> Submitting Order…</>
+            ) : minMet ? "Submit Order" : "Minimum not met"}
           </button>
-          <p className="text-[11px] text-muted-foreground">After confirming, we'll open WhatsApp with your full order so Cathy can confirm the final total.</p>
+          <p className="text-[11px] text-muted-foreground">Your order is saved as <b>Submitted, awaiting confirmation</b>. We'll message you back to confirm the final total and next steps.</p>
         </aside>
       </form>
 
