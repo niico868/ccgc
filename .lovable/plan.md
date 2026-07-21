@@ -1,48 +1,35 @@
-## Goal
-Give customers without WhatsApp a live-updated way to see their order status, and give you (admin) an easy way to update that status.
+# Plan
 
-## Customer side
+## What I’ll update
+1. Fix the current preview runtime blocker so the app loads cleanly again before making the image swap.
+2. Replace the salad and healthy meal photos across the site, not just on menu cards.
+3. Keep the uploaded images exactly as provided, including any text already on them.
+4. Reuse the closest available uploaded photo for the two menu items that do not yet have exact matches.
 
-**New route `/order/$orderRef`** — a public order-status page.
-- Customer enters (or is deep-linked with) their order ID (e.g. `CGCC-XYZ`) + last 4 digits of phone as a lightweight check.
-- Shows: items, subtotal, delivery fee, discount, total, fulfillment method, pickup/delivery info, and a big **status badge**.
-- Status timeline: `Received → Confirmed → Prepping → Ready → Out for delivery / Ready for pickup → Completed` (with `Cancelled` as a side state).
-- Live updates via Supabase Realtime on the `orders` row — status changes appear instantly, no refresh.
-- Simple "Look up my order" page at `/order` for anyone with just the ID.
+## Photo mapping
+### Salads
+- CCGC Specialty Salad — Chef's Choice → `chefs choice.png`
+- Broccoli Power Bowl → `Broccoli power bowl.jpeg`
+- Chopped Salad → `chopped salad.png`
+- Protein Packed Bowl → `protein packed bowl.jpeg`
+- Grilled Salad Bowl → closest available salad photo (best-fit fallback)
 
-**Checkout confirmation screen update**
-- After submitting, show the order ID prominently plus a "Track your order" button linking to `/order/{ref}`.
-- Add a note: "No WhatsApp? Bookmark this link to see live updates."
-- If the customer entered an email, we'll (later) also email the link — for now just display + copy button.
+### Healthy Meals
+- Chinese-Style Quinoa Chow Mein Bowl → `Fluffy quinoa sautéed chow mein–style...png`
+- Sweet Potato Basil Mash with Chimichurri Chicken → `Sweet Potato Basil Mash with Chimichurri Chicken.png`
+- Cumin Basmati Rice with Tandoori Chicken → `Cumin Basmati Rice with Tandoori Chicken.png`
+- Roasted Vegetable Medley with Thai Butter Chicken → closest available healthy meal photo (best-fit fallback)
 
-## Admin side
+## Where the replacements will appear
+- Salad and healthy meal product cards
+- Shared section imagery that pulls from those menu assets
+- Any related featured/gallery usage that currently shows those food categories
 
-**New tab in `/admin` → "Orders"**
-- Table of recent orders (ref, name, phone, total, status, created).
-- Inline status dropdown per row — one click updates status in DB.
-- Optional internal note field.
-- Filter by status, search by ref/phone/name.
+## Technical details
+- Add the uploaded images as proper app assets instead of leaving them as temporary files.
+- Update the menu data so each matched item points to its own new image instead of the single shared category photo.
+- Update any other page/component that still relies on the old shared salad/meal images where these products are represented.
+- Verify the preview after the changes so the images render correctly and the app loads without the dynamic import error.
 
-## Data changes
-
-Add to `orders` table:
-- `status text not null default 'received'` (check constraint on allowed values)
-- `status_updated_at timestamptz`
-- `admin_note text`
-
-New RLS policy: allow **public SELECT** on a narrow view (or on `orders` filtered by `order_ref` + last-4-of-phone match) so unauthenticated customers can read their own order status without login. Admin update policy already governed by `has_role`.
-
-Enable Realtime on `public.orders`.
-
-## Technical notes
-- Public lookup uses a SECURITY DEFINER RPC `get_order_status(ref text, phone_last4 text)` returning only the safe fields — avoids exposing the whole table to `anon`.
-- Realtime subscription in `/order/$orderRef` scoped to that one row.
-- Status enum kept as text with check constraint for easy future changes.
-
-## Out of scope (for this pass)
-- Email/SMS notifications on status change (can add later once you set up email domain).
-- WhatsApp automation (deferred as you noted).
-
-## Questions before I build
-1. Confirm the status stages above — add/remove any?
-2. OK with the "order ID + last 4 of phone" lookup, or would you prefer requiring a login (only works for customers who created an account)?
+## Fallback handling
+- Because the archive doesn’t include exact replacements for `Grilled Salad Bowl` and `Roasted Vegetable Medley with Thai Butter Chicken`, I’ll use the closest uploaded image for each for now, per your instruction.

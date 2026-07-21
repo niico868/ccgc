@@ -46,7 +46,6 @@ export type Database = {
       }
       orders: {
         Row: {
-          admin_note: string | null
           created_at: string
           customer_name: string | null
           delivery_address: string | null
@@ -63,13 +62,11 @@ export type Database = {
           phone: string | null
           pickup_location: string | null
           status: string
-          status_updated_at: string
           subtotal: number
           total: number
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          admin_note?: string | null
           created_at?: string
           customer_name?: string | null
           delivery_address?: string | null
@@ -86,13 +83,11 @@ export type Database = {
           phone?: string | null
           pickup_location?: string | null
           status?: string
-          status_updated_at?: string
           subtotal?: number
           total?: number
-          user_id?: string | null
+          user_id: string
         }
         Update: {
-          admin_note?: string | null
           created_at?: string
           customer_name?: string | null
           delivery_address?: string | null
@@ -109,10 +104,9 @@ export type Database = {
           phone?: string | null
           pickup_location?: string | null
           status?: string
-          status_updated_at?: string
           subtotal?: number
           total?: number
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -208,25 +202,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_order_status: {
-        Args: { _order_ref: string; _phone_last4: string }
-        Returns: {
-          admin_note: string
-          created_at: string
-          customer_name: string
-          delivery_address: string
-          delivery_fee: number
-          discount_amount: number
-          fulfillment: string
-          items: Json
-          order_ref: string
-          pickup_location: string
-          status: string
-          status_updated_at: string
-          subtotal: number
-          total: number
-        }[]
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, Trash2, Check, EyeOff, Save } from "lucide-react";
-import { AdminOrders } from "@/components/site/AdminOrders";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin | Cathy's Clean Green Classics" }] }),
@@ -24,7 +23,6 @@ function AdminPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [tab, setTab] = useState<"orders" | "reviews">("orders");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "hidden">("pending");
   const [drafts, setDrafts] = useState<Record<string, { body: string; rating: number }>>({});
@@ -77,26 +75,10 @@ function AdminPage() {
   return (
     <Section className="py-12 space-y-6">
       <div>
-        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Admin</h1>
-        <p className="text-sm text-brown">Manage live orders and customer reviews.</p>
+        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Admin · Reviews</h1>
+        <p className="text-sm text-brown">Approve, edit, hide or delete customer reviews.</p>
       </div>
 
-      <div className="flex gap-2 border-b border-border">
-        {(["orders", "reviews"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`-mb-px border-b-2 px-4 py-2 text-sm font-semibold capitalize transition ${
-              tab === t ? "border-leaf-deep text-leaf-deep" : "border-transparent text-brown hover:text-leaf-deep"
-            }`}
-          >{t}</button>
-        ))}
-      </div>
-
-      {tab === "orders" && <AdminOrders />}
-
-      {tab === "reviews" && (
-        <>
       <div className="flex flex-wrap gap-2">
         {(["pending", "approved", "hidden", "all"] as const).map((f) => (
           <button
@@ -171,8 +153,6 @@ function AdminPage() {
             );
           })}
         </ul>
-      )}
-        </>
       )}
     </Section>
   );
