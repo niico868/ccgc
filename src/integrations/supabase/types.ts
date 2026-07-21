@@ -44,25 +44,95 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          category: string
+          created_at: string
+          excluded_ingredients: string | null
+          id: string
+          item_instructions: string | null
+          line_total: number
+          order_id: string
+          product_id: string
+          product_name: string
+          protein: string | null
+          quantity: number
+          seafood: boolean
+          size: string | null
+          unit_price: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          excluded_ingredients?: string | null
+          id?: string
+          item_instructions?: string | null
+          line_total: number
+          order_id: string
+          product_id: string
+          product_name: string
+          protein?: string | null
+          quantity: number
+          seafood?: boolean
+          size?: string | null
+          unit_price: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          excluded_ingredients?: string | null
+          id?: string
+          item_instructions?: string | null
+          line_total?: number
+          order_id?: string
+          product_id?: string
+          product_name?: string
+          protein?: string | null
+          quantity?: number
+          seafood?: boolean
+          size?: string | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           admin_note: string | null
+          allergy_info: string | null
+          amount_received: number
+          completed_at: string | null
           created_at: string
           customer_name: string | null
           delivery_address: string | null
           delivery_fee: number
+          delivery_zone: string | null
           discount_amount: number
           discount_code: string | null
+          drop_off_instructions: string | null
           email: string | null
           fulfillment: string | null
+          fulfillment_window: string | null
           id: string
           idempotency_key: string | null
           items: Json
           notes: string | null
           order_ref: string
           payment_method: string | null
+          payment_received: boolean
+          payment_received_at: string | null
           phone: string | null
           pickup_location: string | null
+          required_fulfillment_date: string | null
+          simple_status: string
+          split_for_freshness: boolean
           status: string
           status_updated_at: string
           subtotal: number
@@ -73,22 +143,33 @@ export type Database = {
         }
         Insert: {
           admin_note?: string | null
+          allergy_info?: string | null
+          amount_received?: number
+          completed_at?: string | null
           created_at?: string
           customer_name?: string | null
           delivery_address?: string | null
           delivery_fee?: number
+          delivery_zone?: string | null
           discount_amount?: number
           discount_code?: string | null
+          drop_off_instructions?: string | null
           email?: string | null
           fulfillment?: string | null
+          fulfillment_window?: string | null
           id?: string
           idempotency_key?: string | null
           items?: Json
           notes?: string | null
           order_ref: string
           payment_method?: string | null
+          payment_received?: boolean
+          payment_received_at?: string | null
           phone?: string | null
           pickup_location?: string | null
+          required_fulfillment_date?: string | null
+          simple_status?: string
+          split_for_freshness?: boolean
           status?: string
           status_updated_at?: string
           subtotal?: number
@@ -99,22 +180,33 @@ export type Database = {
         }
         Update: {
           admin_note?: string | null
+          allergy_info?: string | null
+          amount_received?: number
+          completed_at?: string | null
           created_at?: string
           customer_name?: string | null
           delivery_address?: string | null
           delivery_fee?: number
+          delivery_zone?: string | null
           discount_amount?: number
           discount_code?: string | null
+          drop_off_instructions?: string | null
           email?: string | null
           fulfillment?: string | null
+          fulfillment_window?: string | null
           id?: string
           idempotency_key?: string | null
           items?: Json
           notes?: string | null
           order_ref?: string
           payment_method?: string | null
+          payment_received?: boolean
+          payment_received_at?: string | null
           phone?: string | null
           pickup_location?: string | null
+          required_fulfillment_date?: string | null
+          simple_status?: string
+          split_for_freshness?: boolean
           status?: string
           status_updated_at?: string
           subtotal?: number

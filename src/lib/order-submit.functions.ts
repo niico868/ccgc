@@ -24,8 +24,14 @@ export type SubmitOrderInput = {
   fulfillment: "Delivery" | "Pickup";
   pickupLocation?: string;
   deliveryAddress?: string;
+  deliveryZone?: string;
+  fulfillmentWindow?: string;
+  requiredFulfillmentDate?: string; // YYYY-MM-DD
+  splitForFreshness?: boolean;
   paymentMethod: string;
   notes?: string;
+  allergyInfo?: string;
+  dropOffInstructions?: string;
   items: SubmitOrderItem[];
   subtotal: number;
   deliveryFee: number;
@@ -80,8 +86,14 @@ export const submitOrder = createServerFn({ method: "POST" })
       fulfillment: data.fulfillment,
       pickup_location: data.pickupLocation ?? "",
       delivery_address: data.deliveryAddress ?? "",
+      delivery_zone: data.deliveryZone ?? "",
+      fulfillment_window: data.fulfillmentWindow ?? "",
+      required_fulfillment_date: data.requiredFulfillmentDate ?? "",
+      split_for_freshness: data.splitForFreshness ?? false,
       payment_method: data.paymentMethod,
       notes: data.notes ?? "",
+      allergy_info: data.allergyInfo ?? "",
+      drop_off_instructions: data.dropOffInstructions ?? "",
       items: data.items as unknown as Json,
       subtotal: data.subtotal,
       delivery_fee: data.deliveryFee,
