@@ -24,8 +24,14 @@ export type SubmitOrderInput = {
   fulfillment: "Delivery" | "Pickup";
   pickupLocation?: string;
   deliveryAddress?: string;
+  deliveryZone?: string;
+  fulfillmentWindow?: string;
+  requiredFulfillmentDate?: string; // YYYY-MM-DD
+  splitForFreshness?: boolean;
   paymentMethod: string;
   notes?: string;
+  allergyInfo?: string;
+  dropOffInstructions?: string;
   items: SubmitOrderItem[];
   subtotal: number;
   deliveryFee: number;
