@@ -172,6 +172,8 @@ function AdminPage() {
           })}
         </ul>
       )}
+        </>
+      )}
     </Section>
   );
 }
