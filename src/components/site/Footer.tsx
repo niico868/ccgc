@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, Phone } from "lucide-react";
-import logoAsset from "@/assets/ccgc-logo.png.asset.json";
+import logoAsset from "@/assets/ccgc-nav-logo.png.asset.json";
 
 export function Footer() {
   return (

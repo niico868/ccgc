@@ -88,7 +88,7 @@ function AuthPage() {
         </div>
 
         <h1 className="mt-5 text-display text-2xl text-leaf-deep">{isSignup ? "Create your account" : "Welcome back"}</h1>
-        <p className="mt-1 text-sm text-brown">Save your order history and discount codes.</p>
+        <p className="mt-1 text-sm text-brown">Save your order history and reorder faster.</p>
 
         <button onClick={google} disabled={loading} className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold hover:bg-secondary">
           Continue with Google

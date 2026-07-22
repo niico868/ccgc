@@ -60,22 +60,6 @@ function AccountPage() {
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-        <div className="text-display text-lg text-leaf-deep">Saved discount codes</div>
-        {codes.length === 0 ? (
-          <p className="mt-2 text-sm text-brown">No codes saved yet.</p>
-        ) : (
-          <ul className="mt-3 space-y-2 text-sm">
-            {codes.map((c) => (
-              <li key={c.id} className={`flex justify-between rounded-xl border px-4 py-2 font-mono ${c.redeemed_at ? "border-border bg-muted text-muted-foreground line-through" : "border-leaf-soft/30 bg-leaf-soft/10"}`}>
-                <span className="font-bold text-leaf-deep">{c.code}</span>
-                <span className="text-brown">{c.percent}% off {c.redeemed_at ? "· used" : ""}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
         <div className="text-display text-lg text-leaf-deep">Order history</div>
         {orders.length === 0 ? (
           <p className="mt-2 text-sm text-brown">No orders yet. <Link to="/salads" className="text-leaf-deep underline">Browse the menu</Link>.</p>

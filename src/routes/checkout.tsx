@@ -6,7 +6,7 @@ import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { nextSaladDays, sameDayOpen } from "@/lib/fulfillment";
 import { toast } from "sonner";
-import { AlertCircle, BadgePercent, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { supabase } from "@/integrations/supabase/client";
 import { submitOrder } from "@/lib/order-submit.functions";
@@ -17,15 +17,12 @@ export const Route = createFileRoute("/checkout")({
   component: Checkout,
 });
 
-type WelcomeCode = { id: string; code: string; percent: number };
-
 function Checkout() {
   const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount } = useBasket();
   const navigate = useNavigate();
   const runSubmit = useServerFn(submitOrder);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [welcome, setWelcome] = useState<WelcomeCode | null>(null);
   const idemRef = useRef<string>(crypto.randomUUID());
   const saladDays = useMemo(() => nextSaladDays(4), []);
   const sameDay = useMemo(() => sameDayOpen(), []);
@@ -52,10 +49,8 @@ function Checkout() {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const [{ data: p }, { data: existingOrders }, { data: codes }] = await Promise.all([
+      const [{ data: p }] = await Promise.all([
         supabase.from("profiles").select("first_name,last_name,email,phone,default_address,default_delivery_zone,default_payment_method" as unknown as "*").eq("id", user.id).maybeSingle(),
-        supabase.from("orders").select("id", { count: "exact" }).limit(1),
-        supabase.from("discount_codes").select("id,code,percent,redeemed_at").is("redeemed_at", null).order("created_at", { ascending: true }).limit(1),
       ]);
       if (p) {
         const prof = p as unknown as { first_name?: string; last_name?: string; email?: string; phone?: string; default_address?: string; default_delivery_zone?: string; default_payment_method?: string };
@@ -71,18 +66,14 @@ function Checkout() {
         }));
       }
 
-      const isFirstOrder = !existingOrders || existingOrders.length === 0;
-      if (isFirstOrder && codes && codes.length > 0) {
-        setWelcome({ id: codes[0].id, code: codes[0].code, percent: codes[0].percent });
-      }
     })();
   }, []);
 
   const deliveryFee = form.fulfillment === "Delivery"
     ? (form.deliveryZone === "Trincity & environs" ? 20 : 30)
     : 0;
-  const discountAmount = welcome ? Math.round(subtotal * (welcome.percent / 100) * 100) / 100 : 0;
-  const total = Math.max(0, subtotal + deliveryFee - discountAmount);
+  const discountAmount = 0;
+  const total = Math.max(0, subtotal + deliveryFee);
   const input = "h-11 w-full rounded-xl border border-border bg-background px-4 text-sm outline-none focus:border-leaf-deep transition";
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -145,17 +136,11 @@ function Checkout() {
           })),
           subtotal,
           deliveryFee,
-          discountCode: welcome?.code ?? null,
+          discountCode: null,
           discountAmount,
           total,
         },
       });
-
-      if (welcome && result.isNew) {
-        await supabase.from("discount_codes")
-          .update({ redeemed_at: new Date().toISOString() })
-          .eq("id", welcome.id);
-      }
 
       // Save/refresh profile defaults for signed-in customers, so future
       // checkouts auto-fill their details. Fields remain editable.
@@ -200,7 +185,7 @@ function Checkout() {
               seafood: l.seafood, preferences: l.preferences, notes: l.notes,
             })),
             subtotal, deliveryFee,
-            discountCode: welcome?.code ?? null, discountPercent: welcome?.percent ?? 0,
+            discountCode: null, discountPercent: 0,
             discountAmount, total,
             submittedAt: new Date().toISOString(),
           }),
@@ -229,16 +214,6 @@ function Checkout() {
           : "Same-day ordering has closed for today. Please choose the next available salad day below."}
       </div>
 
-
-      {welcome && (
-        <div className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-citrus bg-[linear-gradient(90deg,rgba(246,233,107,0.4),rgba(167,217,72,0.18))] px-5 py-4 shadow-[0_10px_24px_rgba(31,90,53,0.12)]">
-          <BadgePercent className="h-6 w-6 shrink-0 text-leaf-deep" />
-          <div className="text-sm text-leaf-deep">
-            <div className="font-bold">Welcome gift: <span className="font-mono">{welcome.code}</span> ({welcome.percent}% off) is applied to this order.</div>
-            <div className="text-xs text-brown">One-time first-order discount, used on this purchase.</div>
-          </div>
-        </div>
-      )}
 
       {!minMet && (
         <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm">
@@ -388,9 +363,6 @@ function Checkout() {
           <div className="border-t border-border pt-3 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{fmt(subtotal)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "included at pickup"}</span></div>
-            {welcome && (
-              <div className="flex justify-between text-leaf-deep"><span>Discount ({welcome.percent}%)</span><span>−{fmt(discountAmount)}</span></div>
-            )}
             <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>{fmt(total)}</span></div>
           </div>
           <button

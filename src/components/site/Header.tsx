@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logoAsset from "@/assets/ccgc-logo.png.asset.json";
+import logoAsset from "@/assets/ccgc-nav-logo.png.asset.json";
 
 const NAV = [
   { to: "/salads", label: "Salads" },
@@ -73,7 +73,7 @@ export function Header() {
           </div>
           <div className="hidden min-w-0 leading-none sm:block">
             <div className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-deep/85">REAL FOOD. READY WHEN YOU ARE.</div>
-            <div className="mt-1 text-xs text-foreground/65">Nutritious salads, meals and juices prepared fresh in Trinidad &amp; Tobago</div>
+            <div className="mt-1 text-xs text-foreground/65">Diabetic friendly juices* prepared fresh in Trinidad &amp; Tobago</div>
           </div>
         </Link>
 

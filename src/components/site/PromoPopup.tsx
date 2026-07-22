@@ -10,7 +10,7 @@ const DAY = 24 * 60 * 60 * 1000;
 
 export function PromoPopup() {
   const [open, setOpen] = useState(false);
-  const [variant, setVariant] = useState<"signin" | "discount">("signin");
+  const [variant, setVariant] = useState<"signin" | "returning">("signin");
 
   useEffect(() => {
     let cancelled = false;
@@ -21,7 +21,7 @@ export function PromoPopup() {
       if (Date.now() - last > DAY) {
         setTimeout(() => {
           if (cancelled) return;
-          setVariant(signedIn ? "discount" : "signin");
+          setVariant(signedIn ? "returning" : "signin");
           setOpen(true);
         }, 4000);
       }
@@ -30,7 +30,7 @@ export function PromoPopup() {
   }, []);
 
   const close = () => {
-    localStorage.setItem(variant === "discount" ? KEY : SIGNIN_KEY, String(Date.now()));
+    localStorage.setItem(variant === "returning" ? KEY : SIGNIN_KEY, String(Date.now()));
     setOpen(false);
   };
 
