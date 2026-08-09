@@ -109,6 +109,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
                 </button>
               ))}
             </div>
+            <p className="mt-1.5 text-[11px] text-brown">{PROTEIN_COPY}</p>
           </div>
         )}
 
