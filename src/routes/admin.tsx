@@ -7,7 +7,7 @@ import { fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import {
   Phone, MessageCircle, Copy, Mail, ChevronDown, ChevronUp,
-  Search, LogOut, ClipboardList, CheckSquare, Settings as SettingsIcon,
+  Search, LogOut, ClipboardList, CheckSquare, CalendarDays, Settings as SettingsIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -56,7 +56,8 @@ type Order = {
   discount_code: string | null;
   discount_amount: number;
   total: number;
-  simple_status: "pending" | "done";
+  simple_status: "pending" | "done" | "cancelled";
+  recurring_frequency: string | null;
   completed_at: string | null;
   created_at: string;
 };
@@ -699,4 +700,26 @@ function longDate(iso: string): string {
     weekday: "short", month: "short", day: "numeric",
     hour: "numeric", minute: "2-digit",
   });
+}
+
+/** ISO date of the next occurrence of a weekday (0=Sun) in Trinidad time, today included. */
+function nextWeekdayISO(weekday: number): string {
+  const todayISO = ttDateISO(new Date());
+  const [y, m, d] = todayISO.split("-").map(Number);
+  const base = new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1));
+  for (let i = 0; i < 14; i++) {
+    const dt = new Date(base);
+    dt.setUTCDate(base.getUTCDate() + i);
+    if (dt.getUTCDay() === weekday) {
+      return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, "0")}-${String(dt.getUTCDate()).padStart(2, "0")}`;
+    }
+  }
+  return todayISO;
+}
+
+/** "November 2026" heading for an ISO date. */
+function monthHeading(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1))
+    .toLocaleDateString("en-TT", { timeZone: "UTC", month: "long", year: "numeric" });
 }
