@@ -255,6 +255,15 @@ function OrdersView({ mode }: { mode: ViewMode }) {
     load();
   };
 
+  const cancelOrder = async (o: Order) => {
+    const { error } = await supabase.from("orders").update({
+      simple_status: "cancelled", status: "cancelled", completed_at: new Date().toISOString(),
+    } as never).eq("id", o.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Order cancelled");
+    load();
+  };
+
   const saveNote = async (o: Order, note: string) => {
     const { error } = await supabase.from("orders").update({ admin_note: note } as never).eq("id", o.id);
     if (error) { toast.error(error.message); return; }
