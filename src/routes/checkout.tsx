@@ -119,6 +119,7 @@ function Checkout() {
           fulfillmentWindow,
           requiredFulfillmentDate: form.fulfillmentDate || undefined,
           splitForFreshness: form.splitDelivery,
+          recurringFrequency: form.recurring,
           paymentMethod: form.payment,
           notes: notesCombined || undefined,
           allergyInfo: form.allergy.trim() || undefined,
