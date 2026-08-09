@@ -15,6 +15,7 @@ type Order = {
   id: string; order_ref: string; total: number; status: string; created_at: string;
   items: OrderItem[] | null; fulfillment: string | null; pickup_location: string | null;
   delivery_address: string | null; discount_code: string | null; discount_amount: number | null;
+  loyalty_points: number | null;
 };
 type Discount = { id: string; code: string; percent: number; created_at: string; redeemed_at: string | null };
 
@@ -31,7 +32,7 @@ function AccountPage() {
       if (!user) { navigate({ to: "/auth", search: { mode: "signin" } }); return; }
       const [{ data: p }, { data: o }, { data: c }] = await Promise.all([
         supabase.from("profiles").select("first_name,last_name,email,phone").eq("id", user.id).maybeSingle(),
-        supabase.from("orders").select("id,order_ref,total,status,created_at,items,fulfillment,pickup_location,delivery_address,discount_code,discount_amount").order("created_at", { ascending: false }),
+        supabase.from("orders").select("id,order_ref,total,status,created_at,items,fulfillment,pickup_location,delivery_address,discount_code,discount_amount,loyalty_points").order("created_at", { ascending: false }),
         supabase.from("discount_codes").select("id,code,percent,created_at,redeemed_at").order("created_at", { ascending: false }),
       ]);
       setProfile(p as Profile | null);
