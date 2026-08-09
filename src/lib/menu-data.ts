@@ -33,14 +33,21 @@ export const fmt = (n: number) => `$${n.toFixed(0)}`;
 /** @deprecated retained for backwards compatibility — use fmt() with a price. */
 export const PRICELESS = "[PRICELESS]";
 
-export const SALAD_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
-export const MEAL_PROTEINS = ["Chicken", "Fish", "Shrimp", "Vegan"];
-export const SEAFOOD_LABELS = ["Fish", "Shrimp"];
+export const SALAD_PROTEINS = ["Chicken", "Beef", "Fish", "Shrimp", "Vegan"];
+export const MEAL_PROTEINS = ["Chicken", "Beef", "Fish", "Shrimp", "Vegan"];
+/** Proteins that carry the $5 premium addition per item. */
+export const PREMIUM_PROTEINS = ["Fish", "Shrimp", "Beef"];
+/** @deprecated use PREMIUM_PROTEINS */
+export const SEAFOOD_LABELS = PREMIUM_PROTEINS;
+/** Customer facing summary of the protein choices offered on salads and meals. */
+export const PROTEIN_COPY = "Choose chicken, beef, fish, shrimp or vegan. Beef, fish and shrimp add $5 per item.";
 
 
 export const FOOD_MIN = 5;
 export const DRINK_MIN = 6;
 export const SEAFOOD_SURCHARGE = 5;
+/** Premium protein addition per item (beef, fish, shrimp). */
+export const PREMIUM_SURCHARGE = 5;
 
 /** Batch sizes — items are only sold in these multiples. */
 export const SALAD_BATCH = 5;
