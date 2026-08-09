@@ -444,3 +444,10 @@ function Checkout() {
     </Section>
   );
 }
+
+/** "November 2026" heading for an ISO (YYYY-MM-DD) fulfillment day. */
+function monthLabel(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1))
+    .toLocaleDateString("en-TT", { timeZone: "UTC", month: "long", year: "numeric" });
+}
