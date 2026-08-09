@@ -60,6 +60,8 @@ function AccountPage() {
         </div>
       </div>
 
+      <LoyaltyCard orders={orders} />
+
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
         <div className="text-display text-lg text-leaf-deep">Order history</div>
         {orders.length === 0 ? (
