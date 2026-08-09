@@ -274,29 +274,14 @@ function OrdersView({ mode }: { mode: ViewMode }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">
-          {status === "pending" ? "Cathy's Orders" : "Completed Orders"}
-        </h1>
+        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">{VIEW_TITLES[mode]}</h1>
         <p className="mt-1 text-base text-brown">
-          {status === "pending" ? "Orders waiting to be completed" : "Orders you have already finished"}
+          {mode === "all" && "All upcoming orders, grouped by month."}
+          {mode === "monday" && `Orders for the coming Monday, ${shortDateISO(nextMondayISO)}.`}
+          {mode === "wednesday" && `Orders for the coming Wednesday, ${shortDateISO(nextWednesdayISO)}.`}
+          {mode === "completed" && "Past orders you have finished, plus cancelled orders."}
         </p>
       </div>
-
-      {status === "pending" && (
-        <div className="flex flex-wrap gap-3">
-          {(["today", "tomorrow", "all"] as DateFilter[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setDateFilter(f)}
-              className={`rounded-xl border-2 px-5 py-3 text-base font-semibold transition ${
-                dateFilter === f ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-white text-leaf-deep hover:bg-secondary"
-              }`}
-            >
-              {f === "today" ? "Today" : f === "tomorrow" ? "Tomorrow" : "All Pending"}
-            </button>
-          ))}
-        </div>
-      )}
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brown" aria-hidden />
@@ -308,7 +293,7 @@ function OrdersView({ mode }: { mode: ViewMode }) {
         />
       </div>
 
-      {status === "pending" && (
+      {!isCompleted && (
         <div className="grid gap-4 sm:grid-cols-3">
           <StatCard label="Pending orders" value={pendingCount} />
           <StatCard label="Total food items" value={totalFood} />
@@ -323,73 +308,94 @@ function OrdersView({ mode }: { mode: ViewMode }) {
           <p className="text-lg text-brown">No orders in this view.</p>
         </div>
       ) : (
-        <ul className="space-y-3">
-          {filtered.map((o) => {
-            const items = itemsByOrder[o.id] ?? [];
-            const totalQty = items.reduce((s, i) => s + i.quantity, 0);
-            const type = orderType(items);
-            const isOpen = expanded === o.id;
-            return (
-              <li key={o.id} className="overflow-hidden rounded-2xl border-2 border-border bg-white shadow-sm">
-                <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1.4fr_0.6fr_0.8fr_0.9fr_auto] sm:items-center">
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(isOpen ? null : o.id)}
-                    className="flex items-center gap-2 text-left"
-                    aria-expanded={isOpen}
-                  >
-                    <div>
-                      <div className="text-lg font-semibold text-leaf-deep">
-                        {o.customer_name || "—"}
+        groups.map((g) => (
+          <div key={g.heading || "single"} className="space-y-3">
+            {g.heading && (
+              <h2 className="pt-2 text-display text-2xl text-leaf-deep">{g.heading}</h2>
+            )}
+            <ul className="space-y-3">
+              {g.orders.map((o) => {
+                const items = itemsByOrder[o.id] ?? [];
+                const totalQty = items.reduce((s, i) => s + i.quantity, 0);
+                const type = orderType(items);
+                const isOpen = expanded === o.id;
+                return (
+                  <li key={o.id} className="overflow-hidden rounded-2xl border-2 border-border bg-white shadow-sm">
+                    <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1.4fr_0.6fr_0.8fr_0.9fr_auto] sm:items-center">
+                      <button
+                        type="button"
+                        onClick={() => setExpanded(isOpen ? null : o.id)}
+                        className="flex items-center gap-2 text-left"
+                        aria-expanded={isOpen}
+                      >
+                        <div>
+                          <div className="text-lg font-semibold text-leaf-deep">{o.customer_name || "—"}</div>
+                          <div className="text-xs text-brown font-mono">{o.order_ref}</div>
+                          {o.recurring_frequency && o.recurring_frequency !== "none" && (
+                            <div className="mt-1 inline-block rounded-full bg-leaf-soft/25 px-2 py-0.5 text-[11px] font-semibold text-leaf-deep">
+                              Repeats {o.recurring_frequency}
+                            </div>
+                          )}
+                        </div>
+                        {isOpen ? <ChevronUp className="h-5 w-5 text-leaf-deep" /> : <ChevronDown className="h-5 w-5 text-leaf-deep" />}
+                      </button>
+                      <div className="text-base">
+                        <span className="font-semibold text-leaf-deep">{totalQty}</span>{" "}
+                        <span className="text-brown">items</span>
                       </div>
-                      <div className="text-xs text-brown font-mono">{o.order_ref}</div>
+                      <div className="text-base text-leaf-deep">{type}</div>
+                      <div className="text-sm text-brown">
+                        Placed {shortDate(o.created_at)}
+                        {o.required_fulfillment_date && (
+                          <div className="text-sm text-leaf-deep">Required {shortDateISO(o.required_fulfillment_date)}</div>
+                        )}
+                        {o.simple_status === "cancelled" && (
+                          <div className="text-sm font-semibold text-coral">Cancelled</div>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {!isCompleted ? (
+                          <>
+                            <button
+                              onClick={() => setConfirmDone(o)}
+                              className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-leaf-soft/20"
+                            >
+                              <span className="inline-block h-5 w-5 rounded border-2 border-leaf-deep" aria-hidden /> Mark Done
+                            </button>
+                            <button
+                              onClick={() => cancelOrder(o)}
+                              className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-brown hover:bg-secondary"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => moveBackToPending(o)}
+                            className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary"
+                          >
+                            Move Back to Pending
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    {isOpen ? <ChevronUp className="h-5 w-5 text-leaf-deep" /> : <ChevronDown className="h-5 w-5 text-leaf-deep" />}
-                  </button>
-                  <div className="text-base">
-                    <span className="font-semibold text-leaf-deep">{totalQty}</span>{" "}
-                    <span className="text-brown">items</span>
-                  </div>
-                  <div className="text-base text-leaf-deep">{type}</div>
-                  <div className="text-sm text-brown">
-                    Placed {shortDate(o.created_at)}
-                    {o.required_fulfillment_date && (
-                      <div className="text-sm text-leaf-deep">Required {shortDateISO(o.required_fulfillment_date)}</div>
-                    )}
-                  </div>
-                  <div>
-                    {status === "pending" ? (
-                      <button
-                        onClick={() => setConfirmDone(o)}
-                        className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-leaf-soft/20"
-                      >
-                        <span className="inline-block h-5 w-5 rounded border-2 border-leaf-deep" aria-hidden /> Mark Done
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => moveBackToPending(o)}
-                        className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary"
-                      >
-                        Move Back to Pending
-                      </button>
-                    )}
-                  </div>
-                </div>
 
-                {isOpen && (
-                  <div className="space-y-6 border-t-2 border-border bg-cream/30 p-5">
-                    <ExpandedOrder
-                      order={o}
-                      items={items}
-                      onSetPaymentReceived={(v) => setPaymentReceived(o, v)}
-                      onSaveNote={(n) => saveNote(o, n)}
-                    />
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                    {isOpen && (
+                      <div className="space-y-6 border-t-2 border-border bg-cream/30 p-5">
+                        <ExpandedOrder
+                          order={o}
+                          items={items}
+                          onSetPaymentReceived={(v) => setPaymentReceived(o, v)}
+                          onSaveNote={(n) => saveNote(o, n)}
+                        />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))
       )}
 
       {confirmDone && (
@@ -402,6 +408,13 @@ function OrdersView({ mode }: { mode: ViewMode }) {
     </div>
   );
 }
+
+const VIEW_TITLES: Record<ViewMode, string> = {
+  all: "All Upcoming Orders",
+  monday: "Monday Orders",
+  wednesday: "Wednesday Orders",
+  completed: "Completed & Cancelled",
+};
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
