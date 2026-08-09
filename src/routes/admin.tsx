@@ -61,13 +61,13 @@ type Order = {
   created_at: string;
 };
 
-type Tab = "orders" | "completed" | "settings";
+type Tab = "all" | "monday" | "wednesday" | "completed" | "settings";
 
 function AdminPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [tab, setTab] = useState<Tab>("orders");
+  const [tab, setTab] = useState<Tab>("all");
   const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
@@ -112,8 +112,10 @@ function AdminPage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="text-display text-2xl text-leaf-deep">Cathy's Dashboard</div>
           <nav className="flex flex-wrap gap-2" aria-label="Admin sections">
-            <NavBtn active={tab === "orders"} onClick={() => setTab("orders")} icon={<ClipboardList className="h-5 w-5" />} label="Orders" />
             <NavBtn active={tab === "completed"} onClick={() => setTab("completed")} icon={<CheckSquare className="h-5 w-5" />} label="Completed" />
+            <NavBtn active={tab === "all"} onClick={() => setTab("all")} icon={<ClipboardList className="h-5 w-5" />} label="All" />
+            <NavBtn active={tab === "monday"} onClick={() => setTab("monday")} icon={<CalendarDays className="h-5 w-5" />} label="Monday" />
+            <NavBtn active={tab === "wednesday"} onClick={() => setTab("wednesday")} icon={<CalendarDays className="h-5 w-5" />} label="Wednesday" />
             <NavBtn active={tab === "settings"} onClick={() => setTab("settings")} icon={<SettingsIcon className="h-5 w-5" />} label="Settings" />
             <button
               onClick={signOut}
@@ -126,9 +128,7 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        {tab === "orders" && <OrdersView status="pending" />}
-        {tab === "completed" && <OrdersView status="done" />}
-        {tab === "settings" && <SettingsView email={userEmail} />}
+        {tab === "settings" ? <SettingsView email={userEmail} /> : <OrdersView mode={tab} />}
       </main>
     </div>
   );
