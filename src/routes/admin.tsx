@@ -149,24 +149,23 @@ function NavBtn({ active, onClick, icon, label }: { active: boolean; onClick: ()
 
 /* ─────────────────────────── ORDERS / COMPLETED ─────────────────────────── */
 
-type DateFilter = "today" | "tomorrow" | "all";
+type ViewMode = "all" | "monday" | "wednesday" | "completed";
 
-function OrdersView({ status }: { status: "pending" | "done" }) {
+function OrdersView({ mode }: { mode: ViewMode }) {
+  const isCompleted = mode === "completed";
   const [orders, setOrders] = useState<Order[]>([]);
   const [itemsByOrder, setItemsByOrder] = useState<Record<string, OrderItemRow[]>>({});
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [dateFilter, setDateFilter] = useState<DateFilter>(status === "pending" ? "today" : "all");
   const [search, setSearch] = useState("");
   const [confirmDone, setConfirmDone] = useState<Order | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data: os, error } = await supabase.from("orders")
-      .select("*")
-      .eq("simple_status" as never, status as never)
-      .order("created_at", { ascending: false })
-      .limit(500);
+    const query = supabase.from("orders").select("*").limit(500);
+    const { data: os, error } = isCompleted
+      ? await query.in("simple_status" as never, ["done", "cancelled"] as never).order("created_at", { ascending: false })
+      : await query.eq("simple_status" as never, "pending" as never).order("created_at", { ascending: false });
     if (error) { toast.error(error.message); setLoading(false); return; }
     const list = (os ?? []) as unknown as Order[];
     setOrders(list);
@@ -184,25 +183,43 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [status]);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [mode]);
 
   const todayISO = ttDateISO(new Date());
-  const tomorrowISO = ttDateISO(new Date(Date.now() + 86400000));
+  const nextMondayISO = nextWeekdayISO(1);
+  const nextWednesdayISO = nextWeekdayISO(3);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
     return orders.filter((o) => {
-      if (status === "pending") {
-        if (dateFilter === "today" && o.required_fulfillment_date !== todayISO) return false;
-        if (dateFilter === "tomorrow" && o.required_fulfillment_date !== tomorrowISO) return false;
-      }
+      const date = o.required_fulfillment_date;
+      if (mode === "all" && date && date < todayISO) return false;
+      if (mode === "monday" && date !== nextMondayISO) return false;
+      if (mode === "wednesday" && date !== nextWednesdayISO) return false;
       if (s) {
         const hay = `${o.customer_name ?? ""} ${o.order_ref} ${o.phone ?? ""}`.toLowerCase();
         if (!hay.includes(s)) return false;
       }
       return true;
     });
-  }, [orders, dateFilter, search, status, todayISO, tomorrowISO]);
+  }, [orders, search, mode, todayISO, nextMondayISO, nextWednesdayISO]);
+
+  const groups = useMemo(() => {
+    const sorted = [...filtered].sort((a, b) => {
+      const ad = a.required_fulfillment_date ?? "9999-99-99";
+      const bd = b.required_fulfillment_date ?? "9999-99-99";
+      return isCompleted ? b.created_at.localeCompare(a.created_at) : ad.localeCompare(bd);
+    });
+    if (mode !== "all") return [{ heading: "", orders: sorted }];
+    const out: { heading: string; orders: Order[] }[] = [];
+    sorted.forEach((o) => {
+      const heading = o.required_fulfillment_date ? monthHeading(o.required_fulfillment_date) : "No date set";
+      const last = out[out.length - 1];
+      if (last && last.heading === heading) last.orders.push(o);
+      else out.push({ heading, orders: [o] });
+    });
+    return out;
+  }, [filtered, mode, isCompleted]);
 
   const pendingCount = filtered.length;
   const totalFood = filtered.reduce((s, o) => s + (itemsByOrder[o.id] ?? []).filter((i) => i.category !== "juice").reduce((a, b) => a + b.quantity, 0), 0);
