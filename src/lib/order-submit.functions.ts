@@ -92,6 +92,7 @@ export const submitOrder = createServerFn({ method: "POST" })
       fulfillment_window: data.fulfillmentWindow ?? "",
       required_fulfillment_date: data.requiredFulfillmentDate ?? "",
       split_for_freshness: data.splitForFreshness ?? false,
+      recurring_frequency: data.recurringFrequency ?? "none",
       payment_method: data.paymentMethod,
       notes: data.notes ?? "",
       allergy_info: data.allergyInfo ?? "",
