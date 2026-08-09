@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2, MessageCircle, Sparkles } from "lucide-react";
 import { Section } from "@/components/site/Section";
 import { fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
+import { Confetti } from "@/components/site/Confetti";
+import { fmtPoints, pointsFor } from "@/lib/loyalty";
 import { z } from "zod";
 
 
@@ -72,8 +74,19 @@ function Confirmation() {
     return `Hi Cathy's Clean Green Classics. I submitted order ${order.orderRef} through the website and would like to double-check it with you. Order: ${itemList}. Fulfilment: ${fulfil}. Submitted: ${submittedDate}. Website subtotal: ${fmt(order.subtotal)}${order.deliveryFee ? `, delivery ${fmt(order.deliveryFee)}` : ""}. Website total: ${fmt(order.total)}.`;
   }, [order, submittedDate]);
 
+  const earnedPoints = useMemo(() => {
+    if (!order) return 0;
+    let food = 0, drink = 0;
+    for (const i of order.items) {
+      if (i.category === "juice") drink += i.quantity;
+      else food += i.quantity;
+    }
+    return pointsFor(food, drink);
+  }, [order]);
+
   return (
     <Section className="py-14">
+      <Confetti />
       <div className="mx-auto max-w-2xl text-center">
         <CheckCircle2 className="mx-auto h-14 w-14 text-leaf-deep" />
         <h1 className="mt-4 text-display text-3xl text-leaf-deep lg:text-4xl">Order submitted successfully</h1>
@@ -84,6 +97,20 @@ function Confirmation() {
           <div className="mx-auto mt-6 inline-flex flex-col items-center gap-1 rounded-2xl border border-leaf-soft/40 bg-leaf-soft/10 px-6 py-4">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-leaf-soft">Your order reference</div>
             <div className="font-mono text-xl font-bold text-leaf-deep">{ref}</div>
+          </div>
+        )}
+        {earnedPoints > 0 && (
+          <div className="mx-auto mt-6 max-w-lg animate-scale-in rounded-2xl border border-leaf-soft/40 bg-[linear-gradient(135deg,#FFFDF5_0%,#F3FBE7_55%,#FFF8E3_100%)] px-6 py-5 shadow-card">
+            <div className="flex items-center justify-center gap-2 text-display text-2xl text-leaf-deep">
+              <Sparkles className="h-6 w-6 text-leaf-soft" aria-hidden />
+              +{fmtPoints(earnedPoints)} Green Points
+            </div>
+            <p className="mt-2 text-sm text-brown">
+              Beautiful. These points are banked to your account. Rewards are coming soon, so keep them growing.
+            </p>
+            <Link to="/account" className="mt-3 inline-block text-sm font-semibold text-leaf-deep underline">
+              View your points
+            </Link>
           </div>
         )}
         <p className="mt-3 inline-block rounded-full bg-citrus/60 px-3 py-1 text-xs font-semibold text-leaf-deep">
