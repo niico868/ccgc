@@ -30,6 +30,7 @@ export type SubmitOrderInput = {
   splitForFreshness?: boolean;
   /** "none" | "weekly" | "monthly" — a request to repeat, not a charge. */
   recurringFrequency?: string;
+  paymentMethod: string;
   notes?: string;
   allergyInfo?: string;
   dropOffInstructions?: string;
