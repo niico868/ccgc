@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
-import { nextSaladDays, sameDayOpen } from "@/lib/fulfillment";
+import { saladDaysAhead, sameDayOpen } from "@/lib/fulfillment";
 import { toast } from "sonner";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
@@ -24,7 +24,7 @@ function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const idemRef = useRef<string>(crypto.randomUUID());
-  const saladDays = useMemo(() => nextSaladDays(4), []);
+  const saladDays = useMemo(() => saladDaysAhead(6), []);
   const sameDay = useMemo(() => sameDayOpen(), []);
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
@@ -34,6 +34,7 @@ function Checkout() {
     address: "",
     deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
     payment: "Bank Transfer" as "Cash" | "Bank Transfer",
+    recurring: "none" as "none" | "weekly" | "monthly",
     splitDelivery: false,
     splitNotes: "",
     notes: "",
