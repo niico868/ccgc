@@ -123,6 +123,7 @@ export type Database = {
           id: string
           idempotency_key: string | null
           items: Json
+          loyalty_points: number
           notes: string | null
           order_ref: string
           payment_method: string | null
@@ -161,6 +162,7 @@ export type Database = {
           id?: string
           idempotency_key?: string | null
           items?: Json
+          loyalty_points?: number
           notes?: string | null
           order_ref: string
           payment_method?: string | null
@@ -199,6 +201,7 @@ export type Database = {
           id?: string
           idempotency_key?: string | null
           items?: Json
+          loyalty_points?: number
           notes?: string | null
           order_ref?: string
           payment_method?: string | null
