@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/accordion";
 
 const TITLE = "FAQ: Ordering, Delivery & Pickup | Cathy's Clean Green Classics";
-const DESC = "Answers on cutoffs, delivery from 11 AM, pickup at Orange Grove, batch pricing, seafood additions and how to confirm your order online.";
+const DESC = "Answers on cutoffs, delivery from 11 AM, pickup at Orange Grove, batch pricing, protein choices and how to confirm your order online.";
 const URL = "https://cathysgreenkitchen.com/faq";
 
 const QA = [
@@ -15,9 +15,11 @@ const QA = [
   { q: "When does delivery start?", a: "Delivery begins at 11:00 AM and runs along the east west corridor." },
   { q: "How much is delivery?", a: "Curepe to Arima is $30. Trincity and environs is $20. Cathy's team confirms the final fee when they review your order." },
   { q: "Where can I pick up my order?", a: "Pickup is at Orange Grove, Tacarigua, from 11:00 AM to 6:00 PM on your fulfillment day." },
-  { q: "What about prices?", a: "Salads are $45 each (minimum 5 items). Healthy meals are $50 each (minimum 5 items). Fish or shrimp add $5 per item. Cold-pressed juices are $18 each (minimum 6 drinks). Ginger shots are $8 each (minimum 6 drinks). Cathy's team confirms your final total, including delivery, after you submit your order." },
-  { q: "Do you offer seafood?", a: "Yes. Fish and shrimp are available on salads and meals and add $5 per item. Choose the protein on the product card and the price updates right away." },
+  { q: "What about prices?", a: "Salads are $45 each (minimum 5 items). Healthy meals are $50 each (minimum 5 items). Beef, fish or shrimp add $5 per item. Cold-pressed juices are $18 each (minimum 6 drinks). Ginger shots are $8 each (minimum 6 drinks). Cathy's team confirms your final total, including delivery, after you submit your order." },
+  { q: "Which proteins can I choose?", a: "Chicken, beef, fish, shrimp or vegan on salads and healthy meals. Beef, fish and shrimp add $5 per item. Choose the protein on the product card and the price updates right away." },
   { q: "What are the order minimums?", a: "Food orders need at least 5 items in total. Salads and healthy meals can be combined. Drink orders need at least 6 items in total. Juices and ginger shots can be combined." },
+  { q: "How far ahead can I order?", a: "You can book any Monday or Wednesday up to six months ahead. Scroll the date list at checkout and pick the day you want." },
+  { q: "Can I set up a recurring order?", a: "Yes. At checkout you can ask us to repeat this order weekly or monthly. You are only billed for the order you are placing now, and we contact you before each repeat." },
   { q: "How do I confirm my order?", a: "Place your order through the website. After you submit, you'll see a confirmation screen with your order reference and full details. Cathy's team then reviews it and follows up to confirm availability, fulfillment details and payment." },
   { q: "Do I need an account?", a: "No, an account is completely optional. You can check out as a guest any time. Creating an account simply saves your details for faster future orders and keeps your order history in one place." },
 ];

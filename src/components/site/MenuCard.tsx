@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
-import { fmt, SEAFOOD_LABELS, SEAFOOD_SURCHARGE, SALAD_INGREDIENTS } from "@/lib/menu-data";
+import { fmt, PREMIUM_PROTEINS, PREMIUM_SURCHARGE, PROTEIN_COPY, SALAD_INGREDIENTS } from "@/lib/menu-data";
 import { Minus, Plus, ShoppingBasket, ChevronDown } from "lucide-react";
 
 export function MenuCard({ item }: { item: MenuItem }) {
@@ -15,8 +15,8 @@ export function MenuCard({ item }: { item: MenuItem }) {
 
   const size = item.sizes?.[sizeIdx];
   const basePrice = size ? size.price : item.price;
-  const seafood = !!protein && SEAFOOD_LABELS.includes(protein);
-  const seafoodAdd = seafood ? SEAFOOD_SURCHARGE : 0;
+  const seafood = !!protein && PREMIUM_PROTEINS.includes(protein);
+  const seafoodAdd = seafood ? PREMIUM_SURCHARGE : 0;
   const unitPrice = basePrice + seafoodAdd;
 
   const toggleExcluded = (ing: string) =>
@@ -58,7 +58,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
           <div className="shrink-0 text-right">
             <div className="text-sm font-bold tracking-wide text-leaf-deep">{fmt(unitPrice)}<span className="text-[10px] font-medium text-muted-foreground"> /ea</span></div>
             {seafood && (
-              <div className="mt-0.5 text-[10px] font-medium text-brown">Includes $5 seafood addition per item.</div>
+              <div className="mt-0.5 text-[10px] font-medium text-brown">Includes $5 premium protein addition per item.</div>
             )}
             <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
               {item.category === "salad" && "Mix & match, 5 item food minimum"}
@@ -109,6 +109,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
                 </button>
               ))}
             </div>
+            <p className="mt-1.5 text-[11px] text-brown">{PROTEIN_COPY}</p>
           </div>
         )}
 

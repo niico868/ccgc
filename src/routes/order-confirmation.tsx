@@ -114,7 +114,7 @@ function Confirmation() {
                 const extras: string[] = [];
                 if (i.size) extras.push(i.size);
                 if (i.protein) extras.push(i.protein);
-                if (i.seafood) extras.push("Seafood (+$5)");
+                if (i.seafood) extras.push("Premium protein (+$5)");
                 return (
                   <li key={idx} className="flex justify-between gap-3">
                     <div>

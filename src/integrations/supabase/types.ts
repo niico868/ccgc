@@ -130,6 +130,7 @@ export type Database = {
           payment_received_at: string | null
           phone: string | null
           pickup_location: string | null
+          recurring_frequency: string
           required_fulfillment_date: string | null
           simple_status: string
           split_for_freshness: boolean
@@ -167,6 +168,7 @@ export type Database = {
           payment_received_at?: string | null
           phone?: string | null
           pickup_location?: string | null
+          recurring_frequency?: string
           required_fulfillment_date?: string | null
           simple_status?: string
           split_for_freshness?: boolean
@@ -204,6 +206,7 @@ export type Database = {
           payment_received_at?: string | null
           phone?: string | null
           pickup_location?: string | null
+          recurring_frequency?: string
           required_fulfillment_date?: string | null
           simple_status?: string
           split_for_freshness?: boolean

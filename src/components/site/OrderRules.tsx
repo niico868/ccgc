@@ -35,7 +35,7 @@ export function FirstTimerCard() {
         <h3 className="mt-2 text-display text-2xl text-leaf-deep">Welcome, we're glad you're here.</h3>
         <div className="mt-4 grid gap-4 text-sm text-foreground/85 sm:grid-cols-2">
           <p className="text-brown">Every plate is made the day of fulfillment on Monday and Wednesday. Same-day orders are open until 8:00 AM Trinidad time.</p>
-          <p className="text-brown">Choose chicken, fish, shrimp or vegan. Fish and shrimp add $5 per item.</p>
+          <p className="text-brown">Choose chicken, beef, fish, shrimp or vegan. Beef, fish and shrimp add $5 per item.</p>
           <div>
             <div className="font-semibold text-leaf-deep">Pickup and delivery</div>
             <ul className="mt-1 space-y-0.5 text-brown">

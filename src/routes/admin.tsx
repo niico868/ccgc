@@ -7,7 +7,7 @@ import { fmt } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import {
   Phone, MessageCircle, Copy, Mail, ChevronDown, ChevronUp,
-  Search, LogOut, ClipboardList, CheckSquare, Settings as SettingsIcon,
+  Search, LogOut, ClipboardList, CheckSquare, CalendarDays, Settings as SettingsIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -56,18 +56,19 @@ type Order = {
   discount_code: string | null;
   discount_amount: number;
   total: number;
-  simple_status: "pending" | "done";
+  simple_status: "pending" | "done" | "cancelled";
+  recurring_frequency: string | null;
   completed_at: string | null;
   created_at: string;
 };
 
-type Tab = "orders" | "completed" | "settings";
+type Tab = "all" | "monday" | "wednesday" | "completed" | "settings";
 
 function AdminPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [tab, setTab] = useState<Tab>("orders");
+  const [tab, setTab] = useState<Tab>("all");
   const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
@@ -112,8 +113,10 @@ function AdminPage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="text-display text-2xl text-leaf-deep">Cathy's Dashboard</div>
           <nav className="flex flex-wrap gap-2" aria-label="Admin sections">
-            <NavBtn active={tab === "orders"} onClick={() => setTab("orders")} icon={<ClipboardList className="h-5 w-5" />} label="Orders" />
             <NavBtn active={tab === "completed"} onClick={() => setTab("completed")} icon={<CheckSquare className="h-5 w-5" />} label="Completed" />
+            <NavBtn active={tab === "all"} onClick={() => setTab("all")} icon={<ClipboardList className="h-5 w-5" />} label="All" />
+            <NavBtn active={tab === "monday"} onClick={() => setTab("monday")} icon={<CalendarDays className="h-5 w-5" />} label="Monday" />
+            <NavBtn active={tab === "wednesday"} onClick={() => setTab("wednesday")} icon={<CalendarDays className="h-5 w-5" />} label="Wednesday" />
             <NavBtn active={tab === "settings"} onClick={() => setTab("settings")} icon={<SettingsIcon className="h-5 w-5" />} label="Settings" />
             <button
               onClick={signOut}
@@ -126,9 +129,7 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        {tab === "orders" && <OrdersView status="pending" />}
-        {tab === "completed" && <OrdersView status="done" />}
-        {tab === "settings" && <SettingsView email={userEmail} />}
+        {tab === "settings" ? <SettingsView email={userEmail} /> : <OrdersView mode={tab} />}
       </main>
     </div>
   );
@@ -149,24 +150,23 @@ function NavBtn({ active, onClick, icon, label }: { active: boolean; onClick: ()
 
 /* ─────────────────────────── ORDERS / COMPLETED ─────────────────────────── */
 
-type DateFilter = "today" | "tomorrow" | "all";
+type ViewMode = "all" | "monday" | "wednesday" | "completed";
 
-function OrdersView({ status }: { status: "pending" | "done" }) {
+function OrdersView({ mode }: { mode: ViewMode }) {
+  const isCompleted = mode === "completed";
   const [orders, setOrders] = useState<Order[]>([]);
   const [itemsByOrder, setItemsByOrder] = useState<Record<string, OrderItemRow[]>>({});
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [dateFilter, setDateFilter] = useState<DateFilter>(status === "pending" ? "today" : "all");
   const [search, setSearch] = useState("");
   const [confirmDone, setConfirmDone] = useState<Order | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data: os, error } = await supabase.from("orders")
-      .select("*")
-      .eq("simple_status" as never, status as never)
-      .order("created_at", { ascending: false })
-      .limit(500);
+    const query = supabase.from("orders").select("*").limit(500);
+    const { data: os, error } = isCompleted
+      ? await query.in("simple_status" as never, ["done", "cancelled"] as never).order("created_at", { ascending: false })
+      : await query.eq("simple_status" as never, "pending" as never).order("created_at", { ascending: false });
     if (error) { toast.error(error.message); setLoading(false); return; }
     const list = (os ?? []) as unknown as Order[];
     setOrders(list);
@@ -184,25 +184,43 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [status]);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [mode]);
 
   const todayISO = ttDateISO(new Date());
-  const tomorrowISO = ttDateISO(new Date(Date.now() + 86400000));
+  const nextMondayISO = nextWeekdayISO(1);
+  const nextWednesdayISO = nextWeekdayISO(3);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
     return orders.filter((o) => {
-      if (status === "pending") {
-        if (dateFilter === "today" && o.required_fulfillment_date !== todayISO) return false;
-        if (dateFilter === "tomorrow" && o.required_fulfillment_date !== tomorrowISO) return false;
-      }
+      const date = o.required_fulfillment_date;
+      if (mode === "all" && date && date < todayISO) return false;
+      if (mode === "monday" && date !== nextMondayISO) return false;
+      if (mode === "wednesday" && date !== nextWednesdayISO) return false;
       if (s) {
         const hay = `${o.customer_name ?? ""} ${o.order_ref} ${o.phone ?? ""}`.toLowerCase();
         if (!hay.includes(s)) return false;
       }
       return true;
     });
-  }, [orders, dateFilter, search, status, todayISO, tomorrowISO]);
+  }, [orders, search, mode, todayISO, nextMondayISO, nextWednesdayISO]);
+
+  const groups = useMemo(() => {
+    const sorted = [...filtered].sort((a, b) => {
+      const ad = a.required_fulfillment_date ?? "9999-99-99";
+      const bd = b.required_fulfillment_date ?? "9999-99-99";
+      return isCompleted ? b.created_at.localeCompare(a.created_at) : ad.localeCompare(bd);
+    });
+    if (mode !== "all") return [{ heading: "", orders: sorted }];
+    const out: { heading: string; orders: Order[] }[] = [];
+    sorted.forEach((o) => {
+      const heading = o.required_fulfillment_date ? monthHeading(o.required_fulfillment_date) : "No date set";
+      const last = out[out.length - 1];
+      if (last && last.heading === heading) last.orders.push(o);
+      else out.push({ heading, orders: [o] });
+    });
+    return out;
+  }, [filtered, mode, isCompleted]);
 
   const pendingCount = filtered.length;
   const totalFood = filtered.reduce((s, o) => s + (itemsByOrder[o.id] ?? []).filter((i) => i.category !== "juice").reduce((a, b) => a + b.quantity, 0), 0);
@@ -238,6 +256,15 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
     load();
   };
 
+  const cancelOrder = async (o: Order) => {
+    const { error } = await supabase.from("orders").update({
+      simple_status: "cancelled", status: "cancelled", completed_at: new Date().toISOString(),
+    } as never).eq("id", o.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Order cancelled");
+    load();
+  };
+
   const saveNote = async (o: Order, note: string) => {
     const { error } = await supabase.from("orders").update({ admin_note: note } as never).eq("id", o.id);
     if (error) { toast.error(error.message); return; }
@@ -248,29 +275,14 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">
-          {status === "pending" ? "Cathy's Orders" : "Completed Orders"}
-        </h1>
+        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">{VIEW_TITLES[mode]}</h1>
         <p className="mt-1 text-base text-brown">
-          {status === "pending" ? "Orders waiting to be completed" : "Orders you have already finished"}
+          {mode === "all" && "All upcoming orders, grouped by month."}
+          {mode === "monday" && `Orders for the coming Monday, ${shortDateISO(nextMondayISO)}.`}
+          {mode === "wednesday" && `Orders for the coming Wednesday, ${shortDateISO(nextWednesdayISO)}.`}
+          {mode === "completed" && "Past orders you have finished, plus cancelled orders."}
         </p>
       </div>
-
-      {status === "pending" && (
-        <div className="flex flex-wrap gap-3">
-          {(["today", "tomorrow", "all"] as DateFilter[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setDateFilter(f)}
-              className={`rounded-xl border-2 px-5 py-3 text-base font-semibold transition ${
-                dateFilter === f ? "border-leaf-deep bg-leaf-deep text-cream" : "border-border bg-white text-leaf-deep hover:bg-secondary"
-              }`}
-            >
-              {f === "today" ? "Today" : f === "tomorrow" ? "Tomorrow" : "All Pending"}
-            </button>
-          ))}
-        </div>
-      )}
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brown" aria-hidden />
@@ -282,7 +294,7 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
         />
       </div>
 
-      {status === "pending" && (
+      {!isCompleted && (
         <div className="grid gap-4 sm:grid-cols-3">
           <StatCard label="Pending orders" value={pendingCount} />
           <StatCard label="Total food items" value={totalFood} />
@@ -297,73 +309,94 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
           <p className="text-lg text-brown">No orders in this view.</p>
         </div>
       ) : (
-        <ul className="space-y-3">
-          {filtered.map((o) => {
-            const items = itemsByOrder[o.id] ?? [];
-            const totalQty = items.reduce((s, i) => s + i.quantity, 0);
-            const type = orderType(items);
-            const isOpen = expanded === o.id;
-            return (
-              <li key={o.id} className="overflow-hidden rounded-2xl border-2 border-border bg-white shadow-sm">
-                <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1.4fr_0.6fr_0.8fr_0.9fr_auto] sm:items-center">
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(isOpen ? null : o.id)}
-                    className="flex items-center gap-2 text-left"
-                    aria-expanded={isOpen}
-                  >
-                    <div>
-                      <div className="text-lg font-semibold text-leaf-deep">
-                        {o.customer_name || "—"}
+        groups.map((g) => (
+          <div key={g.heading || "single"} className="space-y-3">
+            {g.heading && (
+              <h2 className="pt-2 text-display text-2xl text-leaf-deep">{g.heading}</h2>
+            )}
+            <ul className="space-y-3">
+              {g.orders.map((o) => {
+                const items = itemsByOrder[o.id] ?? [];
+                const totalQty = items.reduce((s, i) => s + i.quantity, 0);
+                const type = orderType(items);
+                const isOpen = expanded === o.id;
+                return (
+                  <li key={o.id} className="overflow-hidden rounded-2xl border-2 border-border bg-white shadow-sm">
+                    <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1.4fr_0.6fr_0.8fr_0.9fr_auto] sm:items-center">
+                      <button
+                        type="button"
+                        onClick={() => setExpanded(isOpen ? null : o.id)}
+                        className="flex items-center gap-2 text-left"
+                        aria-expanded={isOpen}
+                      >
+                        <div>
+                          <div className="text-lg font-semibold text-leaf-deep">{o.customer_name || "—"}</div>
+                          <div className="text-xs text-brown font-mono">{o.order_ref}</div>
+                          {o.recurring_frequency && o.recurring_frequency !== "none" && (
+                            <div className="mt-1 inline-block rounded-full bg-leaf-soft/25 px-2 py-0.5 text-[11px] font-semibold text-leaf-deep">
+                              Repeats {o.recurring_frequency}
+                            </div>
+                          )}
+                        </div>
+                        {isOpen ? <ChevronUp className="h-5 w-5 text-leaf-deep" /> : <ChevronDown className="h-5 w-5 text-leaf-deep" />}
+                      </button>
+                      <div className="text-base">
+                        <span className="font-semibold text-leaf-deep">{totalQty}</span>{" "}
+                        <span className="text-brown">items</span>
                       </div>
-                      <div className="text-xs text-brown font-mono">{o.order_ref}</div>
+                      <div className="text-base text-leaf-deep">{type}</div>
+                      <div className="text-sm text-brown">
+                        Placed {shortDate(o.created_at)}
+                        {o.required_fulfillment_date && (
+                          <div className="text-sm text-leaf-deep">Required {shortDateISO(o.required_fulfillment_date)}</div>
+                        )}
+                        {o.simple_status === "cancelled" && (
+                          <div className="text-sm font-semibold text-coral">Cancelled</div>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {!isCompleted ? (
+                          <>
+                            <button
+                              onClick={() => setConfirmDone(o)}
+                              className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-leaf-soft/20"
+                            >
+                              <span className="inline-block h-5 w-5 rounded border-2 border-leaf-deep" aria-hidden /> Mark Done
+                            </button>
+                            <button
+                              onClick={() => cancelOrder(o)}
+                              className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-brown hover:bg-secondary"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => moveBackToPending(o)}
+                            className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary"
+                          >
+                            Move Back to Pending
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    {isOpen ? <ChevronUp className="h-5 w-5 text-leaf-deep" /> : <ChevronDown className="h-5 w-5 text-leaf-deep" />}
-                  </button>
-                  <div className="text-base">
-                    <span className="font-semibold text-leaf-deep">{totalQty}</span>{" "}
-                    <span className="text-brown">items</span>
-                  </div>
-                  <div className="text-base text-leaf-deep">{type}</div>
-                  <div className="text-sm text-brown">
-                    Placed {shortDate(o.created_at)}
-                    {o.required_fulfillment_date && (
-                      <div className="text-sm text-leaf-deep">Required {shortDateISO(o.required_fulfillment_date)}</div>
-                    )}
-                  </div>
-                  <div>
-                    {status === "pending" ? (
-                      <button
-                        onClick={() => setConfirmDone(o)}
-                        className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-leaf-soft/20"
-                      >
-                        <span className="inline-block h-5 w-5 rounded border-2 border-leaf-deep" aria-hidden /> Mark Done
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => moveBackToPending(o)}
-                        className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary"
-                      >
-                        Move Back to Pending
-                      </button>
-                    )}
-                  </div>
-                </div>
 
-                {isOpen && (
-                  <div className="space-y-6 border-t-2 border-border bg-cream/30 p-5">
-                    <ExpandedOrder
-                      order={o}
-                      items={items}
-                      onSetPaymentReceived={(v) => setPaymentReceived(o, v)}
-                      onSaveNote={(n) => saveNote(o, n)}
-                    />
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                    {isOpen && (
+                      <div className="space-y-6 border-t-2 border-border bg-cream/30 p-5">
+                        <ExpandedOrder
+                          order={o}
+                          items={items}
+                          onSetPaymentReceived={(v) => setPaymentReceived(o, v)}
+                          onSaveNote={(n) => saveNote(o, n)}
+                        />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))
       )}
 
       {confirmDone && (
@@ -376,6 +409,13 @@ function OrdersView({ status }: { status: "pending" | "done" }) {
     </div>
   );
 }
+
+const VIEW_TITLES: Record<ViewMode, string> = {
+  all: "All Upcoming Orders",
+  monday: "Monday Orders",
+  wednesday: "Wednesday Orders",
+  completed: "Completed & Cancelled",
+};
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
@@ -660,4 +700,26 @@ function longDate(iso: string): string {
     weekday: "short", month: "short", day: "numeric",
     hour: "numeric", minute: "2-digit",
   });
+}
+
+/** ISO date of the next occurrence of a weekday (0=Sun) in Trinidad time, today included. */
+function nextWeekdayISO(weekday: number): string {
+  const todayISO = ttDateISO(new Date());
+  const [y, m, d] = todayISO.split("-").map(Number);
+  const base = new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1));
+  for (let i = 0; i < 14; i++) {
+    const dt = new Date(base);
+    dt.setUTCDate(base.getUTCDate() + i);
+    if (dt.getUTCDay() === weekday) {
+      return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, "0")}-${String(dt.getUTCDate()).padStart(2, "0")}`;
+    }
+  }
+  return todayISO;
+}
+
+/** "November 2026" heading for an ISO date. */
+function monthHeading(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1))
+    .toLocaleDateString("en-TT", { timeZone: "UTC", month: "long", year: "numeric" });
 }

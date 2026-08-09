@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
-import { nextSaladDays, sameDayOpen } from "@/lib/fulfillment";
+import { saladDaysAhead, sameDayOpen } from "@/lib/fulfillment";
 import { toast } from "sonner";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
@@ -24,7 +24,7 @@ function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const idemRef = useRef<string>(crypto.randomUUID());
-  const saladDays = useMemo(() => nextSaladDays(4), []);
+  const saladDays = useMemo(() => saladDaysAhead(6), []);
   const sameDay = useMemo(() => sameDayOpen(), []);
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
@@ -34,6 +34,7 @@ function Checkout() {
     address: "",
     deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
     payment: "Bank Transfer" as "Cash" | "Bank Transfer",
+    recurring: "none" as "none" | "weekly" | "monthly",
     splitDelivery: false,
     splitNotes: "",
     notes: "",
@@ -118,6 +119,7 @@ function Checkout() {
           fulfillmentWindow,
           requiredFulfillmentDate: form.fulfillmentDate || undefined,
           splitForFreshness: form.splitDelivery,
+          recurringFrequency: form.recurring,
           paymentMethod: form.payment,
           notes: notesCombined || undefined,
           allergyInfo: form.allergy.trim() || undefined,
@@ -260,12 +262,6 @@ function Checkout() {
                 <option>Delivery</option>
                 <option>Pickup</option>
               </select>
-              <select value={form.fulfillmentDate} onChange={set("fulfillmentDate")} className={input} required>
-                {saladDays.length === 0 && <option value="">No dates available</option>}
-                {saladDays.map((d) => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
               {form.fulfillment === "Pickup" ? (
                 <select value={form.pickup} onChange={set("pickup")} className={`${input} sm:col-span-2`}>
                   <option>Orange Grove, Tacarigua (11 AM to 6 PM)</option>
@@ -279,6 +275,40 @@ function Checkout() {
                   <option>Trincity &amp; environs</option>
                 </select>
               )}
+            </div>
+
+            <div className="mt-4">
+              <div className="text-sm font-semibold text-leaf-deep">Choose your fulfillment day</div>
+              <p className="mt-1 text-xs text-muted-foreground">We cook on Mondays and Wednesdays. Scroll down the list to book any Monday or Wednesday up to six months ahead.</p>
+              <div className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-border bg-background p-2" role="radiogroup" aria-label="Fulfillment day">
+                {saladDays.length === 0 && (
+                  <div className="p-3 text-sm text-brown">No dates available right now.</div>
+                )}
+                {saladDays.map((d, i) => {
+                  const month = monthLabel(d.value);
+                  const showHeading = i === 0 || monthLabel(saladDays[i - 1]!.value) !== month;
+                  const selected = form.fulfillmentDate === d.value;
+                  return (
+                    <div key={d.value}>
+                      {showHeading && (
+                        <div className="sticky top-0 bg-background px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-brown">{month}</div>
+                      )}
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => setForm((f) => ({ ...f, fulfillmentDate: d.value }))}
+                        className={`mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
+                          selected ? "bg-leaf-deep text-cream" : "hover:bg-secondary text-foreground"
+                        }`}
+                      >
+                        <span>{d.label}</span>
+                        {selected && <span className="text-xs font-semibold">Selected</span>}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on your fulfillment day (Mon or Wed). Delivery begins at 11:00 AM along the east west corridor. Pickup at Orange Grove, Tacarigua runs from 11:00 AM to 6:00 PM. Curepe to Arima $30. Trincity and environs $20.</p>
 
@@ -322,6 +352,36 @@ function Checkout() {
           </div>
 
           <div>
+            <div className="text-display text-lg text-leaf-deep">Make this a recurring order</div>
+            <p className="mt-1 text-xs text-muted-foreground">Optional. Ask us to repeat this same order on a schedule. You are only billed for the order you are placing today. We contact you before each repeat to confirm it.</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              {([
+                { v: "none", label: "One time only", hint: "No repeats" },
+                { v: "weekly", label: "Repeat weekly", hint: "Same day each week" },
+                { v: "monthly", label: "Repeat monthly", hint: "Same day each month" },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.v}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, recurring: opt.v }))}
+                  aria-pressed={form.recurring === opt.v}
+                  className={`rounded-xl border-2 px-4 py-3 text-left transition ${
+                    form.recurring === opt.v ? "border-leaf-deep bg-leaf-deep/10" : "border-border bg-background hover:border-leaf-deep"
+                  }`}
+                >
+                  <div className="text-sm font-semibold text-leaf-deep">{opt.label}</div>
+                  <div className="text-[11px] text-muted-foreground">{opt.hint}</div>
+                </button>
+              ))}
+            </div>
+            {form.recurring !== "none" && (
+              <div className="mt-3 rounded-xl border border-leaf-soft/40 bg-leaf-soft/10 p-3 text-xs text-leaf-deep animate-fade-in">
+                We will pencil in this order {form.recurring === "weekly" ? "every week" : "every month"} on the same fulfillment day. Only today's order is charged now. You can pause or stop at any time by messaging us.
+              </div>
+            )}
+          </div>
+
+          <div>
             <div className="text-display text-lg text-leaf-deep">Allergy information</div>
             <textarea rows={2} placeholder="Any allergies or dietary restrictions we should know…" value={form.allergy} onChange={set("allergy")}
               className="mt-3 w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf-deep" />
@@ -352,7 +412,7 @@ function Checkout() {
                   {(l.size || l.protein) && (
                     <span className="block text-xs text-muted-foreground">{[l.size, l.protein].filter(Boolean).join(" · ")}</span>
                   )}
-                  {l.seafood && <span className="block text-xs text-brown">Seafood</span>}
+                  {l.seafood && <span className="block text-xs text-brown">Premium protein</span>}
                   {l.preferences && <span className="block text-xs text-muted-foreground">No: {l.preferences}</span>}
                   {l.notes && <span className="block text-xs text-muted-foreground">{l.notes}</span>}
                 </span>
@@ -383,4 +443,11 @@ function Checkout() {
       <div className="mt-10"><FirstTimerCard /></div>
     </Section>
   );
+}
+
+/** "November 2026" heading for an ISO (YYYY-MM-DD) fulfillment day. */
+function monthLabel(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1))
+    .toLocaleDateString("en-TT", { timeZone: "UTC", month: "long", year: "numeric" });
 }

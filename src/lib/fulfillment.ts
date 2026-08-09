@@ -55,14 +55,23 @@ export type SaladDay = {
   isToday: boolean;
 };
 
+/**
+ * Every available salad day within the next `months` months (default 6),
+ * from Trinidad's perspective. Used for the scrollable advance booking list.
+ */
+export function saladDaysAhead(months = 6, now: Date = new Date()): SaladDay[] {
+  // Mon + Wed gives roughly 8.7 options per month; add a little headroom.
+  return nextSaladDays(Math.ceil(months * 9) + 2, now, months * 31 + 7);
+}
+
 /** Return the next N available salad days from Trinidad's perspective. */
-export function nextSaladDays(count = 4, now: Date = new Date()): SaladDay[] {
+export function nextSaladDays(count = 4, now: Date = new Date(), horizonDays = 21): SaladDay[] {
   const p = ttParts(now);
   const todayStr = `${p.year}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
   const base = new Date(Date.UTC(p.year, p.month - 1, p.day));
 
   const out: SaladDay[] = [];
-  for (let i = 0; out.length < count && i < 21; i++) {
+  for (let i = 0; out.length < count && i < horizonDays; i++) {
     const d = new Date(base);
     d.setUTCDate(base.getUTCDate() + i);
     const wd = d.getUTCDay();

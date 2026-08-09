@@ -28,6 +28,8 @@ export type SubmitOrderInput = {
   fulfillmentWindow?: string;
   requiredFulfillmentDate?: string; // YYYY-MM-DD
   splitForFreshness?: boolean;
+  /** "none" | "weekly" | "monthly" — a request to repeat, not a charge. */
+  recurringFrequency?: string;
   paymentMethod: string;
   notes?: string;
   allergyInfo?: string;
@@ -90,6 +92,7 @@ export const submitOrder = createServerFn({ method: "POST" })
       fulfillment_window: data.fulfillmentWindow ?? "",
       required_fulfillment_date: data.requiredFulfillmentDate ?? "",
       split_for_freshness: data.splitForFreshness ?? false,
+      recurring_frequency: data.recurringFrequency ?? "none",
       payment_method: data.paymentMethod,
       notes: data.notes ?? "",
       allergy_info: data.allergyInfo ?? "",
