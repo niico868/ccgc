@@ -67,7 +67,7 @@ function Basket() {
                   )}
                   {l.seafood ? (
                     <div className="mt-1 text-[11px] leading-snug text-brown">
-                      Base {fmt(base)} each. Seafood addition {fmt(seafoodAdd)} per item. Adjusted {fmt(l.unitPrice)} each.
+                      Base {fmt(base)} each. Premium protein addition {fmt(seafoodAdd)} per item. Adjusted {fmt(l.unitPrice)} each.
                     </div>
                   ) : null}
                   <div className="mt-1 text-sm font-bold text-leaf-deep">
