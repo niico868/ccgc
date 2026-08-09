@@ -28,7 +28,8 @@ export type SubmitOrderInput = {
   fulfillmentWindow?: string;
   requiredFulfillmentDate?: string; // YYYY-MM-DD
   splitForFreshness?: boolean;
-  paymentMethod: string;
+  /** "none" | "weekly" | "monthly" — a request to repeat, not a charge. */
+  recurringFrequency?: string;
   notes?: string;
   allergyInfo?: string;
   dropOffInstructions?: string;
