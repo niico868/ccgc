@@ -11,6 +11,11 @@ import beetRootAsset from "@/assets/beet-root-cold-press.png.asset.json";
 import watermelonAsset from "@/assets/watermelon-cold-press.png.asset.json";
 import gingerShotAsset from "@/assets/ginger-shot-cold-press.png.asset.json";
 
+import zestyAsset from "@/assets/zesty-herb-bowl.png.asset.json";
+import moroccanAsset from "@/assets/moroccan-chicken-couscous.png.asset.json";
+import mexAsset from "@/assets/mediterranean-mex-bowl.png.asset.json";
+import mexSideAsset from "@/assets/mediterranean-mex-side.jpg.asset.json";
+
 export type Size = { label: string; price: number };
 
 export type MenuItem = {
@@ -19,6 +24,8 @@ export type MenuItem = {
   category: "salad" | "meal" | "juice";
   price: number;
   image: string;
+  images?: string[];
+  note?: string;
   ingredients?: string;
   description: string;
   benefits?: string;
@@ -33,14 +40,14 @@ export const fmt = (n: number) => `$${n.toFixed(0)}`;
 /** @deprecated retained for backwards compatibility — use fmt() with a price. */
 export const PRICELESS = "[PRICELESS]";
 
-export const SALAD_PROTEINS = ["Chicken", "Beef", "Fish", "Shrimp", "Vegan"];
-export const MEAL_PROTEINS = ["Chicken", "Beef", "Fish", "Shrimp", "Vegan"];
+export const SALAD_PROTEINS = ["Chicken", "Beef", "Fish", "Shrimp", "Vegetarian"];
+export const MEAL_PROTEINS = ["Chicken", "Beef", "Fish", "Shrimp", "Vegetarian"];
 /** Proteins that carry the $5 premium addition per item. */
 export const PREMIUM_PROTEINS = ["Fish", "Shrimp", "Beef"];
 /** @deprecated use PREMIUM_PROTEINS */
 export const SEAFOOD_LABELS = PREMIUM_PROTEINS;
 /** Customer facing summary of the protein choices offered on salads and meals. */
-export const PROTEIN_COPY = "Choose chicken, beef, fish, shrimp or vegan. Beef, fish and shrimp add $5 per item.";
+export const PROTEIN_COPY = "Choose chicken, beef, fish, shrimp or vegetarian. Beef, fish and shrimp add $5 per item.";
 
 
 export const FOOD_MIN = 5;
@@ -140,7 +147,7 @@ export const SALADS: MenuItem[] = [
   },
 ];
 
-export const MEALS: MenuItem[] = [
+export const MENU_A_MEALS: MenuItem[] = [
   {
     id: "meal-quinoa-chow-mein",
     category: "meal",
@@ -235,6 +242,20 @@ export const JUICES: MenuItem[] = [
   },
 ];
 
+
+export const MENU_B_MEALS: MenuItem[] = [
+  { id: "meal-zesty-herb-bowl", name: "Zesty Herb Bowl", category: "meal", price: MEAL_BASE,
+    image: zestyAsset.url, proteinOptions: MEAL_PROTEINS,
+    description: "Herb-roasted smashed baby potatoes over our garlic butter and olive oil hummus, topped with lemon-herb grilled chicken, house-pickled jalapeños and a fresh sprout and herb garnish." },
+  { id: "meal-mediterranean-mex-bowl", name: "Mediterranean Mex Bowl", category: "meal", price: MEAL_BASE,
+    image: mexAsset.url, images: [mexAsset.url, mexSideAsset.url], proteinOptions: MEAL_PROTEINS,
+    description: "Mexican black beans with roasted melongene, minced beef, feta and fresh basil, served with zesty grilled chicken and a crisp Mediterranean salad of spinach, tomato, cucumber and red onion.",
+    note: "Choosing Vegetarian? We leave out the minced beef and chicken." },
+  { id: "meal-moroccan-chicken-couscous", name: "Moroccan Spiced Chicken & Couscous Bowl", category: "meal", price: MEAL_BASE,
+    image: moroccanAsset.url, proteinOptions: MEAL_PROTEINS,
+    description: "Fluffy couscous sautéed with vegetables, served with our Moroccan-spiced chicken breast, pumpkin, carrots, chickpeas and bell peppers in our in-house spices." },
+];
+export const MEALS: MenuItem[] = [...MENU_A_MEALS, ...MENU_B_MEALS];
 
 export const ALL_ITEMS = [...SALADS, ...MEALS, ...JUICES];
 export const findItem = (id: string) => ALL_ITEMS.find((i) => i.id === id);
