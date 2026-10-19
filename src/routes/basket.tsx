@@ -3,6 +3,7 @@ import { Section } from "@/components/site/Section";
 import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { Minus, Plus, Trash2, ShoppingBasket, AlertCircle } from "lucide-react";
+import { OrderDatePicker } from "@/components/site/OrderDatePicker";
 
 export const Route = createFileRoute("/basket")({
   head: () => ({ meta: [{ title: "Your Basket | Cathy's Clean Green Classics" }] }),
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/basket")({
 });
 
 function Basket() {
-  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
+  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet, unavailableLines } = useBasket();
 
   if (lines.length === 0) {
     return (
@@ -28,6 +29,7 @@ function Basket() {
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Your Basket</h1>
+      <OrderDatePicker />
 
       {minMet ? (
         <div className="mt-6 rounded-2xl border border-leaf-soft/40 bg-leaf-soft/10 p-4 text-sm font-semibold text-leaf-deep">
@@ -59,6 +61,7 @@ function Basket() {
               <li key={l.lineId} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
                 <div className="flex-1">
                   <div className="font-semibold text-leaf-deep">{l.name}</div>
+                  {unavailableLines.some((i) => i.lineId === l.lineId) && <p className="text-sm font-semibold text-coral">Unavailable for your selected week. Remove this meal or change the date.</p>}
                   <div className="text-xs text-muted-foreground">
                     {[l.size, l.protein].filter(Boolean).join(" · ") || "Standard"}
                   </div>
@@ -99,11 +102,12 @@ function Basket() {
             const foodShort = foodCount > 0 && !foodOk ? FOOD_MIN - foodCount : 0;
             const drinkShort = drinkCount > 0 && !drinkOk ? DRINK_MIN - drinkCount : 0;
             let label = "Submit Order";
+            if (unavailableLines.length) label = "Remove unavailable meals or change date";
             if (!minMet) {
               if (foodShort > 0 && drinkShort === 0) label = `Add ${foodShort} more food items to complete order`;
               else if (drinkShort > 0 && foodShort === 0) label = `Add ${drinkShort} more drinks to complete order`;
               else if (foodShort > 0 && drinkShort > 0) label = `Add ${foodShort} food + ${drinkShort} drinks to complete order`;
-              else label = "Minimum not met";
+              else if (!unavailableLines.length) label = "Choose an available date";
             }
             return (
               <Link

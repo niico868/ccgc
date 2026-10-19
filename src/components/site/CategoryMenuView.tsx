@@ -7,6 +7,8 @@ import { OrderProgress } from "./OrderProgress";
 import { ReviewCheckoutBar } from "./ReviewCheckoutBar";
 import { OrderingAccordion, CompactPageHeader } from "./OrderingAccordion";
 import { FirstTimerCard } from "./OrderRules";
+import { OrderDatePicker } from "./OrderDatePicker";
+import { WeeklyMeals } from "./WeeklyMeals";
 
 import { SALADS, MEALS, JUICES, type MenuItem } from "@/lib/menu-data";
 
@@ -70,7 +72,8 @@ export function CategoryMenuView({ active }: { active: Key }) {
   const goTo = (k: Key) => {
     if (k === shown) return;
     setShown(k);
-    const target = CATEGORIES.find((c) => c.key === k)!;
+    const target = CATEGORIES.find((c) => c.key === k);
+    if (!target) return;
     navigate({ to: target.to, replace: true });
   };
 
@@ -103,11 +106,13 @@ export function CategoryMenuView({ active }: { active: Key }) {
     };
   }, [shown]);
 
-  const current = CATEGORIES.find((c) => c.key === shown)!;
+  const current = CATEGORIES.find((c) => c.key === shown) ?? CATEGORIES[0];
+  if (!current) return null;
 
   return (
     <div ref={containerRef}>
       <CompactPageHeader eyebrow={current.eyebrow} title={current.title} intro={current.intro} />
+      <Section className="pt-5"><OrderDatePicker /></Section>
 
       <Section className="pt-6 pb-2">
         <div className="mx-auto flex max-w-2xl flex-wrap justify-center gap-2 rounded-full border border-white/60 bg-white/65 p-1.5 shadow-card backdrop-blur">
@@ -153,7 +158,7 @@ export function CategoryMenuView({ active }: { active: Key }) {
                       transition={{ duration: 0.35 }}
                       className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
                     >
-                      {c.items.map((item) => (
+                      {c.key === "meal" ? <WeeklyMeals /> : c.items.map((item) => (
                         <motion.div
                           key={item.id}
                           initial={{ opacity: 0, y: 12 }}

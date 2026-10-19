@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { FOOD_MIN, DRINK_MIN } from "./menu-data";
+import { saladDaysAhead } from "./fulfillment";
+import { unavailableMeals } from "./menu-rotation";
 
 export type BasketCategory = "salad" | "meal" | "juice";
 
@@ -23,6 +25,9 @@ export type BasketLine = {
 };
 
 type BasketCtx = {
+  fulfillmentDate: string;
+  setFulfillmentDate: (date: string) => void;
+  unavailableLines: BasketLine[];
   lines: BasketLine[];
   add: (line: Omit<BasketLine, "lineId">) => void;
   remove: (lineId: string) => void;
@@ -42,17 +47,24 @@ const KEY = "cgcc.basket.v2";
 
 export function BasketProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<BasketLine[]>([]);
+  const [fulfillmentDate, setFulfillmentDate] = useState("");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
       const raw = typeof window !== "undefined" ? localStorage.getItem(KEY) : null;
-      if (raw) setLines(JSON.parse(raw));
+      if (raw) setLines((JSON.parse(raw) as BasketLine[]).map((l) => ({ ...l, protein: l.protein === "Vegan" ? "Vegetarian" : l.protein })));
+      const days = saladDaysAhead(6);
+      const savedDate = localStorage.getItem(`${KEY}.date`);
+      setFulfillmentDate(days.some((d) => d.value === savedDate) ? savedDate ?? "" : days[0]?.value ?? "");
     } catch {}
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    try { localStorage.setItem(KEY, JSON.stringify(lines)); } catch {}
-  }, [lines]);
+    if (!ready) return;
+    try { localStorage.setItem(KEY, JSON.stringify(lines)); localStorage.setItem(`${KEY}.date`, fulfillmentDate); } catch {}
+  }, [lines, fulfillmentDate, ready]);
 
   const add: BasketCtx["add"] = useCallback((line) => {
     setLines((prev) => [...prev, { ...line, lineId: crypto.randomUUID() }]);
@@ -68,14 +80,17 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     const foodOk = foodCount === 0 || foodCount >= FOOD_MIN;
     const drinkOk = drinkCount === 0 || drinkCount >= DRINK_MIN;
     const hasItems = lines.length > 0;
+    const unavailableLines = unavailableMeals(lines, fulfillmentDate) as BasketLine[];
+    const dateOk = saladDaysAhead(6).some((d) => d.value === fulfillmentDate);
     return {
+      fulfillmentDate, setFulfillmentDate, unavailableLines,
       lines, add, remove, setQty, clear,
       count: lines.reduce((s, l) => s + l.quantity, 0),
       subtotal: lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0),
       foodCount, drinkCount, foodOk, drinkOk,
-      minMet: hasItems && foodOk && drinkOk,
+      minMet: hasItems && foodOk && drinkOk && dateOk && unavailableLines.length === 0,
     };
-  }, [lines, add, remove, setQty, clear]);
+  }, [lines, add, remove, setQty, clear, fulfillmentDate]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
