@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/integrations/supabase/types";
+import { validateOrderAvailability, PICKUP_LOCATIONS } from "./menu-rotation";
 
 export type SubmitOrderItem = {
   itemId: string;
@@ -66,6 +67,8 @@ export const submitOrder = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data }) => {
+    validateOrderAvailability(data.items, data.requiredFulfillmentDate ?? "");
+    if (data.fulfillment === "Pickup" && !PICKUP_LOCATIONS.some((p) => p === data.pickupLocation)) throw new Error("Choose Trincity or St. Clair for pickup.");
     const url = process.env.SUPABASE_URL!;
     const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
     const client = createClient<Database>(url, key, {
