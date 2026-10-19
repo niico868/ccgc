@@ -1,5 +1,5 @@
 // Fulfillment / salad-day helpers using Trinidad & Tobago local time.
-// Salad days are Monday and Wednesday. Same-day orders are permitted only
+// Salad days are Monday, Wednesday and Friday. Same-day orders are permitted only
 // before 8:00 AM local time. After 8:00 AM the current day is no longer
 // selectable and customers must pick the next available salad day.
 
@@ -35,7 +35,7 @@ export function ttParts(now: Date = new Date()): TTParts {
 }
 
 export const CUTOFF_HOUR = 8; // 8:00 AM T&T time on salad days
-export const SALAD_WEEKDAYS = [1, 3]; // Mon, Wed
+export const SALAD_WEEKDAYS = [1, 3, 5]; // Mon, Wed, Fri
 
 export function isSaladWeekday(weekday: number) {
   return SALAD_WEEKDAYS.includes(weekday);
@@ -60,8 +60,10 @@ export type SaladDay = {
  * from Trinidad's perspective. Used for the scrollable advance booking list.
  */
 export function saladDaysAhead(months = 6, now: Date = new Date()): SaladDay[] {
-  // Mon + Wed gives roughly 8.7 options per month; add a little headroom.
-  return nextSaladDays(Math.ceil(months * 9) + 2, now, months * 31 + 7);
+  // Mon + Wed + Fri gives roughly 13 options per month; add a little headroom.
+  const p = ttParts(now);
+  const end = new Date(Date.UTC(p.year, p.month - 1 + months, p.day));
+  return nextSaladDays(100, now, months * 31 + 7).filter((d) => d.value <= end.toISOString().slice(0, 10));
 }
 
 /** Return the next N available salad days from Trinidad's perspective. */

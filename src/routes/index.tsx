@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { activeMeals } from "@/lib/menu-rotation";
+import { HomeMenuSlideshow } from "@/components/site/HomeMenuSlideshow";
 import { ArrowRight, Clock, Truck } from "lucide-react";
 import hero from "@/assets/hero-salad.jpg";
-import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE, JUICE_FEATURE_IMAGE } from "@/lib/menu-data";
+import { SALADS, JUICES } from "@/lib/menu-data";
 import { waLink } from "@/lib/whatsapp";
 import { Section } from "@/components/site/Section";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
@@ -21,24 +24,17 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: DESC },
       { property: "og:url", content: URL },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://cathysgreenkitchen.com/og-image.jpg" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
-      { name: "twitter:image", content: "https://cathysgreenkitchen.com/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: URL }],
   }),
   component: Home,
 });
 
-const SECTIONS = [
-  { to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE, desc: "Fresh greens, clean toppings and your choice of protein, built to order.", benefit: "Fresh. Custom. Filling.", objectPosition: "center 50%" },
-  { to: "/meals", title: "Healthy Meals", image: MEAL_FEATURE_IMAGE, desc: "Hearty, homestyle bowls. Properly seasoned, well-balanced and made with care.", benefit: "Wholesome. Satisfying.", objectPosition: "center 55%" },
-  { to: "/juices", title: "Cold-Pressed Juices", image: JUICE_FEATURE_IMAGE, desc: "Pressed fresh from clean produce, to lift, restore and refresh.", benefit: "Fresh. Pure.", objectPosition: "center 60%" },
-];
-
-
 function Home() {
+  const [meals, setMeals] = useState(() => activeMeals());
+  useEffect(() => { setMeals(activeMeals()); const timer = setInterval(() => setMeals(activeMeals()), 30000); return () => clearInterval(timer); }, []);
   return (
     <>
       <section className="relative isolate overflow-hidden">
@@ -49,7 +45,7 @@ function Home() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-24 pt-16 text-cream lg:grid-cols-[1.15fr_0.85fr] lg:pb-28 lg:pt-24 lg:px-8">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/45 bg-[rgba(255,248,234,0.78)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-leaf-deep shadow-[0_12px_30px_rgba(31,90,53,0.12)] backdrop-blur-[14px]">
-              Mon &amp; Wed orders close at 8 AM · Delivery from 11 AM
+              MON, WED &amp; FRI ORDERS CLOSE AT 8 AM · DELIVERY 11 AM – ABOUT 2 PM
             </div>
             <h1 className="mt-5 text-display text-4xl leading-[1.02] text-cream drop-shadow-sm lg:text-6xl">
               Make a healthy start to your day.
@@ -77,9 +73,9 @@ function Home() {
 
       <div className="border-b border-border bg-leaf-deep text-cream">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-3 text-center text-sm font-medium lg:px-8">
-          <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-citrus" /> Cutoff 8 AM on Mon &amp; Wed. Same-day orders open until 8 AM.</span>
+          <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-citrus" /> Cutoff 8 AM on Mon, Wed &amp; Fri. Same-day orders open until 8 AM.</span>
           <span className="hidden h-1 w-1 rounded-full bg-cream/40 sm:inline-block" />
-          <span className="inline-flex items-center gap-2"><Truck className="h-4 w-4 text-citrus" /> Delivery from 11 AM. Pickup Orange Grove 11 AM to 6 PM.</span>
+          <span className="inline-flex items-center gap-2"><Truck className="h-4 w-4 text-citrus" /> Delivery 11 AM – about 2 PM. Pickup: Trincity 2–5 PM · St. Clair 11 AM–1 PM.</span>
         </div>
       </div>
 
@@ -100,21 +96,9 @@ function Home() {
           <p className="mx-auto mt-3 max-w-xl text-brown">Real food, beautifully made.</p>
         </div>
         <div className="mx-auto flex max-w-4xl flex-col gap-5">
-          {SECTIONS.map((s) => (
-            <Link key={s.to} to={s.to} className="group grid overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)] sm:grid-cols-[40%_1fr]">
-              <div className="relative aspect-[16/9] overflow-hidden sm:aspect-auto sm:min-h-[180px]">
-                <img src={s.image} alt={s.title} loading="lazy" style={{ objectPosition: s.objectPosition }} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-              </div>
-              <div className="flex flex-col gap-2 p-6 lg:p-7">
-                <h3 className="text-display text-xl text-leaf-deep lg:text-2xl">{s.title}</h3>
-                <p className="text-sm text-foreground/80">{s.desc}</p>
-                <div className="text-xs font-semibold uppercase tracking-wider text-leaf-soft">{s.benefit}</div>
-                <div className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-leaf-deep">
-                  Browse Menu <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
-          ))}
+          <HomeMenuSlideshow title="Custom Salads" to="/salads" items={SALADS} />
+          <HomeMenuSlideshow title="Healthy Meals" to="/meals" items={meals} />
+          <HomeMenuSlideshow title="Cold-Pressed Juices" to="/juices" items={JUICES} />
         </div>
       </Section>
 

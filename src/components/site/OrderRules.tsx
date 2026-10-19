@@ -2,10 +2,10 @@ import { Clock, MapPin, Truck, CalendarDays } from "lucide-react";
 
 export function OrderRules() {
   const items = [
-    { icon: CalendarDays, title: "Made fresh to order", desc: "Every meal is prepared the day of fulfillment. Salad days are Monday and Wednesday." },
-    { icon: Clock, title: "Cutoff 8 AM Mon & Wed", desc: "Same-day orders are open until 8:00 AM Trinidad time. After that, choose the next salad day." },
-    { icon: Truck, title: "Delivery from 11 AM", desc: "East west corridor. Curepe to Arima $30. Trincity and environs $20." },
-    { icon: MapPin, title: "Pickup, Orange Grove", desc: "Tacarigua, 11 AM to 6 PM on your fulfillment day." },
+    { icon: CalendarDays, title: "Made fresh to order", desc: "Every meal is prepared the day of fulfillment. Salad days are Monday, Wednesday and Friday." },
+    { icon: Clock, title: "Cutoff 8 AM Mon, Wed & Fri", desc: "Same-day orders are open until 8:00 AM Trinidad time. After that, choose the next salad day." },
+    { icon: Truck, title: "Delivery 11 AM – about 2 PM", desc: "East west corridor. Curepe to Arima $30. Trincity and environs $20." },
+    { icon: MapPin, title: "Pickup, Trincity & St. Clair", desc: "Trincity 2–5 PM · St. Clair 11 AM–1 PM on your fulfillment day." },
   ];
   return (
     <div className="rounded-3xl border border-border bg-cream p-6 lg:p-8">
@@ -34,13 +34,13 @@ export function FirstTimerCard() {
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">New to Cathy's?</div>
         <h3 className="mt-2 text-display text-2xl text-leaf-deep">Welcome, we're glad you're here.</h3>
         <div className="mt-4 grid gap-4 text-sm text-foreground/85 sm:grid-cols-2">
-          <p className="text-brown">Every plate is made the day of fulfillment on Monday and Wednesday. Same-day orders are open until 8:00 AM Trinidad time.</p>
-          <p className="text-brown">Choose chicken, beef, fish, shrimp or vegan. Beef, fish and shrimp add $5 per item.</p>
+          <p className="text-brown">Every plate is made the day of fulfillment on Monday, Wednesday and Friday. Same-day orders are open until 8:00 AM Trinidad time.</p>
+          <p className="text-brown">Choose chicken, beef, fish, shrimp or vegetarian. Beef, fish and shrimp add $5 per item.</p>
           <div>
             <div className="font-semibold text-leaf-deep">Pickup and delivery</div>
             <ul className="mt-1 space-y-0.5 text-brown">
-              <li>Delivery from 11 AM, east west corridor</li>
-              <li>Pickup at Orange Grove, Tacarigua, 11 AM to 6 PM</li>
+              <li>Delivery 11 AM – about 2 PM, east west corridor</li>
+              <li>Pickup at Trincity 2–5 PM · St. Clair 11 AM–1 PM</li>
               <li>Curepe to Arima: $30 delivery</li>
               <li>Trincity and environs: $20 delivery</li>
             </ul>

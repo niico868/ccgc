@@ -4,9 +4,12 @@ import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
 import { fmt, PREMIUM_PROTEINS, PREMIUM_SURCHARGE, PROTEIN_COPY, SALAD_INGREDIENTS } from "@/lib/menu-data";
 import { Minus, Plus, ShoppingBasket, ChevronDown } from "lucide-react";
+import { PhotoCarousel } from "./PhotoCarousel";
+import { validateOrderAvailability } from "@/lib/menu-rotation";
+import { Button } from "@/components/ui/button";
 
 export function MenuCard({ item }: { item: MenuItem }) {
-  const { add } = useBasket();
+  const { add, fulfillmentDate } = useBasket();
   const [protein, setProtein] = useState(item.proteinOptions?.[0] ?? "");
   const [sizeIdx, setSizeIdx] = useState(0);
   const [excluded, setExcluded] = useState<string[]>([]);
@@ -23,6 +26,8 @@ export function MenuCard({ item }: { item: MenuItem }) {
     setExcluded((p) => (p.includes(ing) ? p.filter((x) => x !== ing) : [...p, ing]));
 
   const onAdd = () => {
+    try { validateOrderAvailability([{ itemId: item.id, category: item.category }], fulfillmentDate); }
+    catch (err) { toast.error(err instanceof Error ? err.message : "Please choose a date first."); return; }
     add({
       itemId: item.id,
       name: item.name,
@@ -43,13 +48,13 @@ export function MenuCard({ item }: { item: MenuItem }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)]">
       <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
-        <img
+        {item.images && item.images.length > 1 ? <PhotoCarousel images={item.images} name={item.name} /> : <img
           src={item.image}
           alt={item.name}
           loading="lazy"
           className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
           style={item.category === "juice" ? { objectPosition: "center 70%" } : undefined}
-        />
+        />}
       </div>
       <div className="flex h-1 w-full bg-[linear-gradient(90deg,#F6E96B_0%,#A9D95A_55%,#2F7D32_100%)]" />
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -68,6 +73,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
           </div>
         </div>
         <p className="text-sm leading-relaxed text-foreground/80">{item.description}</p>
+        {item.note && <p className="text-xs text-brown">{item.note}</p>}
         {item.benefits && (
           <div className="text-xs font-semibold uppercase tracking-wider text-leaf-soft">{item.benefits}</div>
         )}

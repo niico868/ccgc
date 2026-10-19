@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { FirstTimerCard } from "@/components/site/OrderRules";
 import { supabase } from "@/integrations/supabase/client";
+import { OrderDatePicker } from "@/components/site/OrderDatePicker";
+import { PICKUP_LOCATIONS, validateOrderAvailability } from "@/lib/menu-rotation";
 import { submitOrder } from "@/lib/order-submit.functions";
 
 
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function Checkout() {
-  const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount } = useBasket();
+  const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount, fulfillmentDate, unavailableLines } = useBasket();
   const navigate = useNavigate();
   const runSubmit = useServerFn(submitOrder);
   const [submitting, setSubmitting] = useState(false);
@@ -29,8 +31,7 @@ function Checkout() {
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
     fulfillment: "Delivery" as "Delivery" | "Pickup",
-    pickup: "Orange Grove, Tacarigua (11 AM to 6 PM)",
-    fulfillmentDate: saladDays[0]?.value ?? "",
+    pickup: "",
     address: "",
     deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
     payment: "Bank Transfer" as "Cash" | "Bank Transfer",
@@ -87,12 +88,13 @@ function Checkout() {
       toast.error("Minimum order not yet met.");
       return;
     }
+    try { validateOrderAvailability(lines, fulfillmentDate); } catch (err) { toast.error(err instanceof Error ? err.message : "Choose a date."); return; }
     setSubmitting(true);
     setSubmitError(null);
 
     const { data: { session } } = await supabase.auth.getSession();
 
-    const selectedDay = saladDays.find((d) => d.value === form.fulfillmentDate);
+    const selectedDay = saladDays.find((d) => d.value === fulfillmentDate);
     const notesCombined = [
       form.notes?.trim(),
       selectedDay ? `Fulfillment day: ${selectedDay.label}` : "",
@@ -103,8 +105,8 @@ function Checkout() {
 
     try {
       const fulfillmentWindow = form.fulfillment === "Pickup"
-        ? "11:00 AM to 6:00 PM"
-        : "11:00 AM to 5:00 PM";
+        ? (form.pickup === PICKUP_LOCATIONS[0] ? "2 PM to 5 PM" : "11 AM to 1 PM")
+        : "11 AM – about 2 PM";
       const result = await runSubmit({
         data: {
           idempotencyKey: idemRef.current,
@@ -117,7 +119,7 @@ function Checkout() {
           deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : undefined,
           deliveryZone: form.fulfillment === "Delivery" ? form.deliveryZone : undefined,
           fulfillmentWindow,
-          requiredFulfillmentDate: form.fulfillmentDate || undefined,
+          requiredFulfillmentDate: fulfillmentDate || undefined,
           splitForFreshness: form.splitDelivery,
           recurringFrequency: form.recurring,
           paymentMethod: form.payment,
@@ -178,6 +180,8 @@ function Checkout() {
             pickupLocation: form.fulfillment === "Pickup" ? form.pickup : "",
             deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : "",
             deliveryZone: form.fulfillment === "Delivery" ? form.deliveryZone : "",
+            requiredFulfillmentDate: fulfillmentDate,
+            fulfillmentWindow,
             paymentMethod: form.payment,
             notes: notesCombined,
             splitDelivery: form.splitDelivery,
@@ -208,6 +212,7 @@ function Checkout() {
   return (
     <Section className="py-12">
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Checkout</h1>
+      <OrderDatePicker />
       <p className="mt-2 text-sm text-muted-foreground">Confirm your details and we'll send you back a confirmation with your order reference. Cathy's team will then follow up to confirm the final total and next steps.</p>
 
       <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${sameDay ? "border-leaf-soft/40 bg-leaf-soft/10 text-leaf-deep" : "border-brown/30 bg-brown/5 text-brown"}`}>
@@ -263,8 +268,9 @@ function Checkout() {
                 <option>Pickup</option>
               </select>
               {form.fulfillment === "Pickup" ? (
-                <select value={form.pickup} onChange={set("pickup")} className={`${input} sm:col-span-2`}>
-                  <option>Orange Grove, Tacarigua (11 AM to 6 PM)</option>
+                <select required aria-label="Pickup location" value={form.pickup} onChange={set("pickup")} className={`${input} sm:col-span-2`}>
+                  <option value="" disabled>Choose a pickup point</option>
+                  {PICKUP_LOCATIONS.map((p) => <option key={p}>{p}</option>)}
                 </select>
               ) : (
                 <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={`${input} sm:col-span-2`} />
@@ -277,40 +283,7 @@ function Checkout() {
               )}
             </div>
 
-            <div className="mt-4">
-              <div className="text-sm font-semibold text-leaf-deep">Choose your fulfillment day</div>
-              <p className="mt-1 text-xs text-muted-foreground">We cook on Mondays and Wednesdays. Scroll down the list to book any Monday or Wednesday up to six months ahead.</p>
-              <div className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-border bg-background p-2" role="radiogroup" aria-label="Fulfillment day">
-                {saladDays.length === 0 && (
-                  <div className="p-3 text-sm text-brown">No dates available right now.</div>
-                )}
-                {saladDays.map((d, i) => {
-                  const month = monthLabel(d.value);
-                  const showHeading = i === 0 || monthLabel(saladDays[i - 1]!.value) !== month;
-                  const selected = form.fulfillmentDate === d.value;
-                  return (
-                    <div key={d.value}>
-                      {showHeading && (
-                        <div className="sticky top-0 bg-background px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-brown">{month}</div>
-                      )}
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        onClick={() => setForm((f) => ({ ...f, fulfillmentDate: d.value }))}
-                        className={`mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
-                          selected ? "bg-leaf-deep text-cream" : "hover:bg-secondary text-foreground"
-                        }`}
-                      >
-                        <span>{d.label}</span>
-                        {selected && <span className="text-xs font-semibold">Selected</span>}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on your fulfillment day (Mon or Wed). Delivery begins at 11:00 AM along the east west corridor. Pickup at Orange Grove, Tacarigua runs from 11:00 AM to 6:00 PM. Curepe to Arima $30. Trincity and environs $20.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on Mon, Wed &amp; Fri. Delivery 11 AM – about 2 PM along the east west corridor. Pickup: Trincity 2–5 PM · St. Clair 11 AM–1 PM. Curepe to Arima $30. Trincity and environs $20.</p>
 
 
             <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-secondary/40 p-3">
@@ -434,7 +407,7 @@ function Checkout() {
           >
             {submitting ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> Submitting Order…</>
-            ) : minMet ? "Submit Order" : "Minimum not met"}
+            ) : minMet ? "Submit Order" : unavailableLines.length ? "Meals unavailable for this week" : "Minimum not met"}
           </button>
           <p className="text-[11px] text-muted-foreground">Your order is saved as <b>Submitted, awaiting confirmation</b>. We'll message you back to confirm the final total and next steps.</p>
         </aside>

@@ -56,8 +56,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Cathy's Clean Green Classics" },
       { property: "og:title", content: "Cathy's Clean Green Classics" },
       { property: "og:description", content: "Craving something healthy yet satisfying? Order freshly prepared salads, satisfying homestyle meals and diabetic-friendly cold-pressed juices for pickup or delivery in Trinidad." },
-      { property: "og:image", content: "https://cathysgreenkitchen.com/__l5e/assets-v1/18653546-97d1-4bc4-be21-3df164f6ac4f/ccgc-og-image.png" },
-      { name: "twitter:image", content: "https://cathysgreenkitchen.com/__l5e/assets-v1/18653546-97d1-4bc4-be21-3df164f6ac4f/ccgc-og-image.png" },
       { name: "twitter:title", content: "Cathy's Clean Green Classics" },
       { name: "twitter:description", content: "Craving something healthy yet satisfying? Order freshly prepared salads, satisfying homestyle meals and diabetic-friendly cold-pressed juices for pickup or delivery in Trinidad." },
       { property: "og:type", content: "website" },
@@ -91,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           address: { "@type": "PostalAddress", addressCountry: "TT", addressRegion: "Trinidad" },
           sameAs: ["https://www.instagram.com/finelivingbycathy"],
           openingHoursSpecification: [
-            { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Wednesday"], opens: "12:00", closes: "17:00" },
+            { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Wednesday", "Friday"], opens: "11:00", closes: "14:00" },
           ],
         }),
       },
