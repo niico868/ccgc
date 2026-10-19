@@ -3,7 +3,7 @@ import { CategoryMenuView } from "@/components/site/CategoryMenuView";
 import { SALADS, fmt } from "@/lib/menu-data";
 
 const TITLE = "Custom Salads in Trinidad | Cathy's Clean Green Classics";
-const DESC = "Made-to-order salads with fresh greens and your choice of chicken, fish, shrimp or vegan protein. Batches of 5, prepared fresh in Trinidad and Tobago.";
+const DESC = "Made-to-order salads with fresh greens and your choice of chicken, fish, shrimp or vegetarian protein. Batches of 5, prepared fresh in Trinidad and Tobago.";
 const URL = "https://cathysgreenkitchen.com/salads";
 
 export const Route = createFileRoute("/salads")({

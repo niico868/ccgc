@@ -102,9 +102,9 @@ function Contact() {
             <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
               <div className="text-display text-base font-extrabold uppercase tracking-wider text-leaf-deep">Pickup &amp; delivery</div>
               <ul className="mt-3 space-y-2 text-sm text-brown">
-                <li className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Cutoff:</b> 8:00 AM Trinidad time on Mon &amp; Wed. Same-day orders open until 8 AM.</span></li>
-                <li className="flex items-start gap-3"><Truck className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Delivery:</b> from 11 AM, east west corridor.</span></li>
-                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Pickup:</b> Orange Grove, Tacarigua, 11 AM to 6 PM.</span></li>
+                <li className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Cutoff:</b> 8:00 AM Trinidad time on Mon, Wed &amp; Fri. Same-day orders open until 8 AM.</span></li>
+                <li className="flex items-start gap-3"><Truck className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Delivery:</b> 11 AM – about 2 PM, east west corridor.</span></li>
+                <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-leaf" /> <span><b className="text-leaf-deep">Pickup:</b> Trincity 2–5 PM · St. Clair 11 AM–1 PM.</span></li>
               </ul>
             </div>
           </div>

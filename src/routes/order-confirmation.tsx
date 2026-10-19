@@ -23,6 +23,7 @@ type StoredOrder = {
   customerName: string; phone: string; email: string;
   fulfillment: "Delivery" | "Pickup";
   pickupLocation: string; deliveryAddress: string; deliveryZone: string;
+  requiredFulfillmentDate?: string; fulfillmentWindow?: string;
   paymentMethod: string; notes: string; splitDelivery: boolean;
   items: StoredOrderItem[];
   subtotal: number; deliveryFee: number;
@@ -61,7 +62,7 @@ function Confirmation() {
     if (!order) return "";
     const itemList = order.items.map((i) => {
       const extras: string[] = [];
-      if (i.protein) extras.push(i.protein);
+      if (i.protein) extras.push(i.protein === "Vegan" ? "Vegetarian" : i.protein);
       if (i.seafood) extras.push("seafood");
       if (i.size) extras.push(i.size);
       if (i.preferences) extras.push(`no ${i.preferences}`);
@@ -71,7 +72,7 @@ function Confirmation() {
     const fulfil = order.fulfillment === "Delivery"
       ? `Delivery to ${order.deliveryAddress}${order.deliveryZone ? `, ${order.deliveryZone}` : ""}`
       : `Pickup at ${order.pickupLocation}`;
-    return `Hi Cathy's Clean Green Classics. I submitted order ${order.orderRef} through the website and would like to double-check it with you. Order: ${itemList}. Fulfilment: ${fulfil}. Submitted: ${submittedDate}. Website subtotal: ${fmt(order.subtotal)}${order.deliveryFee ? `, delivery ${fmt(order.deliveryFee)}` : ""}. Website total: ${fmt(order.total)}.`;
+    return `Hi Cathy's Clean Green Classics. I submitted order ${order.orderRef} through the website and would like to double-check it with you. Order: ${itemList}. Fulfilment: ${fulfil}. Date: ${order.requiredFulfillmentDate ?? "To be confirmed"}. Time: ${order.fulfillmentWindow ?? "To be confirmed"}. Submitted: ${submittedDate}. Website subtotal: ${fmt(order.subtotal)}${order.deliveryFee ? `, delivery ${fmt(order.deliveryFee)}` : ""}. Website total: ${fmt(order.total)}.`;
   }, [order, submittedDate]);
 
   const earnedPoints = useMemo(() => {
@@ -129,7 +130,7 @@ function Confirmation() {
                 ? ` · ${order.deliveryAddress}${order.deliveryZone ? ` (${order.deliveryZone})` : ""}`
                 : ` · ${order.pickupLocation}`}
             </Detail>
-            <Detail label="Requested date &amp; time">{submittedDate || "To be confirmed"}</Detail>
+            <Detail label="Requested date &amp; time">{order.requiredFulfillmentDate ?? "To be confirmed"} · {order.fulfillmentWindow ?? "To be confirmed"}</Detail>
             <Detail label="Payment method">{order.paymentMethod}</Detail>
             {order.notes && <Detail label="Notes">{order.notes}</Detail>}
           </div>
@@ -140,7 +141,7 @@ function Confirmation() {
               {order.items.map((i, idx) => {
                 const extras: string[] = [];
                 if (i.size) extras.push(i.size);
-                if (i.protein) extras.push(i.protein);
+                if (i.protein) extras.push(i.protein === "Vegan" ? "Vegetarian" : i.protein);
                 if (i.seafood) extras.push("Premium protein (+$5)");
                 return (
                   <li key={idx} className="flex justify-between gap-3">
