@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/integrations/supabase/types";
 import { validateOrderAvailability, PICKUP_LOCATIONS } from "./menu-rotation";
+import { normalizePhone } from "./whatsapp";
 
 export type SubmitOrderItem = {
   itemId: string;
@@ -46,11 +47,14 @@ export type SubmitOrderInput = {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const submitOrder = createServerFn({ method: "POST" })
-  .inputValidator((data: SubmitOrderInput) => {
+  .validator((data: SubmitOrderInput) => {
     if (!data || typeof data !== "object") throw new Error("Invalid payload");
     if (!UUID_RE.test(String(data.idempotencyKey ?? ""))) throw new Error("Invalid idempotency key");
     if (!data.customerName?.trim()) throw new Error("Name is required");
     if (!data.phone?.trim()) throw new Error("Phone number is required");
+    const normalizedPhone = normalizePhone(data.phone);
+    if (!normalizedPhone) throw new Error("Enter a valid phone number: 7 digits for Trinidad & Tobago (e.g. 4884248), or + and your country code abroad.");
+    data.phone = normalizedPhone;
     if (data.fulfillment !== "Delivery" && data.fulfillment !== "Pickup") throw new Error("Invalid fulfillment");
     if (data.fulfillment === "Delivery" && !data.deliveryAddress?.trim()) throw new Error("Delivery address is required");
     if (!Array.isArray(data.items) || data.items.length === 0) throw new Error("Basket is empty");

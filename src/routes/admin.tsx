@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
 import { fmt } from "@/lib/menu-data";
-import { waLink } from "@/lib/whatsapp";
+import { customerWaLink } from "@/lib/whatsapp";
 import {
   Phone, MessageCircle, Copy, Mail, ChevronDown, ChevronUp,
   Search, LogOut, ClipboardList, CheckSquare, CalendarDays, Settings as SettingsIcon,
@@ -438,6 +438,7 @@ function ExpandedOrder({
   const remaining = Math.max(0, Number(order.total) - Number(order.amount_received || 0));
 
   const waMsg = `Hi ${order.customer_name ?? "there"}, this is Cathy's Clean Green Classics confirming your website order ${order.order_ref}.`;
+  const customerWa = customerWaLink(order.phone, waMsg);
 
   const copy = async (text: string, label: string) => {
     try { await navigator.clipboard.writeText(text); toast.success(`${label} copied`); }
@@ -459,9 +460,15 @@ function ExpandedOrder({
               <a href={`tel:${order.phone}`} className="inline-flex items-center gap-2 rounded-xl border-2 border-leaf-deep bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
                 <Phone className="h-5 w-5" /> Call Customer
               </a>
-              <a href={waLink(waMsg)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-base font-semibold text-white hover:opacity-90">
-                <MessageCircle className="h-5 w-5" /> Open WhatsApp
-              </a>
+              {customerWa ? (
+                <a href={customerWa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-base font-semibold text-white hover:opacity-90">
+                  <MessageCircle className="h-5 w-5" /> Open WhatsApp
+                </a>
+              ) : (
+                <span title="No valid phone number on this order" className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted-foreground/30 px-4 py-3 text-base font-semibold text-muted-foreground">
+                  <MessageCircle className="h-5 w-5" /> Open WhatsApp
+                </span>
+              )}
               <button onClick={() => copy(order.phone!, "Phone number")} className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-white px-4 py-3 text-base font-semibold text-leaf-deep hover:bg-secondary">
                 <Copy className="h-5 w-5" /> Copy Number
               </button>
