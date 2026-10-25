@@ -354,6 +354,7 @@ export type Database = {
         Args: { _idem: string; _order_ref: string }
         Returns: boolean
       }
+      normalize_phone: { Args: { _raw: string }; Returns: string }
       submit_order: {
         Args: { _idem: string; _payload: Json }
         Returns: {

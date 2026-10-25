@@ -8,6 +8,13 @@
       "when": 1792373141912,
       "tag": "0000_enforce_rotating_meals_and_fulfillment",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792912390493,
+      "tag": "0001_phone_validation_in_submit_order",
+      "breakpoints": true
     }
   ]
 }
