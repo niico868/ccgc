@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { OrderDatePicker } from "@/components/site/OrderDatePicker";
 import { PICKUP_LOCATIONS, validateOrderAvailability } from "@/lib/menu-rotation";
 import { submitOrder } from "@/lib/order-submit.functions";
+import { normalizePhone, PHONE_HELP, PHONE_ERROR } from "@/lib/whatsapp";
 
 
 export const Route = createFileRoute("/checkout")({
@@ -25,6 +26,7 @@ function Checkout() {
   const runSubmit = useServerFn(submitOrder);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const idemRef = useRef<string>(crypto.randomUUID());
   const saladDays = useMemo(() => saladDaysAhead(6), []);
   const sameDay = useMemo(() => sameDayOpen(), []);
