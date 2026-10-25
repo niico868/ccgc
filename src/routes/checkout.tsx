@@ -264,7 +264,23 @@ function Checkout() {
             <div className="text-display text-lg text-leaf-deep">Your details</div>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <input required placeholder="Full name" value={form.name} onChange={set("name")} className={input} />
-              <input required placeholder="Contact number" type="tel" value={form.phone} onChange={set("phone")} className={input} />
+              <div>
+                <input
+                  required
+                  placeholder="Contact number"
+                  type="tel"
+                  value={form.phone}
+                  onChange={set("phone")}
+                  onBlur={() => setPhoneTouched(true)}
+                  aria-invalid={phoneTouched && phoneInvalid}
+                  aria-describedby="phone-help phone-error"
+                  className={`${input} ${phoneTouched && phoneInvalid ? "border-coral" : ""}`}
+                />
+                <p id="phone-help" className="mt-1 text-xs text-muted-foreground">{PHONE_HELP}</p>
+                {phoneTouched && phoneInvalid && (
+                  <p id="phone-error" role="alert" className="mt-1 text-xs font-semibold text-coral">{PHONE_ERROR}</p>
+                )}
+              </div>
               <input placeholder="Email (optional)" type="email" value={form.email} onChange={set("email")} className={`${input} sm:col-span-2`} />
             </div>
           </div>
@@ -409,14 +425,14 @@ function Checkout() {
           </div>
           <button
             type="submit"
-            disabled={!minMet || submitting}
+            disabled={!minMet || submitting || phoneInvalid}
             className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${
-              minMet && !submitting ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
+              minMet && !submitting && !phoneInvalid ? "bg-leaf-deep text-cream hover:opacity-90" : "cursor-not-allowed bg-muted-foreground/30 text-muted-foreground"
             }`}
           >
             {submitting ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> Submitting Order…</>
-            ) : minMet ? "Submit Order" : unavailableLines.length ? "Meals unavailable for this week" : "Minimum not met"}
+            ) : !minMet ? (unavailableLines.length ? "Meals unavailable for this week" : "Minimum not met") : phoneInvalid ? "Enter a valid phone number" : "Submit Order"}
           </button>
           <p className="text-[11px] text-muted-foreground">Your order is saved as <b>Submitted, awaiting confirmation</b>. We'll message you back to confirm the final total and next steps.</p>
         </aside>
