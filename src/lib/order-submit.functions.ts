@@ -47,7 +47,7 @@ export type SubmitOrderInput = {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const submitOrder = createServerFn({ method: "POST" })
-  .inputValidator((data: SubmitOrderInput) => {
+  .validator((data: SubmitOrderInput) => {
     if (!data || typeof data !== "object") throw new Error("Invalid payload");
     if (!UUID_RE.test(String(data.idempotencyKey ?? ""))) throw new Error("Invalid idempotency key");
     if (!data.customerName?.trim()) throw new Error("Name is required");
