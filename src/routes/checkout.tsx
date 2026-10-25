@@ -73,6 +73,8 @@ function Checkout() {
     })();
   }, []);
 
+  const normalizedPhone = normalizePhone(form.phone);
+  const phoneInvalid = !normalizedPhone;
   const deliveryFee = form.fulfillment === "Delivery"
     ? (form.deliveryZone === "Trincity & environs" ? 20 : 30)
     : 0;
@@ -88,6 +90,11 @@ function Checkout() {
     if (submitting) return;
     if (!minMet) {
       toast.error("Minimum order not yet met.");
+      return;
+    }
+    if (!normalizedPhone) {
+      setPhoneTouched(true);
+      toast.error(PHONE_ERROR);
       return;
     }
     try { validateOrderAvailability(lines, fulfillmentDate); } catch (err) { toast.error(err instanceof Error ? err.message : "Choose a date."); return; }
