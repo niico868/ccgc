@@ -18,6 +18,7 @@ export const Route = createFileRoute("/juices")({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [{

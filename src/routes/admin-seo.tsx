@@ -5,10 +5,11 @@ import { toast } from "sonner";
 import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
 import { getSeoHealth, resubmitSitemap } from "@/lib/seo-health.functions";
+import { privatePageHead } from "@/lib/private-page-head";
 import { CheckCircle2, XCircle, RefreshCw, ExternalLink, FileCode, Bot, Globe, Search } from "lucide-react";
 
 export const Route = createFileRoute("/admin-seo")({
-  head: () => ({ meta: [{ title: "SEO Health | Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => privatePageHead("Search Health | Cathy's Clean Green Classics", "Administrator search health for Cathy's Clean Green Classics."),
   component: SeoAdminPage,
 });
 

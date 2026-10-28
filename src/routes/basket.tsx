@@ -4,9 +4,10 @@ import { useBasket } from "@/lib/basket";
 import { FOOD_MIN, DRINK_MIN, fmt } from "@/lib/menu-data";
 import { Minus, Plus, Trash2, ShoppingBasket, AlertCircle } from "lucide-react";
 import { OrderDatePicker } from "@/components/site/OrderDatePicker";
+import { privatePageHead } from "@/lib/private-page-head";
 
 export const Route = createFileRoute("/basket")({
-  head: () => ({ meta: [{ title: "Your Basket | Cathy's Clean Green Classics" }] }),
+  head: () => privatePageHead("Your Basket | Cathy's Clean Green Classics", "Review your selected salads, healthy meals and drinks before checkout."),
   component: Basket,
 });
 

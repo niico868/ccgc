@@ -5,13 +5,14 @@ import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
 import { fmt } from "@/lib/menu-data";
 import { customerWaLink } from "@/lib/whatsapp";
+import { privatePageHead } from "@/lib/private-page-head";
 import {
   Phone, MessageCircle, Copy, Mail, ChevronDown, ChevronUp,
   Search, LogOut, ClipboardList, CheckSquare, CalendarDays, Settings as SettingsIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Cathy's Orders | Admin Dashboard" }] }),
+  head: () => privatePageHead("Order Book | Cathy's Clean Green Classics", "Cathy's Clean Green Classics administrator order book."),
   component: AdminPage,
 });
 

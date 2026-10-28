@@ -5,9 +5,10 @@ import { fmt } from "@/lib/menu-data";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtPoints } from "@/lib/loyalty";
 import { Sparkles, Gift } from "lucide-react";
+import { privatePageHead } from "@/lib/private-page-head";
 
 export const Route = createFileRoute("/account")({
-  head: () => ({ meta: [{ title: "My Account | Cathy's Clean Green Classics" }] }),
+  head: () => privatePageHead("My Account | Cathy's Clean Green Classics", "View your Cathy's Clean Green Classics account, orders and Green Points."),
   component: AccountPage,
 });
 

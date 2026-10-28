@@ -11,8 +11,8 @@ import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { StickyNote } from "@/components/site/StickyNote";
 import { Reviews } from "@/components/site/Reviews";
 
-const TITLE = "Fresh Salads, Meals & Cold-Pressed Juices in Trinidad | Cathy's Clean Green Classics";
-const DESC = "Order made-to-order salads, hearty homestyle meals and diabetic-friendly cold-pressed juices. Fresh from Trinidad and Tobago, with delivery and pickup.";
+const TITLE = "Cathy's Clean Green Classics | Salads & Healthy Meals in Trinidad";
+const DESC = "Healthy eating in Trinidad: freshly prepared salads, homestyle meals, vegetarian options and cold-pressed juices. Order for delivery or pickup.";
 const URL = "https://cathysgreenkitchen.com/";
 
 export const Route = createFileRoute("/")({
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: URL }],
   }),
@@ -48,10 +49,10 @@ function Home() {
               MON, WED &amp; FRI ORDERS CLOSE AT 8 AM · DELIVERY 11 AM – ABOUT 2 PM
             </div>
             <h1 className="mt-5 text-display text-4xl leading-[1.02] text-cream drop-shadow-sm lg:text-6xl">
-              Make a healthy start to your day.
+              Cathy's Clean Green Classics
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-cream/95 lg:text-lg">
-              Hearty salads and meals with diabetic-friendly cold-pressed juices, properly made, packed with care, and ready for your next order.
+              Healthy eating, freshly prepared in Trinidad. Hearty salads, homestyle meals and diabetic-friendly cold-pressed juices, properly made and packed with care. Choose chicken, beef, fish, shrimp or vegetarian for your food order.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to="/salads" className="inline-flex h-12 items-center gap-2 rounded-full bg-[linear-gradient(135deg,#E76F51,#D84A2B)] px-8 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(231,111,81,0.25)] transition hover:-translate-y-0.5">
@@ -93,7 +94,7 @@ function Home() {
         <div className="mb-10 text-center">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-leaf-soft">On the menu</div>
           <h2 className="mt-2 text-display text-3xl text-leaf-deep lg:text-4xl">Clean Green Classics</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brown">Real food, beautifully made.</p>
+          <p className="mx-auto mt-3 max-w-xl text-brown">Fresh salads, healthy meals and cold-pressed juices for delivery or pickup in Trinidad.</p>
         </div>
         <div className="mx-auto flex max-w-4xl flex-col gap-5">
           <HomeMenuSlideshow title="Custom Salads" to="/salads" items={SALADS} />

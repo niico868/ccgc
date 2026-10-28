@@ -13,10 +13,11 @@ import { OrderDatePicker } from "@/components/site/OrderDatePicker";
 import { PICKUP_LOCATIONS, validateOrderAvailability } from "@/lib/menu-rotation";
 import { submitOrder } from "@/lib/order-submit.functions";
 import { normalizePhone, PHONE_HELP, PHONE_ERROR } from "@/lib/whatsapp";
+import { privatePageHead } from "@/lib/private-page-head";
 
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({ meta: [{ title: "Checkout | Cathy's Clean Green Classics" }] }),
+  head: () => privatePageHead("Checkout | Cathy's Clean Green Classics", "Complete your Cathy's Clean Green Classics order with delivery or pickup details."),
   component: Checkout,
 });
 
