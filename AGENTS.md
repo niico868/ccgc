@@ -1,5 +1,6 @@
 # Architecture
 - Export an awaited configuration object from vite.config.ts using the CLI command/mode; the preview wrapper merges objects and otherwise drops the async factory's TanStack entry plugins.
+- Keep @tanstack/react-start on a release whose peer range accepts the installed Vite major (1.169+ needs Vite 8); a mismatch silently drops the TanStack build entries and fails with "Could not resolve entry module index.html".
 - Keep date, cutoff and weekly rotation calculations in shared pure library helpers used by ordering UI and server validation; this prevents divergent availability rules.
 - Persist the selected fulfillment date alongside basket lines; meal availability derives from that date, not the browser's week.
 - Enforce availability on order insertion in the database as well as the server function; direct RPC calls must not bypass menu restrictions.
