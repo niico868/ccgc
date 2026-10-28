@@ -1,5 +1,5 @@
 # Requested changes
-- [ ] Google search logo and local salads/healthy eating SEO
+- [x] Google search logo and local salads/healthy eating SEO (verified in preview; awaiting publishing and Google's recrawl)
 - [ ] Friday schedule, delivery window, pickup and vegetarian copy throughout site
 - [ ] New meal assets, photo carousel and alternating menus
 - [ ] Date-first persistent basket and off-week validation in UI/server/database

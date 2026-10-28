@@ -32,7 +32,8 @@ export function currentMenuWeekMonday(now = new Date()): string {
 export function mealsForDate(date: string) { return menuForDate(date) === "A" ? MENU_A_MEALS : MENU_B_MEALS; }
 export function activeMeals(now = new Date()) { return mealsForDate(currentMenuWeekMonday(now)); }
 export function shortDay(iso: string) {
-  return calendarDate(iso).toLocaleDateString("en-GB", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" });
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" }).formatToParts(calendarDate(iso));
+  return ["weekday", "day", "month"].map((type) => parts.find((part) => part.type === type)?.value ?? "").join(" ");
 }
 export function menuWeekLabel(date: string) {
   const monday = weekMonday(date);
