@@ -1,4 +1,5 @@
 # Architecture
+- Build scripts explicitly select vite.config.ts so preview builds retain TanStack Start's entry-point plugins instead of falling back to an index.html entry.
 - Keep date, cutoff and weekly rotation calculations in shared pure library helpers used by ordering UI and server validation; this prevents divergent availability rules.
 - Persist the selected fulfillment date alongside basket lines; meal availability derives from that date, not the browser's week.
 - Enforce availability on order insertion in the database as well as the server function; direct RPC calls must not bypass menu restrictions.
