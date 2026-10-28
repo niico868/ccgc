@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Confetti } from "@/components/site/Confetti";
 import { fmtPoints, pointsFor } from "@/lib/loyalty";
 import { z } from "zod";
+import { privatePageHead } from "@/lib/private-page-head";
 
 
 const search = z.object({ ref: z.string().optional() });
@@ -33,7 +34,7 @@ type StoredOrder = {
 
 
 export const Route = createFileRoute("/order-confirmation")({
-  head: () => ({ meta: [{ title: "Order Confirmed | Cathy's Clean Green Classics" }] }),
+  head: () => privatePageHead("Order Confirmed | Cathy's Clean Green Classics", "View your submitted order reference and fulfillment summary."),
   validateSearch: (raw) => search.parse(raw),
   component: Confirmation,
 });

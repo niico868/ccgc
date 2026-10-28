@@ -5,12 +5,13 @@ import { Section } from "@/components/site/Section";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { z } from "zod";
+import { privatePageHead } from "@/lib/private-page-head";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>) => ({
     mode: (s.mode === "signup" ? "signup" : "signin") as "signin" | "signup",
   }),
-  head: () => ({ meta: [{ title: "Sign in | Cathy's Clean Green Classics" }] }),
+  head: () => privatePageHead("Sign in | Cathy's Clean Green Classics", "Sign in or create your Cathy's Clean Green Classics account to keep your order history."),
   component: AuthPage,
 });
 
