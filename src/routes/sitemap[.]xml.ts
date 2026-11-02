@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://cathysgreenkitchen.com";
+const BASE_URL = "https://cathyscleangreenclassics.com";
 
 // Routes that exist as files but should never be indexed.
 const EXCLUDED = new Set([

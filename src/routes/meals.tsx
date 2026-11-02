@@ -4,7 +4,7 @@ import { MEALS } from "@/lib/menu-data";
 
 const TITLE = "Healthy Homestyle Meals in Trinidad | Cathy's Clean Green Classics";
 const DESC = "Weekly rotating meals in Trinidad: Quinoa Chow Mein, Sweet Potato Basil, Cumin Basmati, Roasted Vegetable Medley, Zesty Herb, Mediterranean Mex and Moroccan Chicken & Couscous. Monday, Wednesday and Friday delivery 11 AM to about 2 PM.";
-const URL = "https://cathysgreenkitchen.com/meals";
+const URL = "https://cathyscleangreenclassics.com/meals";
 
 export const Route = createFileRoute("/meals")({
   head: () => ({

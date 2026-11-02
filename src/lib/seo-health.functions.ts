@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getSitemapEntries, buildSitemapXml } from "@/routes/sitemap[.]xml";
 
-const SITE_URL = "https://cathysgreenkitchen.com/";
+const SITE_URL = "https://cathyscleangreenclassics.com/";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_search_console";
 
 async function assertAdmin(ctx: { supabase: any; userId: string }) {
@@ -80,7 +80,7 @@ export const getSeoHealth = createServerFn({ method: "GET" })
     const sites = await gscFetch("/webmasters/v3/sites");
 
     // GSC — sitemap status
-    const sitemapUrl = "https://cathysgreenkitchen.com/sitemap.xml";
+    const sitemapUrl = "https://cathyscleangreenclassics.com/sitemap.xml";
     const sitemapStatus = await gscFetch(
       `/webmasters/v3/sites/${encodeURIComponent(SITE_URL)}/sitemaps/${encodeURIComponent(sitemapUrl)}`,
     );
@@ -123,7 +123,7 @@ export const resubmitSitemap = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const sitemapUrl = "https://cathysgreenkitchen.com/sitemap.xml";
+    const sitemapUrl = "https://cathyscleangreenclassics.com/sitemap.xml";
     const res = await gscFetch(
       `/webmasters/v3/sites/${encodeURIComponent(SITE_URL)}/sitemaps/${encodeURIComponent(sitemapUrl)}`,
       { method: "PUT" },

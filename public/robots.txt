@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cathysgreenkitchen.com/sitemap.xml
+Sitemap: https://cathyscleangreenclassics.com/sitemap.xml

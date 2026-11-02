@@ -3,7 +3,7 @@ import { Section } from "@/components/site/Section";
 
 const TITLE = "Privacy Policy | Cathy's Clean Green Classics";
 const DESC = "How Cathy's Clean Green Classics collects, uses, stores and shares your information when you order or create an account.";
-const URL = "https://cathysgreenkitchen.com/privacy";
+const URL = "https://cathyscleangreenclassics.com/privacy";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -31,7 +31,7 @@ function Privacy() {
         <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Privacy Policy</h1>
         <p className="mt-2 text-xs text-brown">Last updated: 2 November 2026</p>
         <p className="mt-4">
-          This policy explains how Fine Time for Cathy's Clean Green Classics ("we", "us") handles your information when you use cathysgreenkitchen.com in Trinidad &amp; Tobago.
+          This policy explains how Fine Time for Cathy's Clean Green Classics ("we", "us") handles your information when you use cathyscleangreenclassics.com in Trinidad &amp; Tobago.
         </p>
 
         <Heading>What we collect</Heading>

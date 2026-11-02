@@ -5,7 +5,7 @@ import { JUICES } from "@/lib/menu-data";
 
 const TITLE = "Diabetic-Friendly Cold-Pressed Juices | Cathy's Clean Green Classics";
 const DESC = "Beetroot, watermelon, mixed vegetable juices and ginger wellness shots, no added sugar. Batches of 6, cold-pressed fresh in Trinidad and Tobago.";
-const URL = "https://cathysgreenkitchen.com/juices";
+const URL = "https://cathyscleangreenclassics.com/juices";
 
 export const Route = createFileRoute("/juices")({
   head: () => ({

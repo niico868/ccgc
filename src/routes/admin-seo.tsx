@@ -78,7 +78,7 @@ function SeoAdminPage() {
   );
   if (!data) return <Section className="py-20 text-center text-brown">No data.</Section>;
 
-  const sitemapUrl = "https://cathysgreenkitchen.com/sitemap.xml";
+  const sitemapUrl = "https://cathyscleangreenclassics.com/sitemap.xml";
   const gscSitemap = data.gsc.sitemap as any;
   const inspection = data.gsc.inspection as any;
   const analytics = data.gsc.analytics as any;

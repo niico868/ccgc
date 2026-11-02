@@ -6,7 +6,7 @@ import {
 
 const TITLE = "FAQ: Ordering, Delivery & Pickup | Cathy's Clean Green Classics";
 const DESC = "Answers on cutoffs, delivery 11 AM to about 2 PM, pickup at Trincity or St. Clair, batch pricing, protein choices and how to confirm your order online.";
-const URL = "https://cathysgreenkitchen.com/faq";
+const URL = "https://cathyscleangreenclassics.com/faq";
 
 const QA = [
   { q: "When are salad days?", a: "Salad days are Monday, Wednesday and Friday. Every plate is made fresh on the day of fulfillment." },

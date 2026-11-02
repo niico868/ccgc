@@ -5,7 +5,7 @@ import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 
 const TITLE = "Gallery | Cathy's Clean Green Classics";
 const DESC = "Photos of our salads, healthy meals, cold-pressed juices and prep-counter moments from the kitchen in Trinidad.";
-const URL = "https://cathysgreenkitchen.com/gallery";
+const URL = "https://cathyscleangreenclassics.com/gallery";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({

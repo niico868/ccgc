@@ -13,7 +13,7 @@ import { Reviews } from "@/components/site/Reviews";
 
 const TITLE = "Fresh Salads, Meals & Cold-Pressed Juices in Trinidad | Cathy's Clean Green Classics";
 const DESC = "Order made-to-order salads, hearty homestyle meals and diabetic-friendly cold-pressed juices. Fresh from Trinidad and Tobago, with delivery and pickup.";
-const URL = "https://cathysgreenkitchen.com/";
+const URL = "https://cathyscleangreenclassics.com/";
 
 export const Route = createFileRoute("/")({
   head: () => ({

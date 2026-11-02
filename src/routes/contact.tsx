@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const TITLE = "Contact Cathy's Clean Green Classics | WhatsApp, Phone & Email";
 const DESC = "Message us on WhatsApp at +1 (868) 488-4248, email dfinetimerestaurant@gmail.com, or send a note. Serving Trinidad and Tobago.";
-const URL = "https://cathysgreenkitchen.com/contact";
+const URL = "https://cathyscleangreenclassics.com/contact";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({

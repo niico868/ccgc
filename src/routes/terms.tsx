@@ -3,7 +3,7 @@ import { Section } from "@/components/site/Section";
 
 const TITLE = "Terms & Conditions | Cathy's Clean Green Classics";
 const DESC = "The terms for ordering salads, meals and juices from Cathy's Clean Green Classics, including cutoffs, changes, refunds, delivery and allergens.";
-const URL = "https://cathysgreenkitchen.com/terms";
+const URL = "https://cathyscleangreenclassics.com/terms";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -31,7 +31,7 @@ function Terms() {
         <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Terms &amp; Conditions</h1>
         <p className="mt-2 text-xs text-brown">Last updated: 2 November 2026</p>
         <p className="mt-4">
-          These terms apply when you order from Fine Time for Cathy's Clean Green Classics ("we", "us") through cathysgreenkitchen.com. By placing an order, you agree to them.
+          These terms apply when you order from Fine Time for Cathy's Clean Green Classics ("we", "us") through cathyscleangreenclassics.com. By placing an order, you agree to them.
         </p>
 
         <Heading>Orders</Heading>
