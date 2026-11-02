@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CategoryMenuView } from "@/components/site/CategoryMenuView";
 import { SALADS, fmt } from "@/lib/menu-data";
 
-const TITLE = "Fresh Salads in Trinidad | Cathy's Clean Green Classics";
-const DESC = "Order fresh salads in Trinidad with chicken, beef, fish, shrimp or vegetarian options. Mix salads and meals toward a 5 item minimum. Delivery or pickup.";
+const TITLE = "Custom Salads in Trinidad | Cathy's Clean Green Classics";
+const DESC = "Made-to-order salads with fresh greens and your choice of chicken, fish, shrimp or vegetarian protein. Batches of 5, prepared fresh in Trinidad and Tobago.";
 const URL = "https://cathysgreenkitchen.com/salads";
 
 export const Route = createFileRoute("/salads")({

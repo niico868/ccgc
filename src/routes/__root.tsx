@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           url: "https://cathysgreenkitchen.com",
           logo: {
             "@type": "ImageObject",
-            url: "https://cathysgreenkitchen.com/__l5e/assets-v1/3fc931ba-3f87-4477-8209-e8c5c5c12d2b/ccgc-nav-logo.png",
+            url: "https://cathysgreenkitchen.com/images/ccgc-nav-logo.png",
             width: 1920,
             height: 1234,
           },
