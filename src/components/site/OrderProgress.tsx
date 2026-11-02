@@ -18,14 +18,14 @@ function Row({ kind, count }: { kind: Kind; count: number }) {
 
   let headline: string;
   if (count === 0) {
-    headline = `Add ${target} ${label} to complete your order.`;
+    headline = `Add ${target} ${label} for delivery. Pickup has no minimum.`;
   } else if (reached) {
     headline =
       kind === "food"
-        ? "5-item food minimum reached, checkout ready."
-        : "6-drink minimum reached, checkout ready.";
+        ? "5-item delivery minimum reached, checkout ready."
+        : "6-drink delivery minimum reached, checkout ready.";
   } else {
-    headline = `${count} of ${target} ${label} added, add ${remaining} more to complete your order.`;
+    headline = `${count} of ${target} ${label} added, add ${remaining} more for delivery, or choose pickup in your basket.`;
   }
 
   return (
@@ -61,7 +61,14 @@ function Row({ kind, count }: { kind: Kind; count: number }) {
  * - When the basket also has items from the other side, shows both rows.
  */
 export function OrderProgress({ kind }: { kind: Kind }) {
-  const { foodCount, drinkCount } = useBasket();
+  const { foodCount, drinkCount, fulfillment } = useBasket();
+  if (fulfillment === "Pickup") {
+    return (
+      <div className="mx-auto max-w-3xl rounded-2xl border border-leaf-soft/40 bg-leaf-soft/10 px-5 py-4 text-sm font-semibold text-leaf-deep">
+        Pickup selected: no minimum order. You can change this in your basket.
+      </div>
+    );
+  }
   const showFood = kind === "food" || foodCount > 0;
   const showDrink = kind === "drink" || drinkCount > 0;
   return (

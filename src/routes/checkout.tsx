@@ -22,7 +22,7 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function Checkout() {
-  const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount, fulfillmentDate, unavailableLines } = useBasket();
+  const { lines, subtotal, clear, minMet, foodOk, drinkOk, foodCount, drinkCount, fulfillmentDate, fulfillment, setFulfillment, unavailableLines } = useBasket();
   const navigate = useNavigate();
   const runSubmit = useServerFn(submitOrder);
   const [submitting, setSubmitting] = useState(false);
@@ -33,7 +33,6 @@ function Checkout() {
   const sameDay = useMemo(() => sameDayOpen(), []);
   const [form, setForm] = useState({
     name: "", phone: "", email: "",
-    fulfillment: "Delivery" as "Delivery" | "Pickup",
     pickup: "",
     address: "",
     deliveryZone: "Curepe to Arima" as "Curepe to Arima" | "Trincity & environs",
@@ -76,7 +75,7 @@ function Checkout() {
 
   const normalizedPhone = normalizePhone(form.phone);
   const phoneInvalid = !normalizedPhone;
-  const deliveryFee = form.fulfillment === "Delivery"
+  const deliveryFee = fulfillment === "Delivery"
     ? (form.deliveryZone === "Trincity & environs" ? 20 : 30)
     : 0;
   const discountAmount = 0;
@@ -109,12 +108,12 @@ function Checkout() {
       form.notes?.trim(),
       selectedDay ? `Fulfillment day: ${selectedDay.label}` : "",
       form.splitDelivery ? `Split bundle: ${form.splitNotes?.trim() || "(see notes)"}` : "",
-      form.fulfillment === "Delivery" ? `Zone: ${form.deliveryZone}` : "",
+      fulfillment === "Delivery" ? `Zone: ${form.deliveryZone}` : "",
     ].filter(Boolean).join(" · ");
 
 
     try {
-      const fulfillmentWindow = form.fulfillment === "Pickup"
+      const fulfillmentWindow = fulfillment === "Pickup"
         ? (form.pickup === PICKUP_LOCATIONS[0] ? "2 PM to 5 PM" : "11 AM to 1 PM")
         : "11 AM – about 2 PM";
       const result = await runSubmit({
@@ -124,10 +123,10 @@ function Checkout() {
           customerName: form.name.trim(),
           phone: normalizedPhone!,
           email: form.email.trim() || undefined,
-          fulfillment: form.fulfillment,
-          pickupLocation: form.fulfillment === "Pickup" ? form.pickup : undefined,
-          deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : undefined,
-          deliveryZone: form.fulfillment === "Delivery" ? form.deliveryZone : undefined,
+          fulfillment,
+          pickupLocation: fulfillment === "Pickup" ? form.pickup : undefined,
+          deliveryAddress: fulfillment === "Delivery" ? form.address.trim() : undefined,
+          deliveryZone: fulfillment === "Delivery" ? form.deliveryZone : undefined,
           fulfillmentWindow,
           requiredFulfillmentDate: fulfillmentDate || undefined,
           splitForFreshness: form.splitDelivery,
@@ -165,8 +164,8 @@ function Checkout() {
           last_name: rest.join(" "),
           email: form.email.trim() || session.user.email || "",
           phone: normalizedPhone!,
-          default_address: form.fulfillment === "Delivery" ? form.address.trim() : undefined,
-          default_delivery_zone: form.fulfillment === "Delivery" ? form.deliveryZone : undefined,
+          default_address: fulfillment === "Delivery" ? form.address.trim() : undefined,
+          default_delivery_zone: fulfillment === "Delivery" ? form.deliveryZone : undefined,
           default_payment_method: form.payment,
         };
         Object.keys(profileUpdate).forEach((k) => {
@@ -186,10 +185,10 @@ function Checkout() {
             customerName: form.name.trim(),
             phone: normalizedPhone!,
             email: form.email.trim(),
-            fulfillment: form.fulfillment,
-            pickupLocation: form.fulfillment === "Pickup" ? form.pickup : "",
-            deliveryAddress: form.fulfillment === "Delivery" ? form.address.trim() : "",
-            deliveryZone: form.fulfillment === "Delivery" ? form.deliveryZone : "",
+            fulfillment,
+            pickupLocation: fulfillment === "Pickup" ? form.pickup : "",
+            deliveryAddress: fulfillment === "Delivery" ? form.address.trim() : "",
+            deliveryZone: fulfillment === "Delivery" ? form.deliveryZone : "",
             requiredFulfillmentDate: fulfillmentDate,
             fulfillmentWindow,
             paymentMethod: form.payment,
@@ -237,13 +236,13 @@ function Checkout() {
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} food items to complete this order. Salads and healthy meals can be combined. You currently have {foodCount}.
+              You need at least {FOOD_MIN} food items for delivery, or choose pickup for any amount. Salads and healthy meals can be combined. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. Juices and ginger shots can be combined. You currently have {drinkCount}.
+              You need at least {DRINK_MIN} drinks for delivery, or choose pickup for any amount. Juices and ginger shots can be combined. You currently have {drinkCount}.
             </div>
           )}
         </div>
@@ -289,11 +288,11 @@ function Checkout() {
           <div>
             <div className="text-display text-lg text-leaf-deep">Pickup or delivery</div>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <select value={form.fulfillment} onChange={set("fulfillment")} className={input}>
+              <select value={fulfillment} onChange={(e) => setFulfillment(e.target.value as typeof fulfillment)} className={input}>
                 <option>Delivery</option>
                 <option>Pickup</option>
               </select>
-              {form.fulfillment === "Pickup" ? (
+              {fulfillment === "Pickup" ? (
                 <select required aria-label="Pickup location" value={form.pickup} onChange={set("pickup")} className={`${input} sm:col-span-2`}>
                   <option value="" disabled>Choose a pickup point</option>
                   {PICKUP_LOCATIONS.map((p) => <option key={p}>{p}</option>)}
@@ -301,7 +300,7 @@ function Checkout() {
               ) : (
                 <input required placeholder="Delivery address" value={form.address} onChange={set("address")} className={`${input} sm:col-span-2`} />
               )}
-              {form.fulfillment === "Delivery" && (
+              {fulfillment === "Delivery" && (
                 <select value={form.deliveryZone} onChange={set("deliveryZone")} className={`${input} sm:col-span-2`}>
                   <option>Curepe to Arima</option>
                   <option>Trincity &amp; environs</option>
@@ -309,7 +308,7 @@ function Checkout() {
               )}
             </div>
 
-            <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on Mon, Wed &amp; Fri. Delivery 11 AM – about 2 PM along the east west corridor. Pickup: Trincity 2–5 PM · St. Clair 11 AM–1 PM. Curepe to Arima $30. Trincity and environs $20.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Order cutoff is 8:00 AM Trinidad time on Mon, Wed &amp; Fri. Delivery 11 AM – about 2 PM along the east west corridor. Pickup: Trincity 2–5 PM · St. Clair 11 AM–1 PM. Curepe to Arima $30. Trincity and environs $20. Minimums apply to delivery only; pickup has no minimum.</p>
 
 
             <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-secondary/40 p-3">
@@ -386,7 +385,7 @@ function Checkout() {
               className="mt-3 w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf-deep" />
           </div>
 
-          {form.fulfillment === "Delivery" && (
+          {fulfillment === "Delivery" && (
             <div>
               <div className="text-display text-lg text-leaf-deep">Drop-off instructions</div>
               <textarea rows={2} placeholder="Gate code, landmarks, where to leave the order…" value={form.dropOff} onChange={set("dropOff")}
@@ -421,7 +420,7 @@ function Checkout() {
           </ul>
           <div className="border-t border-border pt-3 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{fmt(subtotal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{form.fulfillment === "Delivery" ? fmt(deliveryFee) : "included at pickup"}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{fulfillment === "Delivery" ? fmt(deliveryFee) : "included at pickup"}</span></div>
             <div className="mt-2 flex justify-between text-base font-bold text-leaf-deep"><span>Total</span><span>{fmt(total)}</span></div>
           </div>
           <button

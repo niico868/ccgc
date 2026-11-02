@@ -12,7 +12,7 @@ export const Route = createFileRoute("/basket")({
 });
 
 function Basket() {
-  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet, unavailableLines } = useBasket();
+  const { lines, setQty, remove, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet, unavailableLines, fulfillment, setFulfillment } = useBasket();
 
   if (lines.length === 0) {
     return (
@@ -32,22 +32,44 @@ function Basket() {
       <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Your Basket</h1>
       <OrderDatePicker />
 
+      <div className="mt-6 rounded-2xl border border-border bg-card p-4">
+        <div className="text-sm font-semibold text-leaf-deep">How would you like to get your order?</div>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          {(["Delivery", "Pickup"] as const).map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => setFulfillment(option)}
+              aria-pressed={fulfillment === option}
+              className={`rounded-xl border-2 px-4 py-3 text-left text-sm font-semibold transition ${
+                fulfillment === option ? "border-leaf-deep bg-leaf-deep/10 text-leaf-deep" : "border-border bg-background text-foreground/80 hover:border-leaf-deep"
+              }`}
+            >
+              {option}
+              <span className="block text-[11px] font-normal text-muted-foreground">
+                {option === "Delivery" ? `Minimum ${FOOD_MIN} food items or ${DRINK_MIN} drinks` : "No minimum order"}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {minMet ? (
         <div className="mt-6 rounded-2xl border border-leaf-soft/40 bg-leaf-soft/10 p-4 text-sm font-semibold text-leaf-deep">
-          Minimum reached, you can check out when you're ready.
+          {fulfillment === "Pickup" ? "You can check out when you're ready." : "Minimum reached, you can check out when you're ready."}
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-coral/40 bg-coral/10 p-4 text-sm">
           {!foodOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {FOOD_MIN} food items to complete this order. Salads and healthy meals can be combined. You currently have {foodCount}.
+              You need at least {FOOD_MIN} food items for delivery, or choose pickup for any amount. Salads and healthy meals can be combined. You currently have {foodCount}.
             </div>
           )}
           {!drinkOk && (
             <div className="flex items-center gap-2 text-coral">
               <AlertCircle className="h-4 w-4" />
-              You need at least {DRINK_MIN} drinks to complete this order. Juices and ginger shots can be combined. You currently have {drinkCount}.
+              You need at least {DRINK_MIN} drinks for delivery, or choose pickup for any amount. Juices and ginger shots can be combined. You currently have {drinkCount}.
             </div>
           )}
         </div>
@@ -98,7 +120,7 @@ function Basket() {
             <span className="text-muted-foreground">Subtotal</span>
             <span className="font-bold">{fmt(subtotal)}</span>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Minimums: 5 food items (salads and healthy meals combined) and 6 drinks (juices and ginger shots combined). Final total, including delivery, is confirmed by Cathy's team after you submit.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Delivery minimums: 5 food items (salads and healthy meals combined) and 6 drinks (juices and ginger shots combined). Pickup has no minimum. Final total, including delivery, is confirmed by Cathy's team after you submit.</p>
           {(() => {
             const foodShort = foodCount > 0 && !foodOk ? FOOD_MIN - foodCount : 0;
             const drinkShort = drinkCount > 0 && !drinkOk ? DRINK_MIN - drinkCount : 0;

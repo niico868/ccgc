@@ -49,11 +49,23 @@ function Contact() {
     })();
   }, []);
 
-  const submit = (e: React.FormEvent) => {
+  const [sending, setSending] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const existing = JSON.parse(localStorage.getItem("cgcc.messages") || "[]");
-    existing.push({ ...form, at: new Date().toISOString() });
-    localStorage.setItem("cgcc.messages", JSON.stringify(existing));
+    if (sending) return;
+    setSending(true);
+    const { error } = await supabase.from("contact_messages" as never).insert({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim() || null,
+      message: form.message.trim(),
+    } as never);
+    setSending(false);
+    if (error) {
+      toast.error("Your message could not be sent. Please try again or message us on WhatsApp.");
+      return;
+    }
     toast.success("Message sent. We'll get back to you soon.");
     setForm({ name: "", email: "", phone: "", message: "" });
   };
@@ -80,8 +92,8 @@ function Contact() {
               <textarea required rows={5} placeholder="Your message" value={form.message} onChange={set("message")}
                 className="w-full rounded-xl border border-border bg-background p-4 text-sm outline-none focus:border-leaf" />
               <div className="flex flex-wrap gap-3">
-                <button type="submit" className="inline-flex h-11 items-center gap-2 rounded-full bg-leaf px-6 text-sm font-extrabold text-primary-foreground hover:opacity-90">
-                  Send Message
+                <button type="submit" disabled={sending} className="inline-flex h-11 items-center gap-2 rounded-full bg-leaf px-6 text-sm font-extrabold text-primary-foreground hover:opacity-90">
+                  {sending ? "Sending…" : "Send Message"}
                 </button>
                 <a href={waLink("Hi! I have a question.")} target="_blank" rel="noreferrer"
                   className="inline-flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-extrabold text-white hover:brightness-105">

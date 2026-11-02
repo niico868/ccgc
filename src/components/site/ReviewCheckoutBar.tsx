@@ -10,14 +10,14 @@ import { fmt, FOOD_MIN, DRINK_MIN } from "@/lib/menu-data";
  * Always enabled — customers can open the basket before hitting the minimum.
  */
 export function ReviewCheckoutBar() {
-  const { count, subtotal, foodCount, drinkCount, minMet } = useBasket();
+  const { count, subtotal, foodCount, drinkCount, foodOk, drinkOk, minMet } = useBasket();
   if (count === 0) return null;
 
-  const foodShort = foodCount > 0 && foodCount < FOOD_MIN ? FOOD_MIN - foodCount : 0;
-  const drinkShort = drinkCount > 0 && drinkCount < DRINK_MIN ? DRINK_MIN - drinkCount : 0;
+  const foodShort = foodCount > 0 && !foodOk ? FOOD_MIN - foodCount : 0;
+  const drinkShort = drinkCount > 0 && !drinkOk ? DRINK_MIN - drinkCount : 0;
 
   const status = minMet
-    ? "Minimum reached"
+    ? "Ready to check out"
     : [
         foodShort > 0 ? `${foodShort} more food` : null,
         drinkShort > 0 ? `${drinkShort} more drinks` : null,

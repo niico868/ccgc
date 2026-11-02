@@ -48,8 +48,8 @@ export function FirstTimerCard() {
           <div>
             <div className="font-semibold text-leaf-deep">Minimums and payment</div>
             <ul className="mt-1 space-y-0.5 text-brown">
-              <li>5 salads or meals per food order (mix and match).</li>
-              <li>6 juices or shots per drink order (mix and match).</li>
+              <li>For delivery: 5 salads or meals per food order (mix and match).</li>
+              <li>For delivery: 6 juices or shots per drink order (mix and match).</li>
               <li>Payment by bank transfer or cash on collection.</li>
             </ul>
           </div>

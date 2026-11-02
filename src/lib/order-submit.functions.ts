@@ -65,8 +65,8 @@ export const submitOrder = createServerFn({ method: "POST" })
       if (it.category === "salad" || it.category === "meal") food += qty;
       else if (it.category === "juice") drink += qty;
     }
-    if (food > 0 && food < 5) throw new Error(`Food minimum not met: 5 required, ${food} provided`);
-    if (drink > 0 && drink < 6) throw new Error(`Drink minimum not met: 6 required, ${drink} provided`);
+    if (data.fulfillment === "Delivery" && food > 0 && food < 5) throw new Error(`Food minimum not met: 5 required, ${food} provided`);
+    if (data.fulfillment === "Delivery" && drink > 0 && drink < 6) throw new Error(`Drink minimum not met: 6 required, ${drink} provided`);
     if (food === 0 && drink === 0) throw new Error("Basket has no valid items");
     return data;
   })

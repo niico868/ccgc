@@ -8,7 +8,7 @@ import { customerWaLink } from "@/lib/whatsapp";
 import { privatePageHead } from "@/lib/private-page-head";
 import {
   Phone, MessageCircle, Copy, Mail, ChevronDown, ChevronUp,
-  Search, LogOut, ClipboardList, CheckSquare, CalendarDays, Settings as SettingsIcon,
+  Search, LogOut, ClipboardList, CheckSquare, CalendarDays, Inbox, Settings as SettingsIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -63,7 +63,7 @@ type Order = {
   created_at: string;
 };
 
-type Tab = "all" | "monday" | "wednesday" | "completed" | "settings";
+type Tab = "all" | "monday" | "wednesday" | "friday" | "completed" | "messages" | "settings";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -118,6 +118,8 @@ function AdminPage() {
             <NavBtn active={tab === "all"} onClick={() => setTab("all")} icon={<ClipboardList className="h-5 w-5" />} label="All" />
             <NavBtn active={tab === "monday"} onClick={() => setTab("monday")} icon={<CalendarDays className="h-5 w-5" />} label="Monday" />
             <NavBtn active={tab === "wednesday"} onClick={() => setTab("wednesday")} icon={<CalendarDays className="h-5 w-5" />} label="Wednesday" />
+            <NavBtn active={tab === "friday"} onClick={() => setTab("friday")} icon={<CalendarDays className="h-5 w-5" />} label="Friday" />
+            <NavBtn active={tab === "messages"} onClick={() => setTab("messages")} icon={<Inbox className="h-5 w-5" />} label="Messages" />
             <NavBtn active={tab === "settings"} onClick={() => setTab("settings")} icon={<SettingsIcon className="h-5 w-5" />} label="Settings" />
             <button
               onClick={signOut}
@@ -130,7 +132,7 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        {tab === "settings" ? <SettingsView email={userEmail} /> : <OrdersView mode={tab} />}
+        {tab === "settings" ? <SettingsView email={userEmail} /> : tab === "messages" ? <MessagesView /> : <OrdersView mode={tab} />}
       </main>
     </div>
   );
@@ -151,7 +153,7 @@ function NavBtn({ active, onClick, icon, label }: { active: boolean; onClick: ()
 
 /* ─────────────────────────── ORDERS / COMPLETED ─────────────────────────── */
 
-type ViewMode = "all" | "monday" | "wednesday" | "completed";
+type ViewMode = "all" | "monday" | "wednesday" | "friday" | "completed";
 
 function OrdersView({ mode }: { mode: ViewMode }) {
   const isCompleted = mode === "completed";
@@ -190,6 +192,7 @@ function OrdersView({ mode }: { mode: ViewMode }) {
   const todayISO = ttDateISO(new Date());
   const nextMondayISO = nextWeekdayISO(1);
   const nextWednesdayISO = nextWeekdayISO(3);
+  const nextFridayISO = nextWeekdayISO(5);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -198,13 +201,14 @@ function OrdersView({ mode }: { mode: ViewMode }) {
       if (mode === "all" && date && date < todayISO) return false;
       if (mode === "monday" && date !== nextMondayISO) return false;
       if (mode === "wednesday" && date !== nextWednesdayISO) return false;
+      if (mode === "friday" && date !== nextFridayISO) return false;
       if (s) {
         const hay = `${o.customer_name ?? ""} ${o.order_ref} ${o.phone ?? ""}`.toLowerCase();
         if (!hay.includes(s)) return false;
       }
       return true;
     });
-  }, [orders, search, mode, todayISO, nextMondayISO, nextWednesdayISO]);
+  }, [orders, search, mode, todayISO, nextMondayISO, nextWednesdayISO, nextFridayISO]);
 
   const groups = useMemo(() => {
     const sorted = [...filtered].sort((a, b) => {
@@ -281,6 +285,7 @@ function OrdersView({ mode }: { mode: ViewMode }) {
           {mode === "all" && "All upcoming orders, grouped by month."}
           {mode === "monday" && `Orders for the coming Monday, ${shortDateISO(nextMondayISO)}.`}
           {mode === "wednesday" && `Orders for the coming Wednesday, ${shortDateISO(nextWednesdayISO)}.`}
+          {mode === "friday" && `Orders for the coming Friday, ${shortDateISO(nextFridayISO)}.`}
           {mode === "completed" && "Past orders you have finished, plus cancelled orders."}
         </p>
       </div>
@@ -415,6 +420,7 @@ const VIEW_TITLES: Record<ViewMode, string> = {
   all: "All Upcoming Orders",
   monday: "Monday Orders",
   wednesday: "Wednesday Orders",
+  friday: "Friday Orders",
   completed: "Completed & Cancelled",
 };
 
@@ -641,6 +647,86 @@ function ConfirmDoneModal({ order, onCancel, onConfirm }: { order: Order; onCanc
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────── MESSAGES ──────────────────────────────── */
+
+type ContactMessage = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  handled_at: string | null;
+  created_at: string;
+};
+
+function MessagesView() {
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("contact_messages" as never)
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) toast.error(error.message);
+    setMessages((data ?? []) as unknown as ContactMessage[]);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const setHandled = async (m: ContactMessage, handled: boolean) => {
+    const { error } = await supabase
+      .from("contact_messages" as never)
+      .update({ handled_at: handled ? new Date().toISOString() : null } as never)
+      .eq("id", m.id);
+    if (error) { toast.error(error.message); return; }
+    load();
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-display text-3xl text-leaf-deep lg:text-4xl">Messages</h1>
+        <p className="mt-1 text-base text-brown">Notes sent through the website contact form.</p>
+      </div>
+      {loading ? (
+        <p className="py-10 text-center text-base text-brown">Loading messages…</p>
+      ) : messages.length === 0 ? (
+        <div className="rounded-2xl border-2 border-dashed border-border bg-white p-10 text-center">
+          <p className="text-lg text-brown">No messages yet.</p>
+        </div>
+      ) : (
+        <ul className="space-y-3">
+          {messages.map((m) => (
+            <li key={m.id} className={`rounded-2xl border-2 bg-white p-5 shadow-sm ${m.handled_at ? "border-border opacity-70" : "border-leaf-deep/40"}`}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="text-lg font-semibold text-leaf-deep">{m.name}</div>
+                  <div className="text-sm text-brown">{longDate(m.created_at)}</div>
+                </div>
+                <button
+                  onClick={() => setHandled(m, !m.handled_at)}
+                  className="rounded-xl border-2 border-border bg-white px-4 py-2 text-base font-semibold text-leaf-deep hover:bg-secondary"
+                >
+                  {m.handled_at ? "Mark as not done" : "Mark as done"}
+                </button>
+              </div>
+              <p className="mt-3 whitespace-pre-wrap text-base text-leaf-deep">{m.message}</p>
+              <div className="mt-3 flex flex-wrap gap-4 text-base">
+                <a href={`mailto:${m.email}`} className="font-semibold text-leaf-deep underline">{m.email}</a>
+                {m.phone && <a href={`tel:${m.phone}`} className="font-semibold text-leaf-deep underline">{m.phone}</a>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

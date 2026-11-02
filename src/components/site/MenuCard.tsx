@@ -66,9 +66,9 @@ export function MenuCard({ item }: { item: MenuItem }) {
               <div className="mt-0.5 text-[10px] font-medium text-brown">Includes $5 premium protein addition per item.</div>
             )}
             <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
-              {item.category === "salad" && "Mix & match, 5 item food minimum"}
-              {item.category === "meal" && "Mix & match, 5 item food minimum"}
-              {item.category === "juice" && "Mix & match, 6 drink minimum"}
+              {item.category === "salad" && "Mix & match, 5 item food minimum for delivery"}
+              {item.category === "meal" && "Mix & match, 5 item food minimum for delivery"}
+              {item.category === "juice" && "Mix & match, 6 drink minimum for delivery"}
             </div>
           </div>
         </div>

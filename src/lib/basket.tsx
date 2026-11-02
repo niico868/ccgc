@@ -4,6 +4,7 @@ import { saladDaysAhead } from "./fulfillment";
 import { unavailableMeals } from "./menu-rotation";
 
 export type BasketCategory = "salad" | "meal" | "juice";
+export type Fulfillment = "Delivery" | "Pickup";
 
 export type BasketLine = {
   lineId: string;
@@ -27,6 +28,8 @@ export type BasketLine = {
 type BasketCtx = {
   fulfillmentDate: string;
   setFulfillmentDate: (date: string) => void;
+  fulfillment: Fulfillment;
+  setFulfillment: (value: Fulfillment) => void;
   unavailableLines: BasketLine[];
   lines: BasketLine[];
   add: (line: Omit<BasketLine, "lineId">) => void;
@@ -48,6 +51,7 @@ const KEY = "cgcc.basket.v2";
 export function BasketProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<BasketLine[]>([]);
   const [fulfillmentDate, setFulfillmentDate] = useState("");
+  const [fulfillment, setFulfillment] = useState<Fulfillment>("Delivery");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -57,14 +61,15 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       const days = saladDaysAhead(6);
       const savedDate = localStorage.getItem(`${KEY}.date`);
       setFulfillmentDate(days.some((d) => d.value === savedDate) ? savedDate ?? "" : days[0]?.value ?? "");
+      if (localStorage.getItem(`${KEY}.fulfillment`) === "Pickup") setFulfillment("Pickup");
     } catch {}
     setReady(true);
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    try { localStorage.setItem(KEY, JSON.stringify(lines)); localStorage.setItem(`${KEY}.date`, fulfillmentDate); } catch {}
-  }, [lines, fulfillmentDate, ready]);
+    try { localStorage.setItem(KEY, JSON.stringify(lines)); localStorage.setItem(`${KEY}.date`, fulfillmentDate); localStorage.setItem(`${KEY}.fulfillment`, fulfillment); } catch {}
+  }, [lines, fulfillmentDate, fulfillment, ready]);
 
   const add: BasketCtx["add"] = useCallback((line) => {
     setLines((prev) => [...prev, { ...line, lineId: crypto.randomUUID() }]);
@@ -77,20 +82,21 @@ export function BasketProvider({ children }: { children: ReactNode }) {
   const value = useMemo<BasketCtx>(() => {
     const foodCount = lines.filter((l) => l.category !== "juice").reduce((s, l) => s + l.quantity, 0);
     const drinkCount = lines.filter((l) => l.category === "juice").reduce((s, l) => s + l.quantity, 0);
-    const foodOk = foodCount === 0 || foodCount >= FOOD_MIN;
-    const drinkOk = drinkCount === 0 || drinkCount >= DRINK_MIN;
+    // Minimums apply to delivery only; pickup has no minimum.
+    const foodOk = fulfillment === "Pickup" || foodCount === 0 || foodCount >= FOOD_MIN;
+    const drinkOk = fulfillment === "Pickup" || drinkCount === 0 || drinkCount >= DRINK_MIN;
     const hasItems = lines.length > 0;
     const unavailableLines = unavailableMeals(lines, fulfillmentDate) as BasketLine[];
     const dateOk = saladDaysAhead(6).some((d) => d.value === fulfillmentDate);
     return {
-      fulfillmentDate, setFulfillmentDate, unavailableLines,
+      fulfillmentDate, setFulfillmentDate, fulfillment, setFulfillment, unavailableLines,
       lines, add, remove, setQty, clear,
       count: lines.reduce((s, l) => s + l.quantity, 0),
       subtotal: lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0),
       foodCount, drinkCount, foodOk, drinkOk,
       minMet: hasItems && foodOk && drinkOk && dateOk && unavailableLines.length === 0,
     };
-  }, [lines, add, remove, setQty, clear, fulfillmentDate]);
+  }, [lines, add, remove, setQty, clear, fulfillmentDate, fulfillment]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

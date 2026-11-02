@@ -24,17 +24,17 @@ const NAV = [
 ] as const;
 
 export function Header() {
-  const { count, foodCount } = useBasket();
+  const { count, foodCount, minMet } = useBasket();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
-  const badgeReady = count >= FOOD_MIN;
+  const badgeReady = minMet;
   const prevFoodRef = useRef(foodCount);
 
   useEffect(() => {
     if (prevFoodRef.current < FOOD_MIN && foodCount >= FOOD_MIN) {
-      toast.success("Basket ready, minimum reached!", {
+      toast.success("Delivery minimum reached!", {
         icon: <ShoppingBasket className="h-4 w-4" />,
         position: "bottom-right",
       });
@@ -129,7 +129,7 @@ export function Header() {
                 className={`absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white shadow-md transition ${
                   badgeReady ? "bg-[#1a9850]" : "bg-[#d73027]"
                 }`}
-                title={badgeReady ? "Ready for checkout" : `Add ${FOOD_MIN - count} more to reach the minimum`}
+                title={badgeReady ? "Ready for checkout" : "Open your basket to see what is needed"}
               >
                 {count}
               </span>
