@@ -435,6 +435,7 @@ function Checkout() {
             ) : !minMet ? (unavailableLines.length ? "Meals unavailable for this week" : "Minimum not met") : phoneInvalid ? "Enter a valid phone number" : "Submit Order"}
           </button>
           <p className="text-[11px] text-muted-foreground">Your order is saved as <b>Submitted, awaiting confirmation</b>. We'll message you back to confirm the final total and next steps.</p>
+          <p className="text-[11px] text-muted-foreground">By submitting, you agree to our <a href="/terms" target="_blank" rel="noreferrer" className="underline">Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" className="underline">Privacy Policy</a>.</p>
         </aside>
       </form>
 

@@ -45,6 +45,10 @@ export function Footer() {
       </div>
       <div className="relative border-t border-white/10 py-4 text-center text-xs text-cream/70">
         © {new Date().getFullYear()} Fine Time for Cathy's Clean Green Classics.
+        <span className="mx-2">·</span>
+        <Link to="/privacy" className="underline hover:text-white">Privacy Policy</Link>
+        <span className="mx-2">·</span>
+        <Link to="/terms" className="underline hover:text-white">Terms &amp; Conditions</Link>
       </div>
     </footer>
   );

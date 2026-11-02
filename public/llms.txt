@@ -11,6 +11,8 @@
 - [/gallery](/gallery): Food photography and behind-the-scenes shots.
 - [/faq](/faq): Ordering, delivery, pickup, and pricing questions.
 - [/contact](/contact): Reach out via form, WhatsApp, phone, or email.
+- [/privacy](/privacy): Privacy policy.
+- [/terms](/terms): Terms and conditions.
 
 ## Ordering
 
