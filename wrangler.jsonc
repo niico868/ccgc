@@ -4,4 +4,11 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  // Keep secrets set in the Cloudflare dashboard when deploying.
+  "keep_vars": true,
+  // Public values only. Secrets such as SUPABASE_SERVICE_ROLE_KEY stay in Cloudflare.
+  "vars": {
+    "SUPABASE_URL": "https://fwouebfehoyaudsimyfh.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_KchjX4Vu19lOxlYrQnGTnw_7R6ISsdz"
+  },
 }
