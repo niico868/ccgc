@@ -23,6 +23,7 @@ import { Route as JuicesRouteImport } from './routes/juices'
 import { Route as MealsRouteImport } from './routes/meals'
 import { Route as OrderConfirmationRouteImport } from './routes/order-confirmation'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SaladsRouteImport } from './routes/salads'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -97,6 +98,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SaladsRoute = SaladsRouteImport.update({
   id: '/salads',
   path: '/salads',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/meals': typeof MealsRoute
   '/order-confirmation': typeof OrderConfirmationRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/salads': typeof SaladsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/meals': typeof MealsRoute
   '/order-confirmation': typeof OrderConfirmationRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/salads': typeof SaladsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/meals': typeof MealsRoute
   '/order-confirmation': typeof OrderConfirmationRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/salads': typeof SaladsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/meals'
     | '/order-confirmation'
     | '/privacy'
+    | '/reset-password'
     | '/salads'
     | '/sitemap.xml'
     | '/terms'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/meals'
     | '/order-confirmation'
     | '/privacy'
+    | '/reset-password'
     | '/salads'
     | '/sitemap.xml'
     | '/terms'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/meals'
     | '/order-confirmation'
     | '/privacy'
+    | '/reset-password'
     | '/salads'
     | '/sitemap.xml'
     | '/terms'
@@ -246,6 +258,7 @@ export interface RootRouteChildren {
   MealsRoute: typeof MealsRoute
   OrderConfirmationRoute: typeof OrderConfirmationRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SaladsRoute: typeof SaladsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/salads': {
       id: '/salads'
       path: '/salads'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   MealsRoute: MealsRoute,
   OrderConfirmationRoute: OrderConfirmationRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SaladsRoute: SaladsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,

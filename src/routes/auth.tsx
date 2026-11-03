@@ -29,6 +29,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const isSignup = mode === "signup";
   const [loading, setLoading] = useState(false);
+  const [forgot, setForgot] = useState(false);
   const [form, setForm] = useState({
     first_name: "", last_name: "", email: "", phone: "",
     password: "", confirm: "", marketing_opt_in: true, stay: true,
@@ -80,6 +81,36 @@ function AuthPage() {
     } finally { setLoading(false); }
   };
 
+  const sendReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(form.email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) { toast.error("We couldn't send the email. Please try again in a few minutes."); return; }
+    toast.success("If that email has an account, a reset link is on its way.");
+    setForgot(false);
+  };
+
+  if (forgot) {
+    return (
+      <Section className="py-12">
+        <div className="mx-auto max-w-lg rounded-3xl border border-border bg-card p-7 shadow-card lg:p-9">
+          <h1 className="text-display text-2xl text-leaf-deep">Reset your password</h1>
+          <p className="mt-1 text-sm text-brown">Enter your account email and we'll send you a link to choose a new password.</p>
+          <form onSubmit={sendReset} className="mt-5 space-y-3">
+            <input required type="email" placeholder="Email" value={form.email} onChange={set("email")} className={input} />
+            <button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-leaf-deep text-sm font-semibold text-cream hover:opacity-90 disabled:opacity-60">
+              {loading ? "Please wait…" : "Send reset link"}
+            </button>
+          </form>
+          <button type="button" onClick={() => setForgot(false)} className="mt-4 text-sm font-semibold text-leaf-deep underline">Back to sign in</button>
+        </div>
+      </Section>
+    );
+  }
+
   return (
     <Section className="py-12">
       <div className="mx-auto max-w-lg rounded-3xl border border-border bg-card p-7 shadow-card lg:p-9">
@@ -121,6 +152,9 @@ function AuthPage() {
             <input type="checkbox" checked={form.stay} onChange={set("stay")} />
             Stay signed in
           </label>
+          {!isSignup && (
+            <button type="button" onClick={() => setForgot(true)} className="text-xs font-semibold text-leaf-deep underline">Forgot password?</button>
+          )}
           <button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-leaf-deep text-sm font-semibold text-cream hover:opacity-90 disabled:opacity-60">
             {loading ? "Please wait…" : isSignup ? "Create account" : "Sign in"}
           </button>
