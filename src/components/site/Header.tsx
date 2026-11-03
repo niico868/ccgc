@@ -61,6 +61,8 @@ export function Header() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setOpen(false);
+    await router.navigate({ to: "/" });
     router.invalidate();
   };
 
