@@ -58,19 +58,19 @@ export function MenuCard({ item }: { item: MenuItem }) {
       </div>
       <div className="flex h-1 w-full bg-[linear-gradient(90deg,#F6E96B_0%,#A9D95A_55%,#2F7D32_100%)]" />
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-display text-lg leading-tight text-leaf-deep">{item.name}</h3>
-          <div className="shrink-0 text-right">
+        <div className="flex flex-col gap-1.5">
+          <h3 className="text-display line-clamp-2 text-lg leading-tight text-leaf-deep [overflow-wrap:anywhere]" title={item.name}>{item.name}</h3>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
             <div className="text-sm font-bold tracking-wide text-leaf-deep">{fmt(unitPrice)}<span className="text-[10px] font-medium text-muted-foreground"> /ea</span></div>
-            {seafood && (
-              <div className="mt-0.5 text-[10px] font-medium text-brown">Includes $5 premium protein addition per item.</div>
-            )}
-            <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
+            <div className="min-w-0 text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
               {item.category === "salad" && "Mix & match, 5 item food minimum for delivery"}
               {item.category === "meal" && "Mix & match, 5 item food minimum for delivery"}
               {item.category === "juice" && "Mix & match, 6 drink minimum for delivery"}
             </div>
           </div>
+          {seafood && (
+            <div className="text-[10px] font-medium text-brown">Includes $5 premium protein addition per item.</div>
+          )}
         </div>
         <p className="text-sm leading-relaxed text-foreground/80">{item.description}</p>
         {item.note && <p className="text-xs text-brown">{item.note}</p>}
