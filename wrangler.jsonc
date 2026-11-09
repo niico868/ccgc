@@ -11,4 +11,12 @@
     "SUPABASE_URL": "https://fwouebfehoyaudsimyfh.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_KchjX4Vu19lOxlYrQnGTnw_7R6ISsdz"
   },
+  // Required by `wrangler preview` (used for pull-request preview builds).
+  // Public values only. These point previews at the same Supabase project as production.
+  "previews": {
+    "vars": {
+      "SUPABASE_URL": "https://fwouebfehoyaudsimyfh.supabase.co",
+      "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_KchjX4Vu19lOxlYrQnGTnw_7R6ISsdz"
+    }
+  },
 }
