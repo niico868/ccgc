@@ -10,6 +10,9 @@ const EXCLUDED = new Set([
   "/account",
   "/basket",
   "/checkout",
+  "/admin-seo",
+  "/order-confirmation",
+  "/reset-password",
 ]);
 
 // Metadata overrides per path (priority + changefreq). Anything not listed
