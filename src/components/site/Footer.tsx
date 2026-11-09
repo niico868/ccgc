@@ -26,7 +26,8 @@ export function Footer() {
           <ul className="mt-3 space-y-1.5 text-sm text-cream/80">
             <li><Link to="/salads" className="hover:text-white">Custom Salads</Link></li>
             <li><Link to="/meals" className="hover:text-white">Healthy Meals</Link></li>
-            <li><Link to="/juices" className="hover:text-white">Cold-Pressed Juices</Link></li>
+            <li><Link to="/juices" className="hover:text-white">Diabetic-Friendly Juices</Link></li>
+            <li><Link to="/about" className="hover:text-white">About &amp; Quick Facts</Link></li>
             <li><Link to="/account" className="hover:text-white">My Account</Link></li>
           </ul>
         </div>

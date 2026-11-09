@@ -1,14 +1,16 @@
+import { photoSrcSet } from "@/lib/utils";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useBasket } from "@/lib/basket";
 import type { MenuItem } from "@/lib/menu-data";
-import { fmt, PREMIUM_PROTEINS, PREMIUM_SURCHARGE, PROTEIN_COPY, SALAD_INGREDIENTS } from "@/lib/menu-data";
+import { dishPath, fmt, PREMIUM_PROTEINS, PREMIUM_SURCHARGE, PROTEIN_COPY, SALAD_INGREDIENTS } from "@/lib/menu-data";
 import { Minus, Plus, ShoppingBasket, ChevronDown } from "lucide-react";
 import { PhotoCarousel } from "./PhotoCarousel";
 import { validateOrderAvailability } from "@/lib/menu-rotation";
 import { Button } from "@/components/ui/button";
 
-export function MenuCard({ item }: { item: MenuItem }) {
+export function MenuCard({ item, orderOnly = false }: { item: MenuItem; orderOnly?: boolean }) {
   const { add, fulfillmentDate } = useBasket();
   const [protein, setProtein] = useState(item.proteinOptions?.[0] ?? "");
   const [sizeIdx, setSizeIdx] = useState(0);
@@ -46,10 +48,13 @@ export function MenuCard({ item }: { item: MenuItem }) {
   };
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)]">
+    <article className={orderOnly ? "flex flex-col" : "group flex h-full flex-col overflow-hidden rounded-[26px] border border-leaf-soft/25 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFF8EA_100%)] shadow-[0_18px_35px_rgba(31,90,53,0.14)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(31,90,53,0.18)]"}>
+      {!orderOnly && <>
       <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
         {item.images && item.images.length > 1 ? <PhotoCarousel images={item.images} name={item.name} /> : <img
           src={item.image}
+          srcSet={photoSrcSet(item.image)}
+          sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
           alt={item.name}
           loading="lazy"
           className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
@@ -57,9 +62,13 @@ export function MenuCard({ item }: { item: MenuItem }) {
         />}
       </div>
       <div className="flex h-1 w-full bg-[linear-gradient(90deg,#F6E96B_0%,#A9D95A_55%,#2F7D32_100%)]" />
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      </>}
+      <div className={orderOnly ? "flex flex-col gap-3" : "flex flex-1 flex-col gap-3 p-5"}>
+        {!orderOnly && <>
         <div className="flex flex-col gap-1.5">
-          <h3 className="text-display line-clamp-2 text-lg leading-tight text-leaf-deep [overflow-wrap:anywhere]" title={item.name}>{item.name}</h3>
+          <h3 className="text-display line-clamp-2 text-lg leading-tight text-leaf-deep [overflow-wrap:anywhere]" title={item.name}>
+            <Link to={dishPath(item)} className="hover:underline hover:decoration-leaf-soft hover:underline-offset-4">{item.name}</Link>
+          </h3>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
             <div className="text-sm font-bold tracking-wide text-leaf-deep">{fmt(unitPrice)}<span className="text-[10px] font-medium text-muted-foreground"> /ea</span></div>
             <div className="min-w-0 text-[10px] font-semibold uppercase tracking-wider text-leaf-soft">
@@ -76,6 +85,14 @@ export function MenuCard({ item }: { item: MenuItem }) {
         {item.note && <p className="text-xs text-brown">{item.note}</p>}
         {item.benefits && (
           <div className="text-xs font-semibold uppercase tracking-wider text-leaf-soft">{item.benefits}</div>
+        )}
+        {item.tags && <DishTags tags={item.tags} />}
+        </>}
+        {orderOnly && (
+          <div>
+            <div className="text-2xl font-bold text-leaf-deep">{fmt(unitPrice)}<span className="text-sm font-medium text-muted-foreground"> each</span></div>
+            {seafood && <div className="mt-0.5 text-xs font-medium text-brown">Includes $5 premium protein addition per item.</div>}
+          </div>
         )}
 
         {item.sizes && (
@@ -190,5 +207,16 @@ export function MenuCard({ item }: { item: MenuItem }) {
         </div>
       </div>
     </article>
+  );
+}
+
+/** Small diet / prep labels, e.g. "Diabetic-friendly*" or "Vegetarian option". */
+export function DishTags({ tags }: { tags: string[] }) {
+  return (
+    <ul className="flex flex-wrap gap-1.5" aria-label="Labels">
+      {tags.map((t) => (
+        <li key={t} className="rounded-full border border-leaf-soft/40 bg-leaf-soft/10 px-2.5 py-0.5 text-[11px] font-semibold text-leaf-deep">{t}</li>
+      ))}
+    </ul>
   );
 }

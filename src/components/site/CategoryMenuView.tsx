@@ -54,8 +54,8 @@ const CATEGORIES: CategoryDef[] = [
     to: "/juices",
     label: "Cold-Pressed Juices",
     eyebrow: "Cold-Pressed Juices",
-    title: "Pure Cold-Pressed Drinks",
-    intro: "Pressed fresh from clean produce. Diabetic-friendly options.",
+    title: "Diabetic-Friendly Cold-Pressed Juices",
+    intro: "Diabetic-friendly* juices and ginger shots with no added sugar, cold-pressed fresh from specially sourced produce.",
     items: JUICES,
     minKind: "drink",
     waMsg: "Hi! I'd like to order cold-pressed juices.",
@@ -139,7 +139,7 @@ export function CategoryMenuView({ active }: { active: Key }) {
       <div className="relative">
         {CATEGORIES.map((c) => (
           <div key={c.key} className={c.key === shown ? "" : "hidden"} aria-hidden={c.key !== shown}>
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {c.key === shown && (
                 <motion.div
                   key={c.key}

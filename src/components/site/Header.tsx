@@ -75,7 +75,7 @@ export function Header() {
           </div>
           <div className="hidden min-w-0 leading-none sm:block">
             <div className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-deep/85">REAL FOOD. READY WHEN YOU ARE.</div>
-            <div className="mt-1 text-xs text-foreground/65">Diabetic friendly juices* prepared fresh in Trinidad &amp; Tobago</div>
+            <div className="mt-1 text-xs text-foreground/65">Diabetic-friendly juices* prepared fresh in Trinidad &amp; Tobago</div>
           </div>
         </Link>
 
