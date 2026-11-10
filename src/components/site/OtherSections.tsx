@@ -5,7 +5,7 @@ import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 const ALL = [
   { key: "salad", to: "/salads", title: "Custom Salads", image: SALAD_FEATURE_IMAGE },
   { key: "meal", to: "/meals", title: "Healthy Meals", image: MEAL_FEATURE_IMAGE },
-  { key: "juice", to: "/juices", title: "Cold-Pressed Juices", image: juices },
+  { key: "juice", to: "/juices", title: "Diabetic-Friendly Cold-Pressed Juices", image: juices },
 ] as const;
 
 export function OtherSections({ except }: { except: "salad" | "meal" | "juice" }) {

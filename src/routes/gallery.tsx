@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
-import hero from "@/assets/hero-salad.jpg";
+import hero from "@/assets/hero-salad.webp";
 import { SALAD_FEATURE_IMAGE, MEAL_FEATURE_IMAGE } from "@/lib/menu-data";
 
 const TITLE = "Gallery | Cathy's Clean Green Classics";

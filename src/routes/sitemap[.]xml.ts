@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { ALL_ITEMS, dishPath } from "@/lib/menu-data";
 
 const BASE_URL = "https://cathyscleangreenclassics.com";
 
@@ -25,6 +26,7 @@ const META: Record<string, { changefreq: string; priority: string }> = {
   "/gallery": { changefreq: "monthly", priority: "0.6" },
   "/faq": { changefreq: "monthly", priority: "0.6" },
   "/contact": { changefreq: "monthly", priority: "0.6" },
+  "/about": { changefreq: "monthly", priority: "0.7" },
 };
 
 // Glob every route file. Vite resolves this at build time on both client and
@@ -37,9 +39,9 @@ function fileToPath(file: string): string | null {
   if (p === "index") return "/";
   if (p === "__root") return null;
   if (p.startsWith("api/")) return null; // server-only routes
-  if (p.includes("sitemap[.]xml")) return null;
+  if (p.includes("sitemap[.]xml") || p.includes("[.]txt")) return null;
   // exclude dynamic ($param), splat ($), and layout (_prefix) routes
-  const segments = p.split("/");
+  const segments = p.split(/[/.]/);
   if (segments.some((s) => s.startsWith("$") || s.startsWith("_"))) return null;
   // flat dot convention -> slashes; trailing /index means folder index
   const url = "/" + p.replace(/\./g, "/").replace(/\/index$/, "");
@@ -51,6 +53,12 @@ export function getSitemapEntries() {
   for (const file of Object.keys(routeFiles)) {
     const path = fileToPath(file);
     if (path && !EXCLUDED.has(path)) paths.add(path);
+  }
+  // One page per dish (/menu/$slug is a dynamic route, so list them here).
+  for (const item of ALL_ITEMS) {
+    const path = dishPath(item);
+    paths.add(path);
+    META[path] ??= { changefreq: "weekly", priority: "0.7" };
   }
   return Array.from(paths)
     .sort((a, b) => (a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b)))

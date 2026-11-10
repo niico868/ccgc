@@ -33,6 +33,8 @@ export type MenuItem = {
   seafood?: boolean;
   sizes?: Size[];
   fixedSize?: string;
+  /** Short labels shown as chips on cards and dish pages (diet, prep style). */
+  tags?: string[];
 };
 
 /** Customer-facing price formatter. */
@@ -89,6 +91,14 @@ export const SALAD_INGREDIENTS = [
   "Seasonal fruit",
   "Toasted seeds",
 ] as const;
+
+/** Labels on every juice and shot. */
+export const JUICE_TAGS = ["Diabetic-friendly*", "No added sugar", "Cold-pressed"];
+/** What the asterisk on "Diabetic-friendly*" means, shown wherever the label appears. */
+export const DIABETIC_NOTE =
+  "*Diabetic-friendly: no added sugar, pressed from specially sourced produce. Fruit and vegetables still contain natural sugars, so if you manage diabetes, check portions with your doctor.";
+const SALAD_TAGS = ["Made fresh on the day", "Vegetarian option"];
+const MEAL_TAGS = ["Homestyle", "Vegetarian option"];
 
 export const SALAD_FEATURE_IMAGE = grilledSaladAsset.url;
 export const MEAL_FEATURE_IMAGE = roastedVegetableMealAsset.url;
@@ -206,8 +216,9 @@ export const JUICES: MenuItem[] = [
     name: "Beetroot",
     price: 18,
     image: beetRootAsset.url,
-    description: "Pure pressed beetroot for that deep, earthy lift after a long morning.",
+    description: "Pure cold-pressed beetroot with no added sugar, for that deep, earthy lift after a long morning. A diabetic-friendly favourite pressed from specially sourced produce.",
     benefits: "Earthy. Restorative.",
+    tags: JUICE_TAGS,
     fixedSize: "300 ml",
   },
   {
@@ -216,8 +227,9 @@ export const JUICES: MenuItem[] = [
     name: "Watermelon",
     price: 18,
     image: watermelonAsset.url,
-    description: "Cold-pressed watermelon with a bright, cooling finish that feels crisp and refreshing.",
+    description: "Cold-pressed watermelon with a bright, cooling finish that feels crisp and refreshing. Nothing added: no sugar, no syrups, just the fruit.",
     benefits: "Cooling. Bright.",
+    tags: JUICE_TAGS,
     fixedSize: "300 ml",
   },
   {
@@ -226,8 +238,9 @@ export const JUICES: MenuItem[] = [
     name: "Mixed Veg",
     price: 18,
     image: beetRootAsset.url,
-    description: "Mixture of fruits and vegetables for that green boost: carrot, pineapple, melon and cucumber.",
+    description: "A diabetic-friendly blend of fruits and vegetables for that green boost: carrot, pineapple, melon and cucumber, cold-pressed with no added sugar.",
     benefits: "Green Boost. Refreshing.",
+    tags: JUICE_TAGS,
     fixedSize: "300 ml",
   },
   {
@@ -236,8 +249,9 @@ export const JUICES: MenuItem[] = [
     name: "Ginger Shot",
     price: 8,
     image: gingerShotAsset.url,
-    description: "A small, potent ginger shot to warm and reset the system.",
+    description: "A small, potent ginger shot to warm and reset the system. Pressed fresh with no added sugar, so it suits a diabetic-friendly routine.",
     benefits: "Warm. Restoring.",
+    tags: JUICE_TAGS,
     fixedSize: "2 oz",
   },
 ];
@@ -255,7 +269,23 @@ export const MENU_B_MEALS: MenuItem[] = [
     image: moroccanAsset.url, proteinOptions: MEAL_PROTEINS,
     description: "Fluffy couscous sautéed with vegetables, served with our Moroccan-spiced chicken breast, pumpkin, carrots, chickpeas and bell peppers in our in-house spices." },
 ];
+for (const item of SALADS) item.tags ??= SALAD_TAGS;
+for (const item of [...MENU_A_MEALS, ...MENU_B_MEALS]) item.tags ??= MEAL_TAGS;
+
 export const MEALS: MenuItem[] = [...MENU_A_MEALS, ...MENU_B_MEALS];
 
 export const ALL_ITEMS = [...SALADS, ...MEALS, ...JUICES];
 export const findItem = (id: string) => ALL_ITEMS.find((i) => i.id === id);
+
+/** URL-friendly name used for each dish page, e.g. /menu/zesty-herb-bowl. */
+export const dishSlug = (item: Pick<MenuItem, "name">) =>
+  item.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, " and ").replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+export const dishPath = (item: Pick<MenuItem, "name">) => `/menu/${dishSlug(item)}`;
+export const findBySlug = (slug: string) => ALL_ITEMS.find((i) => dishSlug(i) === slug);
+
+export const CATEGORY_INFO = {
+  salad: { label: "Custom Salads", single: "Salad", path: "/salads" as const },
+  meal: { label: "Healthy Meals", single: "Healthy Meal", path: "/meals" as const },
+  juice: { label: "Diabetic-Friendly Cold-Pressed Juices", single: "Cold-Pressed Juice", path: "/juices" as const },
+};
