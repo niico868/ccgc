@@ -7,3 +7,4 @@
 - Use Embla for swipeable product photos and home slideshows; it provides reliable touch interaction without custom swipe physics.
 - Derive the public square favicon from the existing brand logo and declare it in the root head; Google search icons need a stable crawlable icon URL.
 - Use shared private-page metadata for account, order and administrator screens; keep searchable food content separate from non-indexed customer flows.
+- Keep brand knowledge in words (voice, rules, policies, FAQ, story) in src/brain markdown files and hard facts (prices, days, times, menu) in site-facts.ts and menu-data.ts; the chat assistant combines them per request and must never keep its own copy of hard facts.

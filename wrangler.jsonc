@@ -6,6 +6,8 @@
   "main": "src/server.ts",
   // Keep secrets set in the Cloudflare dashboard when deploying.
   "keep_vars": true,
+  // Cloudflare Workers AI for the website chat assistant (free daily allowance, no API key).
+  "ai": { "binding": "AI" },
   // Public values only. Secrets such as SUPABASE_SERVICE_ROLE_KEY stay in Cloudflare.
   "vars": {
     "SUPABASE_URL": "https://fwouebfehoyaudsimyfh.supabase.co",
