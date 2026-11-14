@@ -6,6 +6,7 @@ import { Footer } from "./Footer";
 import { PromoPopup } from "./PromoPopup";
 import { ThemePlayer } from "./ThemePlayer";
 import { SignupCtaBand } from "./SignupCtaBand";
+import { ChatWidget } from "./ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,6 +14,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [signedIn, setSignedIn] = useState(false);
   const hideFooter = pathname === "/contact";
+  const hideChat = pathname.startsWith("/admin");
   const hideSignupBand = pathname === "/auth" || pathname === "/account" || signedIn;
 
   useEffect(() => {
@@ -29,6 +31,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       {!hideFooter && <Footer />}
       <PromoPopup />
       <ThemePlayer />
+      {!hideChat && <ChatWidget />}
       <Toaster richColors position="top-center" />
     </div>
   );
