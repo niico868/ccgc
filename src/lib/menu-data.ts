@@ -172,11 +172,11 @@ export const MENU_A_MEALS: MenuItem[] = [
   {
     id: "meal-sweet-potato-basil",
     category: "meal",
-    name: "Sweet Potato Basil Mash with Chimichurri Chicken",
+    name: "Basil Sweet Potato Cubes with Chimichurri Chicken",
     price: MEAL_BASE,
     image: sweetPotatoBasilAsset.url,
     description:
-      "Creamy sweet potato and basil mash served with sautéed garlic-parsley vegetables, grilled chicken, fresh chimichurri, and a light topping of alfalfa or broccoli sprouts.",
+      "Tender cubed sweet potato tossed with fresh basil, served with sautéed garlic-parsley vegetables, grilled chicken, fresh chimichurri, and a light topping of alfalfa or broccoli sprouts.",
     benefits: "Wholesome. Homestyle.",
     proteinOptions: MEAL_PROTEINS,
   },
@@ -283,6 +283,15 @@ export const dishSlug = (item: Pick<MenuItem, "name">) =>
     .replace(/&/g, " and ").replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 export const dishPath = (item: Pick<MenuItem, "name">) => `/menu/${dishSlug(item)}`;
 export const findBySlug = (slug: string) => ALL_ITEMS.find((i) => dishSlug(i) === slug);
+
+/** Old dish-page addresses (from before a rename) mapped to the dish id, so old links redirect. */
+export const LEGACY_DISH_SLUGS: Record<string, string> = {
+  "sweet-potato-basil-mash-with-chimichurri-chicken": "meal-sweet-potato-basil",
+};
+export const findByLegacySlug = (slug: string) => {
+  const id = LEGACY_DISH_SLUGS[slug];
+  return id ? findItem(id) : undefined;
+};
 
 export const CATEGORY_INFO = {
   salad: { label: "Custom Salads", single: "Salad", path: "/salads" as const },
