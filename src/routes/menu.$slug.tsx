@@ -1,5 +1,5 @@
 import { photoSrcSet } from "@/lib/utils";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ChevronRight, Clock, MapPin, Truck } from "lucide-react";
 import { Section } from "@/components/site/Section";
@@ -15,6 +15,7 @@ import {
   dishPath,
   dishSlug,
   findBySlug,
+  findByLegacySlug,
   fmt,
   type MenuItem,
 } from "@/lib/menu-data";
@@ -51,7 +52,11 @@ function dietFor(item: MenuItem) {
 export const Route = createFileRoute("/menu/$slug")({
   loader: ({ params }) => {
     const item = findBySlug(params.slug);
-    if (!item) throw notFound();
+    if (!item) {
+      const renamed = findByLegacySlug(params.slug);
+      if (renamed) throw redirect({ to: "/menu/$slug", params: { slug: dishSlug(renamed) }, statusCode: 301 });
+      throw notFound();
+    }
     return { slug: dishSlug(item) };
   },
   head: ({ params }) => {
