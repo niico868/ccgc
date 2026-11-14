@@ -30,7 +30,10 @@ export const askAssistant = createServerFn({ method: "POST" })
   .validator((data: { messages: ChatTurn[] }) => ({ messages: sanitizeTurns(data?.messages) }))
   .handler(async ({ data }) => {
     try {
-      const { env } = (await import("cloudflare:workers")) as unknown as { env: { AI?: AiBinding } };
+      // Built-in Cloudflare module, loaded only at runtime on Cloudflare. The specifier is
+      // assembled so the build step does not try to resolve or bundle it.
+      const builtin = "cloudflare:" + "workers";
+      const { env } = (await import(/* @vite-ignore */ builtin)) as { env: { AI?: AiBinding } };
       if (!env.AI) throw new Error("Workers AI binding (AI) is not configured");
 
       const result = await env.AI.run(MODEL, {

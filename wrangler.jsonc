@@ -19,6 +19,8 @@
     "vars": {
       "SUPABASE_URL": "https://fwouebfehoyaudsimyfh.supabase.co",
       "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_KchjX4Vu19lOxlYrQnGTnw_7R6ISsdz"
-    }
+    },
+    // Bindings are not inherited by previews, so the chat assistant's AI is declared here too.
+    "ai": { "binding": "AI" }
   },
 }
